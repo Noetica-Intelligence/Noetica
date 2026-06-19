@@ -1,7 +1,7 @@
 // Determine if we are running locally or on GitHub Pages
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE = isLocal 
-    ? 'http://localhost:10000/api/v1' 
+    ? 'http://localhost:8001/api/v1' 
     : 'https://sk4nishmd-noetica-backend.hf.space/api/v1';
 
 // 1. Fetch and render Discoveries in Sidebar

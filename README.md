@@ -8,8 +8,12 @@
 [![Zig](https://img.shields.io/badge/Zig-0.16.0-orange.svg)](https://ziglang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Database](https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-336791.svg)]()
+[![Cloud](https://img.shields.io/badge/Cloud-Hugging%20Face%20%7C%20GitHub%20Pages-FFD21E.svg)]()
 
 *Noetica optimizes for Evidence, Scientific Significance, and Civilizational Importance.*
+
+**[🚀 VIEW THE LIVE 3D GALAXY DASHBOARD (GitHub Pages)](#)** 
+*(Note: Replace the # above with your actual GitHub Pages URL)*
 
 </div>
 
@@ -30,27 +34,28 @@ Most systems optimize for attention, engagement, and trending topics. **Noetica 
 
 ---
 
-## 🏗️ Architecture (V3)
+## 🏗️ Architecture (V3 Dual-Cloud)
 
-Noetica operates on a hybrid-tier architecture combining the massive ecosystem of Python for data ingestion with the raw, compiled speed of Zig for O(N²) Knowledge Graph calculations.
+Noetica operates on a cutting-edge hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) Knowledge Graph calculations, and an autonomous LLM Agent (Gemini) for scientific synthesis. 
+
+It is deployed using a completely free **Serverless Dual-Cloud Architecture**.
 
 ```mermaid
 graph TD
-    A[Global Intel Sources] -->|arXiv, PubMed, OpenAlex| B(Python Ingestion Engine)
-    B -->|Patents, Grants, GitHub| B
-    B -->|@embedFile JSON| C{Zig Native Engine}
-    C -->|O N² Traversal| D[Graph Nodes & Edges]
-    C -->|Civilizational Forecasting| D
-    D -->|SQLAlchemy| E[(PostgreSQL / SQLite)]
-    E --> F[V2 Dashboard UI]
-    E --> G[Automated Daily Email Service]
+    A[Global Intel Sources] -->|arXiv, PubMed, ClinicalTrials| B(Python Ingestion Engine)
+    B -->|JSON Payload| C{Zig Native Engine}
+    C -->|O N² Traversal & Math| D[(SQLite Database)]
+    D -->|Top 3 Breakthroughs| E[Gemini AI Scientist]
+    E -->|Synthesis Report| F[FastAPI Backend - Hugging Face]
+    D --> F
+    F -->|REST API| G[3D Visual Galaxy UI - GitHub Pages]
 ```
 
 ### Components
-- **The Ingestion Layer:** Pulls real-time data from global scientific APIs, patent databases, and NIH grants.
-- **The Zig Core (`/zig_engine`):** A high-performance computation engine that calculates discovery significance, maps cross-disciplinary edges, and assigns **Civilizational Impact Forecast** probabilities.
-- **The Graph Database (`/backend`):** A relational representation of the Knowledge Graph storing Nodes and Edges.
-- **The Intelligence Reporter (`/src`):** Automatically dispatches an HTML intelligence briefing via Gmail SMTP.
+- **The Ingestion Layer:** Pulls real-time data from global scientific APIs, including targeted Oncology trials.
+- **The Zig Core (`/zig_engine`):** A high-performance mathematics engine that calculates discovery significance, maps cross-disciplinary edges, and assigns **Civilizational Impact Forecast** probabilities.
+- **The LLM Agent (`/src/ai_scientist.py`):** An autonomous agent acting as a Polymath Computational Oncologist that synthesizes the Zig rankings into a unified impact report using Google Gemini 1.5 Pro.
+- **The 3D Visualizer (`/docs`):** A frontend utilizing WebGL and Force-Directed Graphs to render the Knowledge Graph as an interactive 3D particle simulation.
 
 ---
 
@@ -64,40 +69,30 @@ graph TD
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Noetica-Intelligence/core.git
-   cd core
+   git clone https://github.com/Noetica-Intelligence/Noetica.git
+   cd Noetica
    ```
 
 2. **Install Python dependencies**
    ```bash
-   pip install requests beautifulsoup4 sqlalchemy
+   pip install -r requirements.txt
    ```
 
 3. **Run the V3 Knowledge Graph Pipeline**
-   This script fetches global data, compiles the Zig engine dynamically, calculates the graph, and stores it in the local SQLite database.
    ```bash
    python backend/ingest_v3.py
    ```
 
-4. **Send a Dry-Run Intelligence Report**
-   To generate a local `latest_report.html` without sending an email:
+4. **Synthesize Data using AI**
    ```bash
-   python src/send_daily_report.py
+   export GEMINI_API_KEY="your-api-key"
+   python src/ai_scientist.py
    ```
 
----
-
-## 📧 Automated Cloud Deployment
-
-Noetica is designed to run completely autonomously at `$0/month` using GitHub Actions and Gmail SMTP.
-
-1. Create a dedicated Gmail account (e.g., `noetica.intelligence@gmail.com`).
-2. Generate an **App Password** in Google Security Settings.
-3. Add the following **Repository Secrets** in GitHub:
-   - `NOETICA_EMAIL`
-   - `NOETICA_APP_PASSWORD`
-   - `NOETICA_SUBSCRIBERS` (Comma-separated list of emails to receive the report)
-4. The GitHub Action will run automatically every day at 8:00 AM UTC.
+5. **Boot the Visual Dashboard**
+   ```bash
+   uvicorn backend.app.main:app --host 0.0.0.0 --port 10000
+   ```
 
 ---
 

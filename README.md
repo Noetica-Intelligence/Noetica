@@ -1,5 +1,12 @@
+---
+title: Noetica Backend
+emoji: 🌌
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+---
 <div align="center">
-  
 # 🌌 Noetica
 
 **Mapping the Evolution of Human Knowledge.**

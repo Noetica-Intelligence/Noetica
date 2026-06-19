@@ -7,51 +7,50 @@ cross-domain connections, and wildcard discovery section.
 import datetime
 import html as html_lib
 
-
 # ─────────────────────────────────────────────
-# DOMAIN → COLOR MAPPING (for badge colors)
+# DOMAIN → COLOR MAPPING (Light DeepMind Aesthetic)
 # ─────────────────────────────────────────────
 
 DOMAIN_COLORS = {
-    "Theoretical Physics":   ("#a78bfa", "#1e1b4b"),  # violet
-    "Experimental Physics":  ("#818cf8", "#1e1b4b"),
-    "Astrophysics":          ("#67e8f9", "#0c4a6e"),
-    "Pure Mathematics":      ("#34d399", "#064e3b"),
-    "Applied Mathematics":   ("#6ee7b7", "#064e3b"),
-    "Statistics":            ("#fcd34d", "#78350f"),
-    "AI & Machine Learning": ("#f87171", "#7f1d1d"),
-    "Bioinformatics":        ("#4ade80", "#14532d"),
-    "Quantum Computing":     ("#c084fc", "#3b0764"),
-    "Cryptography":          ("#fb923c", "#431407"),
-    "Systems CS":            ("#94a3b8", "#0f172a"),
-    "Robotics":              ("#38bdf8", "#0c4a6e"),
-    "Materials Science":     ("#a3e635", "#1a2e05"),
-    "Oncology":              ("#f472b6", "#500724"),
-    "Circadian Biology":     ("#fb923c", "#431407"),
-    "AI in Medicine":        ("#f87171", "#450a0a"),
-    "Neuroscience":          ("#e879f9", "#3b0764"),
-    "Immunology":            ("#2dd4bf", "#042f2e"),
-    "Systems Biology":       ("#4ade80", "#052e16"),
-    "Synthetic Biology":     ("#86efac", "#052e16"),
-    "Structural Biology":    ("#67e8f9", "#0c4a6e"),
-    "GNNs for Biology":      ("#c084fc", "#2e1065"),
-    "Molecular Dynamics":    ("#a78bfa", "#1e1b4b"),
-    "Philosophy":            ("#fbbf24", "#451a03"),
-    "Economics":             ("#34d399", "#022c22"),
-    "Psychology":            ("#f9a8d4", "#500724"),
-    "Computer Science":      ("#60a5fa", "#1e3a5f"),
-    "Mathematics":           ("#6ee7b7", "#064e3b"),
-    "Physics":               ("#818cf8", "#1e1b4b"),
-    "Biology":               ("#4ade80", "#14532d"),
-    "Medicine":              ("#f472b6", "#500724"),
-    "Engineering":           ("#fb923c", "#431407"),
-    "default":               ("#94a3b8", "#0f172a"),
+    "Theoretical Physics":   ("#4f46e5", "#e0e7ff"),  # Indigo
+    "Experimental Physics":  ("#4338ca", "#e0e7ff"),
+    "Astrophysics":          ("#0284c7", "#e0f2fe"),
+    "Pure Mathematics":      ("#059669", "#d1fae5"),
+    "Applied Mathematics":   ("#059669", "#d1fae5"),
+    "Statistics":            ("#d97706", "#fef3c7"),
+    "AI & Machine Learning": ("#e11d48", "#ffe4e6"),
+    "Bioinformatics":        ("#16a34a", "#dcfce7"),
+    "Quantum Computing":     ("#7c3aed", "#ede9fe"),
+    "Cryptography":          ("#ea580c", "#ffedd5"),
+    "Systems CS":            ("#475569", "#f1f5f9"),
+    "Robotics":              ("#0284c7", "#e0f2fe"),
+    "Materials Science":     ("#65a30d", "#ecfccb"),
+    "Oncology":              ("#db2777", "#fce7f3"),
+    "Circadian Biology":     ("#ea580c", "#ffedd5"),
+    "AI in Medicine":        ("#e11d48", "#ffe4e6"),
+    "Neuroscience":          ("#c026d3", "#fae8ff"),
+    "Immunology":            ("#0d9488", "#ccfbf1"),
+    "Systems Biology":       ("#16a34a", "#dcfce7"),
+    "Synthetic Biology":     ("#16a34a", "#dcfce7"),
+    "Structural Biology":    ("#0284c7", "#e0f2fe"),
+    "GNNs for Biology":      ("#7c3aed", "#ede9fe"),
+    "Molecular Dynamics":    ("#4f46e5", "#e0e7ff"),
+    "Philosophy":            ("#b45309", "#fef3c7"),
+    "Economics":             ("#059669", "#d1fae5"),
+    "Psychology":            ("#db2777", "#fce7f3"),
+    "Computer Science":      ("#2563eb", "#dbeafe"),
+    "Mathematics":           ("#059669", "#d1fae5"),
+    "Physics":               ("#4f46e5", "#e0e7ff"),
+    "Biology":               ("#16a34a", "#dcfce7"),
+    "Medicine":              ("#db2777", "#fce7f3"),
+    "Engineering":           ("#ea580c", "#ffedd5"),
+    "default":               ("#475569", "#f1f5f9"),
 }
 
 SCORE_COLOR = {
-    "high":   "#10b981",  # emerald
-    "medium": "#f59e0b",  # amber
-    "low":    "#ef4444",  # red
+    "high":   "#059669",  # emerald
+    "medium": "#d97706",  # amber
+    "low":    "#e11d48",  # red
 }
 
 
@@ -69,7 +68,7 @@ def score_bar(score: float) -> str:
     col = score_color(score)
     return f"""
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-      <div style="flex:1;background:#1e293b;border-radius:4px;height:6px;overflow:hidden;">
+      <div style="flex:1;background:#e2e8f0;border-radius:4px;height:6px;overflow:hidden;">
         <div style="width:{pct}%;background:{col};height:100%;border-radius:4px;"></div>
       </div>
       <span style="color:{col};font-size:12px;font-weight:700;min-width:32px;">{score:.1f}</span>
@@ -79,18 +78,18 @@ def score_bar(score: float) -> str:
 def domain_badge(domain: str) -> str:
     fg, bg = DOMAIN_COLORS.get(domain, DOMAIN_COLORS["default"])
     esc = html_lib.escape(domain)
-    return f'<span style="background:{bg};color:{fg};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.5px;">{esc}</span>'
+    return f'<span style="background:{bg};color:{fg};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:0.5px;border:1px solid {fg}33;">{esc}</span>'
 
 
 def cross_domain_tags(domains: list[str]) -> str:
     if not domains:
         return ""
     tags = " ".join(
-        f'<span style="background:#1e293b;color:#94a3b8;padding:2px 8px;border-radius:12px;font-size:10px;">'
+        f'<span style="background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;padding:3px 8px;border-radius:6px;font-size:10px;">'
         f'→ {html_lib.escape(d)}</span>'
         for d in domains[:4]
     )
-    return f'<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">{tags}</div>'
+    return f'<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">{tags}</div>'
 
 
 def paper_card(rank: int, discovery: dict) -> str:
@@ -111,74 +110,70 @@ def paper_card(rank: int, discovery: dict) -> str:
     status   = discovery.get("status", "Emerging")
 
     composite  = scores.get("composite", 0.0)
-    novelty    = scores.get("novelty", 0.0)
-    evidence   = scores.get("evidence", 0.0)
-    recency    = scores.get("recency", 0.0)
 
-    rank_emoji = ["🥇","🥈","🥉"] + ["🔬"]*97
+    rank_emoji = ["1️⃣","2️⃣","3️⃣"] + ["🔬"]*97
     em = rank_emoji[min(rank-1, len(rank_emoji)-1)]
 
     pdf_btn = ""
     if pdf_url:
-        pdf_btn = f' &nbsp;<a href="{pdf_url}" style="background:#334155;color:#94a3b8;padding:4px 12px;border-radius:6px;text-decoration:none;font-size:11px;">📄 PDF</a>'
+        pdf_btn = f' &nbsp;<a href="{pdf_url}" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600;">📄 PDF</a>'
 
     # Build Explanation Details
     expl_html = ""
     for k, v in explanation.items():
-        expl_html += f'<tr><td style="color:#64748b;font-size:11px;padding-bottom:6px;width:120px;">{k}</td><td style="padding-bottom:6px;color:#cbd5e1;font-size:11px;font-weight:600;">{v}</td></tr>'
+        expl_html += f'<tr><td style="color:#64748b;font-size:12px;padding-bottom:8px;width:130px;">{k}</td><td style="padding-bottom:8px;color:#0f172a;font-size:12px;font-weight:500;">{v}</td></tr>'
 
     # Status Color
-    status_color = "#38bdf8"
-    if status == "Breakthrough": status_color = "#f472b6"
-    elif status == "Growing": status_color = "#4ade80"
+    status_color = "#0284c7"
+    if status == "Breakthrough": status_color = "#e11d48"
+    elif status == "Growing": status_color = "#16a34a"
 
     return f"""
-    <div style="background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 24px rgba(0,0,0,0.4);">
+    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
 
       <!-- Header Row -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
           <span style="font-size:24px;">{em}</span>
-          <span style="color:#64748b;font-size:13px;font-weight:600;">#{rank}</span>
           {domain_badge(domain)}
-          <span style="border:1px solid {status_color};color:{status_color};padding:2px 6px;border-radius:4px;font-size:9px;text-transform:uppercase;letter-spacing:1px;">{status}</span>
+          <span style="background:#f8fafc;border:1px solid {status_color};color:{status_color};padding:3px 8px;border-radius:6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">{status}</span>
         </div>
         <div style="text-align:right;">
-          <div style="color:{score_color(composite)};font-size:22px;font-weight:800;">{composite:.1f}<span style="font-size:12px;color:#475569;">/10</span></div>
-          <div style="color:#475569;font-size:10px;">IMPACT SCORE</div>
+          <div style="color:{score_color(composite)};font-size:24px;font-weight:800;line-height:1;">{composite:.1f}<span style="font-size:14px;color:#94a3b8;font-weight:600;">/10</span></div>
+          <div style="color:#64748b;font-size:10px;letter-spacing:1px;margin-top:4px;">IMPACT SCORE</div>
         </div>
       </div>
 
       <!-- Title -->
-      <h2 style="margin:0 0 8px 0;font-size:17px;font-weight:700;line-height:1.4;">
-        <a href="{url}" style="color:#e2e8f0;text-decoration:none;">{title}</a>
+      <h2 style="margin:0 0 10px 0;font-size:19px;font-weight:700;line-height:1.4;">
+        <a href="{url}" style="color:#0f172a;text-decoration:none;">{title}</a>
       </h2>
 
       <!-- Authors & Date -->
-      <div style="color:#64748b;font-size:12px;margin-bottom:12px;">
+      <div style="color:#64748b;font-size:13px;margin-bottom:16px;font-weight:500;">
         {authors} &nbsp;·&nbsp; {date} &nbsp;·&nbsp; <span style="color:#475569;">{source}</span>
       </div>
 
       <!-- Abstract -->
-      <p style="color:#94a3b8;font-size:13px;line-height:1.7;margin:0 0 16px 0;border-left:3px solid #1e293b;padding-left:12px;">
+      <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 20px 0;border-left:3px solid #cbd5e1;padding-left:14px;">
         {abstract}{"..." if len(discovery.get("abstract",""))>500 else ""}
       </p>
 
       <!-- Ranking Explanation -->
-      <div style="background:#060c18;border-radius:10px;padding:14px;margin-bottom:12px;">
-        <div style="color:#475569;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Ranking Explanation</div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="color:#64748b;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;font-weight:600;">AI Ranking Rationale</div>
         <table style="width:100%;border-collapse:collapse;">
           {expl_html}
         </table>
       </div>
 
       <!-- Cross-disciplinary -->
-      {f'<div style="color:#475569;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">⚡ Cross-Disciplinary Impact</div>' if cross else ""}
+      {f'<div style="color:#64748b;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:600;">⚡ Cross-Disciplinary Architecture</div>' if cross else ""}
       {cross_domain_tags(cross)}
 
       <!-- Action Buttons -->
-      <div style="margin-top:14px;">
-        <a href="{url}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:6px 16px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">🔗 Read Paper</a>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <a href="{url}" style="background:#2563eb;color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;display:inline-block;">🔗 Read Publication</a>
         {pdf_btn}
       </div>
 
@@ -187,11 +182,11 @@ def paper_card(rank: int, discovery: dict) -> str:
 
 def emerging_trend_item(topic: str, desc: str) -> str:
     return f"""
-    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;">
-      <span style="color:#f59e0b;font-size:16px;min-width:20px;">◈</span>
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+      <span style="color:#2563eb;font-size:16px;min-width:20px;">◈</span>
       <div>
-        <div style="color:#e2e8f0;font-size:13px;font-weight:600;">{html_lib.escape(topic)}</div>
-        <div style="color:#64748b;font-size:12px;">{html_lib.escape(desc)}</div>
+        <div style="color:#0f172a;font-size:14px;font-weight:700;">{html_lib.escape(topic)}</div>
+        <div style="color:#475569;font-size:13px;">{html_lib.escape(desc)}</div>
       </div>
     </div>"""
 
@@ -221,14 +216,14 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
         wc_url    = wildcard.get("url","#")
         wc_domain = wildcard.get("domain","")
         wildcard_html = f"""
-        <div style="background:linear-gradient(135deg,#1a0533,#0f172a);border:1px solid #6d28d9;border-radius:16px;padding:24px;margin-bottom:20px;">
-          <div style="color:#a78bfa;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">🎲 WILDCARD DISCOVERY</div>
-          <div style="color:#64748b;font-size:11px;margin-bottom:6px;">{domain_badge(wc_domain)}</div>
-          <h3 style="color:#e2e8f0;font-size:16px;margin:8px 0;">
-            <a href="{wc_url}" style="color:#e2e8f0;text-decoration:none;">{wc_title}</a>
+        <div style="background:linear-gradient(to right, #f8fafc, #f1f5f9);border:1px solid #cbd5e1;border-radius:16px;padding:28px;margin-bottom:24px;">
+          <div style="color:#7c3aed;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700;">🎲 Wildcard Discovery</div>
+          <div style="margin-bottom:8px;">{domain_badge(wc_domain)}</div>
+          <h3 style="color:#0f172a;font-size:18px;margin:12px 0;font-weight:700;">
+            <a href="{wc_url}" style="color:#0f172a;text-decoration:none;">{wc_title}</a>
           </h3>
-          <p style="color:#94a3b8;font-size:13px;line-height:1.6;margin:8px 0;">{wc_abs}{"..." if len(wildcard.get("abstract",""))>400 else ""}</p>
-          <div style="color:#64748b;font-size:11px;margin-top:10px;">Why this matters: Cross-disciplinary insights often come from unexpected fields.</div>
+          <p style="color:#334155;font-size:14px;line-height:1.6;margin:12px 0;">{wc_abs}{"..." if len(wildcard.get("abstract",""))>400 else ""}</p>
+          <div style="color:#64748b;font-size:12px;margin-top:14px;font-style:italic;">Why this matters: Cross-disciplinary insights often emerge from adjacent fields.</div>
         </div>"""
 
     return f"""<!DOCTYPE html>
@@ -238,49 +233,51 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scientific Intelligence Digest — {today}</title>
 </head>
-<body style="margin:0;padding:0;background:#020817;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#e2e8f0;">
+<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;color:#0f172a;">
 
   <!-- Outer wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#020817;">
-    <tr><td align="center" style="padding:30px 20px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;">
+    <tr><td align="center" style="padding:40px 20px;">
 
       <!-- Container -->
-      <table width="680" cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;">
+      <table width="700" cellpadding="0" cellspacing="0" style="max-width:700px;width:100%;">
         <tr><td>
 
           <!-- ══ HEADER ══ -->
-          <div style="background:linear-gradient(135deg,#0d0221 0%,#1a0533 40%,#0c1a3d 100%);border-radius:20px;padding:40px 36px;margin-bottom:20px;text-align:center;border:1px solid #1e1b4b;">
-            <div style="font-size:12px;letter-spacing:3px;color:#6d28d9;text-transform:uppercase;margin-bottom:8px;">Scientific Intelligence System</div>
-            <h1 style="margin:0 0 8px 0;font-size:32px;font-weight:800;background:linear-gradient(90deg,#818cf8,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:40px;margin-bottom:24px;text-align:center;box-shadow:0 10px 25px -5px rgba(0,0,0,0.05);">
+            <img src="https://noetica-intelligence.github.io/Noetica/logo.jpg" alt="Noetica Logo" style="width:64px;height:64px;border-radius:50%;margin-bottom:16px;border:2px solid #e2e8f0;">
+            <div style="font-size:11px;letter-spacing:3px;color:#64748b;text-transform:uppercase;margin-bottom:12px;font-weight:700;">Noetica Intelligence System</div>
+            <h1 style="margin:0 0 12px 0;font-size:32px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">
               Daily Research Digest
             </h1>
-            <p style="margin:0;color:#64748b;font-size:14px;">{today}</p>
-            <div style="margin-top:20px;display:flex;justify-content:center;gap:24px;">
+            <p style="margin:0;color:#475569;font-size:15px;font-weight:500;">{today}</p>
+            
+            <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f1f5f9;display:flex;justify-content:center;gap:32px;">
               <div style="text-align:center;">
-                <div style="color:#a78bfa;font-size:24px;font-weight:800;">{total}</div>
-                <div style="color:#475569;font-size:10px;letter-spacing:1px;">PAPERS</div>
+                <div style="color:#2563eb;font-size:26px;font-weight:800;">{total}</div>
+                <div style="color:#64748b;font-size:10px;letter-spacing:1px;font-weight:600;margin-top:4px;">PAPERS</div>
               </div>
-              <div style="color:#1e293b;font-size:30px;">|</div>
+              <div style="color:#e2e8f0;font-size:26px;">|</div>
               <div style="text-align:center;">
-                <div style="color:#34d399;font-size:24px;font-weight:800;">{domains_covered}</div>
-                <div style="color:#475569;font-size:10px;letter-spacing:1px;">DOMAINS</div>
+                <div style="color:#059669;font-size:26px;font-weight:800;">{domains_covered}</div>
+                <div style="color:#64748b;font-size:10px;letter-spacing:1px;font-weight:600;margin-top:4px;">DOMAINS</div>
               </div>
-              <div style="color:#1e293b;font-size:30px;">|</div>
+              <div style="color:#e2e8f0;font-size:26px;">|</div>
               <div style="text-align:center;">
-                <div style="color:#f472b6;font-size:24px;font-weight:800;">{sources_covered}</div>
-                <div style="color:#475569;font-size:10px;letter-spacing:1px;">SOURCES</div>
+                <div style="color:#db2777;font-size:26px;font-weight:800;">{sources_covered}</div>
+                <div style="color:#64748b;font-size:10px;letter-spacing:1px;font-weight:600;margin-top:4px;">SOURCES</div>
               </div>
-              <div style="color:#1e293b;font-size:30px;">|</div>
+              <div style="color:#e2e8f0;font-size:26px;">|</div>
               <div style="text-align:center;">
-                <div style="color:#fbbf24;font-size:24px;font-weight:800;">{avg_score:.1f}</div>
-                <div style="color:#475569;font-size:10px;letter-spacing:1px;">AVG SCORE</div>
+                <div style="color:#d97706;font-size:26px;font-weight:800;">{avg_score:.1f}</div>
+                <div style="color:#64748b;font-size:10px;letter-spacing:1px;font-weight:600;margin-top:4px;">AVG SCORE</div>
               </div>
             </div>
           </div>
 
           <!-- ══ SECTION LABEL ══ -->
-          <div style="color:#475569;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding:0 4px;">
-            🏆 Top Ranked Discoveries
+          <div style="color:#64748b;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;padding:0 8px;font-weight:700;">
+            🏆 High-Impact Discoveries
           </div>
 
           <!-- ══ PAPER CARDS ══ -->
@@ -290,8 +287,8 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
           {wildcard_html}
 
           <!-- ══ EMERGING TRENDS ══ -->
-          <div style="background:#0a0f1e;border:1px solid #1e293b;border-radius:16px;padding:24px;margin-bottom:20px;">
-            <div style="color:#f59e0b;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">📈 Emerging Trends This Week</div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+            <div style="color:#ea580c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;font-weight:700;">📈 Emerging Trends Assessed</div>
             {emerging_trend_item("AI-Assisted Science", "LLMs generating and verifying novel hypotheses")}
             {emerging_trend_item("Quantum-Classical Hybrid Algorithms", "Near-term quantum advantage in optimization")}
             {emerging_trend_item("Circadian Pharmacology", "Timing-dependent drug efficacy across oncology trials")}
@@ -300,17 +297,17 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
           </div>
 
           <!-- ══ FOOTER ══ -->
-          <div style="text-align:center;padding:24px;color:#334155;font-size:12px;border-top:1px solid #1e293b;">
-            <p style="margin:0 0 16px 0;">
-              Was this digest useful?<br>
-              <a href="mailto:feedback@scientificintel.local?subject=Very Useful" style="color:#6366f1;text-decoration:none;margin:0 8px;">Very Useful</a> | 
-              <a href="mailto:feedback@scientificintel.local?subject=Useful" style="color:#6366f1;text-decoration:none;margin:0 8px;">Useful</a> | 
-              <a href="mailto:feedback@scientificintel.local?subject=Neutral" style="color:#6366f1;text-decoration:none;margin:0 8px;">Neutral</a> | 
-              <a href="mailto:feedback@scientificintel.local?subject=Not Useful" style="color:#6366f1;text-decoration:none;margin:0 8px;">Not Useful</a>
+          <div style="text-align:center;padding:32px 24px;color:#64748b;font-size:13px;border-top:1px solid #e2e8f0;">
+            <p style="margin:0 0 20px 0;font-weight:500;">
+              Was this digest useful?<br><br>
+              <a href="mailto:feedback@noetica.local?subject=Very Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Very Useful</a>
+              <a href="mailto:feedback@noetica.local?subject=Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Useful</a>
+              <a href="mailto:feedback@noetica.local?subject=Neutral" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Neutral</a>
+              <a href="mailto:feedback@noetica.local?subject=Not Useful" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Not Useful</a>
             </p>
-            <p style="margin:0 0 8px 0;">🔬 Scientific Intelligence System &nbsp;·&nbsp; Evidence-First Research Curation</p>
-            <p style="margin:0;color:#1e293b;">Powered by arXiv · PubMed · OpenAlex · bioRxiv · Semantic Scholar</p>
-            <p style="margin:8px 0 0 0;color:#1e293b;font-size:10px;">Ranking is based on scientific evidence and novelty — not social media popularity.</p>
+            <p style="margin:0 0 8px 0;font-weight:600;color:#0f172a;">Noetica Intelligence System</p>
+            <p style="margin:0;">Powered by arXiv · PubMed · bioRxiv · Semantic Scholar</p>
+            <p style="margin:12px 0 0 0;font-size:11px;color:#94a3b8;">Confidential Intelligence Briefing for Authorized Personnel Only.</p>
           </div>
 
         </td></tr>
@@ -330,4 +327,4 @@ def build_email_subject(papers: list[dict], date_str: str) -> str:
         short_title = top.get("title","")[:50]
         score = top.get("scores",{}).get("composite",0)
         return f"🔬 [{today}] #{1} [{score:.1f}/10] {short_title}... + {len(papers)-1} more breakthroughs"
-    return f"🔬 Scientific Intelligence Digest — {today}"
+    return f"🔬 Noetica Intelligence Digest — {today}"

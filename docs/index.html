@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noetica Intelligence Dashboard</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js and Post-Processing -->
+    <script src="//unpkg.com/three"></script>
+    
+    <!-- 3D Force Graph -->
+    <script src="//unpkg.com/3d-force-graph"></script>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- 3D Canvas -->
+    <div id="3d-graph"></div>
+    <div id="loader">INITIALIZING ZIG KNOWLEDGE ENGINE...</div>
+
+    <!-- UI Overlay -->
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo"><span class="logo-icon">🌌</span> Noetica</h1>
+                <div class="tagline">CIVILIZATIONAL INTELLIGENCE NETWORK</div>
+            </div>
+            
+            <div class="discovery-list" id="discovery-list">
+                <!-- Discovery cards injected here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Discovery Details -->
+    <div class="modal-overlay" id="discovery-modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">&times;</div>
+            <h2 class="modal-title" id="modal-title">Loading...</h2>
+            <div class="modal-tags" id="modal-tags"></div>
+            <div class="modal-abstract" id="modal-abstract"></div>
+            <div class="modal-sources" id="modal-sources"></div>
+        </div>
+    </div>
+
+    <!-- External Javascript -->
+    <script src="./app.js"></script>
+</body>
+</html>

@@ -93,7 +93,7 @@ async function loadGraph() {
 
         document.getElementById('loader').style.display = 'none';
 
-        const Graph = ForceGraph3D()
+        window.Graph = ForceGraph3D()
             (document.getElementById('3d-graph'))
             .graphData(graphData)
             .nodeLabel('name')
@@ -138,3 +138,60 @@ async function loadGraph() {
 // Initialize
 loadDiscoveries();
 loadGraph();
+
+// Theme Toggle Logic
+const themeToggle = document.getElementById('theme-toggle');
+const sunIcon = document.getElementById('sun-icon');
+const moonIcon = document.getElementById('moon-icon');
+
+// Check for saved theme
+const savedTheme = localStorage.getItem('theme') || 'dark';
+if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    sunIcon.style.display = 'none';
+    moonIcon.style.display = 'block';
+}
+
+function updateGraphColors(theme) {
+    if (!window.Graph) return;
+    
+    if (theme === 'light') {
+        window.Graph
+            .backgroundColor('#f8fafc')
+            .nodeColor(node => node.group === 'Technology' ? '#2563eb' : (node.group === 'Concept' ? '#e11d48' : '#7c3aed'))
+            .linkColor(() => 'rgba(37, 99, 235, 0.2)')
+            .linkDirectionalParticleColor(() => '#1e40af');
+    } else {
+        window.Graph
+            .backgroundColor('#020205')
+            .nodeColor(node => node.group === 'Technology' ? '#66fcf1' : (node.group === 'Concept' ? '#ff0055' : '#8a2be2'))
+            .linkColor(() => 'rgba(102, 252, 241, 0.2)')
+            .linkDirectionalParticleColor(() => '#ffffff');
+    }
+}
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    if (newTheme === 'light') {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+    } else {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+    }
+    
+    updateGraphColors(newTheme);
+});
+
+// Watch for graph load to apply initial theme colors
+const checkGraphInterval = setInterval(() => {
+    if (window.Graph) {
+        updateGraphColors(document.documentElement.getAttribute('data-theme') || 'dark');
+        clearInterval(checkGraphInterval);
+    }
+}, 100);

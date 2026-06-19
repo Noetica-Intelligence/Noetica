@@ -332,3 +332,96 @@ body, html {
     background: rgba(0, 229, 255, 0.3);
     border-radius: 3px;
 }
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent);
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --panel-bg: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --text-primary: #475569;
+    --text-title: #0f172a;
+    --accent: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.2);
+    --accent-dim: #64748b;
+}
+
+[data-theme="light"] body {
+    background-image: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
+}
+
+[data-theme="light"] .sidebar {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 1);
+}
+
+[data-theme="light"] .sidebar-header {
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, transparent 100%);
+}
+
+[data-theme="light"] .logo-icon {
+    text-shadow: none;
+    animation: none;
+}
+
+[data-theme="light"] .discovery-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .discovery-card:hover {
+    background: #ffffff;
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="light"] .discovery-card::before {
+    background: var(--accent);
+}
+
+[data-theme="light"] .d-score {
+    color: #fff;
+    background: var(--accent);
+}
+
+[data-theme="light"] .modal-overlay {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .modal-content {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .modal-abstract {
+    color: #334155;
+}
+
+[data-theme="light"] .modal-sources a {
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}

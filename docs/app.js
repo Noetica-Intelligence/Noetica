@@ -93,7 +93,7 @@ async function loadGraph() {
 
         document.getElementById('loader').style.display = 'none';
 
-        window.Graph = ForceGraph3D()
+        const Graph = window.Graph = ForceGraph3D()
             (document.getElementById('3d-graph'))
             .graphData(graphData)
             .nodeLabel('name')

@@ -35,8 +35,9 @@ jobs:
 
       - name: Generate & Send Email Report
         env:
-          NOETICA_EMAIL: ${{ secrets.NOETICA_EMAIL }}
-          NOETICA_APP_PASSWORD: ${{ secrets.NOETICA_APP_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.NOETICA_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.NOETICA_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.NOETICA_EMAIL }}
           NOETICA_SUBSCRIBERS: ${{ secrets.NOETICA_SUBSCRIBERS }}
         run: |
-          python src/send_daily_report.py
+          python src/main.py

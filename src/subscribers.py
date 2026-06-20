@@ -18,7 +18,23 @@ def get_subscribers() -> list[dict]:
     """
     sheet_id = os.environ.get("GOOGLE_SHEET_ID")
     if not sheet_id:
-        print("⚠️  No GOOGLE_SHEET_ID found. Defaulting to single-user mode (RECIPIENT_EMAIL).")
+        print("⚠️  No GOOGLE_SHEET_ID found. Defaulting to environment variable subscribers.")
+        
+        # Check NOETICA_SUBSCRIBERS first (comma separated list)
+        subs_env = os.environ.get("NOETICA_SUBSCRIBERS")
+        if subs_env:
+            subs_list = []
+            for email in subs_env.split(","):
+                subs_list.append({
+                    "Email": email.strip(),
+                    "Name": email.split("@")[0].capitalize(),
+                    "Reading Time": "15 Minutes",
+                    "Interests": "All",
+                    "Exploration Preference": "Yes",
+                    "Report Frequency": "Daily"
+                })
+            return subs_list
+            
         recipient = os.environ.get("RECIPIENT_EMAIL")
         if not recipient:
             return []

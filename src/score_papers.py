@@ -1,7 +1,7 @@
 """
 Scientific Intelligence Engine — Scoring Engine
 Ranks papers by novelty, impact, recency, and cross-disciplinary potential.
-No social-media or popularity-based ranking. Evidence-first.
+Outputs a 0-100 score and narrative AI rationale.
 """
 
 import re
@@ -11,7 +11,6 @@ import datetime
 
 # ─────────────────────────────────────────────
 # BREAKTHROUGH SIGNAL KEYWORDS
-# Empirically known terms that appear in high-impact papers
 # ─────────────────────────────────────────────
 
 BREAKTHROUGH_SIGNALS = [
@@ -37,39 +36,47 @@ HYPE_PENALTIES = [
 ]
 
 METHODOLOGY_QUALITY = [
+    # Clinical / Bio
     "randomized controlled trial", "systematic review", "meta-analysis",
     "n=", "cohort study", "blind study", "validated on",
     "benchmark", "ablation study", "statistical significance",
     "p-value", "confidence interval",
+    # Physics / Math / CS / Chemistry
+    "theorem", "proof", "simulation", "accuracy", "state-of-the-art",
+    "first-principles", "ab initio", "experimental observation",
+    "rigorous", "computational model", "density functional theory",
+    "topology", "manifold", "algorithm",
 ]
 
 # Domain weights: domains with more cross-disciplinary influence get bonus
 DOMAIN_INFLUENCE_WEIGHTS = {
-    "AI & Machine Learning":  1.3,
-    "Pure Mathematics":       1.2,
-    "Theoretical Physics":    1.2,
-    "Statistics":             1.15,
-    "Bioinformatics":         1.15,
-    "Quantum Computing":      1.2,
+    "AI & Machine Learning":  1.2,
+    "Pure Mathematics":       1.15,
+    "Theoretical Physics":    1.15,
+    "Statistics":             1.1,
+    "Bioinformatics":         1.1,
+    "Quantum Computing":      1.15,
     "Systems Biology":        1.1,
-    "Oncology":               1.1,
+    "Oncology":               1.05,
     "Circadian Biology":      1.05,
-    "Neuroscience":           1.1,
-    "Philosophy":             1.05,
+    "Neuroscience":           1.05,
+    "Philosophy":             1.0,
     "Economics":              1.0,
     "default":                1.0,
 }
 
 # Domains with high cross-disciplinary connection potential
 CROSS_DOMAIN_PAIRS = {
-    "Quantum Computing":      ["Cryptography", "AI & Machine Learning", "Drug Discovery", "Optimization"],
-    "AI & Machine Learning":  ["Drug Discovery", "Structural Biology", "Materials Science", "Economics", "Climate Science"],
-    "Pure Mathematics":       ["AI & Machine Learning", "Cryptography", "Physics", "Statistics"],
+    "Quantum Computing":      ["Cryptography", "AI", "Drug Discovery", "Optimization"],
+    "AI & Machine Learning":  ["Drug Discovery", "Structural Biology", "Materials Science", "Economics", "Mathematics"],
+    "Pure Mathematics":       ["AI", "Cryptography", "Physics", "Statistics"],
     "Circadian Biology":      ["Oncology", "Neuroscience", "Pharmacology", "Systems Biology"],
-    "Structural Biology":     ["Drug Discovery", "AI & Machine Learning", "Bioinformatics"],
+    "Structural Biology":     ["Drug Discovery", "AI", "Bioinformatics"],
     "Theoretical Physics":    ["Quantum Computing", "Mathematics", "Cosmology", "AI"],
-    "Statistics":             ["AI & Machine Learning", "Epidemiology", "Economics", "Genetics"],
+    "Experimental Physics":   ["Materials Science", "Quantum Computing", "Engineering"],
+    "Statistics":             ["AI", "Epidemiology", "Economics", "Genetics"],
     "Synthetic Biology":      ["Drug Discovery", "Agriculture", "Materials Science", "Bioinformatics"],
+    "Materials Science":      ["Quantum Computing", "Engineering", "Physics", "Chemistry"],
 }
 
 
@@ -78,117 +85,97 @@ CROSS_DOMAIN_PAIRS = {
 # ─────────────────────────────────────────────
 
 def score_novelty(title: str, abstract: str) -> float:
-    """
-    Score 0–10: How novel/groundbreaking is this paper?
-    Based on breakthrough keyword density minus hype penalties.
-    """
+    """Score 0–10 based on breakthrough keywords minus hype."""
     text = (title + " " + abstract).lower()
     signal_hits = sum(1 for kw in BREAKTHROUGH_SIGNALS if kw in text)
     hype_hits   = sum(1 for kw in HYPE_PENALTIES if kw in text)
-    raw = min(signal_hits * 1.5, 10.0) - min(hype_hits * 0.5, 3.0)
+    # Base 5.0 for passing filters. Each hit gives +2.0.
+    raw = min(5.0 + signal_hits * 2.0, 10.0) - min(hype_hits * 1.0, 3.0)
     return max(0.0, min(10.0, raw))
 
 
 def score_evidence(abstract: str) -> float:
-    """
-    Score 0–10: How strong is the experimental/empirical evidence?
-    """
+    """Score 0–10 based on experimental/theoretical methodology."""
     text = abstract.lower()
     method_hits = sum(1 for kw in METHODOLOGY_QUALITY if kw in text)
-    # Papers with numbers in abstract often have quantitative results
     numbers = len(re.findall(r'\b\d+\.?\d*[%±]\b|\bn\s*=\s*\d+', text))
-    raw = min(method_hits * 2.0 + numbers * 0.5, 10.0)
+    # Base 5.0. Hits give strong boosts.
+    raw = min(5.0 + method_hits * 2.5 + numbers * 0.5, 10.0)
     return max(0.0, min(10.0, raw))
 
 
 def score_recency(date_str: str) -> float:
-    """
-    Score 0–10: Papers from today get 10, older papers decay logarithmically.
-    """
+    """Score 0–10: Logarithmic decay."""
     if not date_str:
-        return 5.0
+        return 8.0
     try:
-        # Handle partial dates like "2026-Jun-01"
         clean = date_str[:10].replace("Jan","01").replace("Feb","02").replace("Mar","03") \
                                .replace("Apr","04").replace("May","05").replace("Jun","06") \
                                .replace("Jul","07").replace("Aug","08").replace("Sep","09") \
                                .replace("Oct","10").replace("Nov","11").replace("Dec","12")
         pub_date = datetime.date.fromisoformat(clean)
     except ValueError:
-        return 5.0
+        return 8.0
     delta_days = (datetime.date.today() - pub_date).days
-    if delta_days < 0:
+    if delta_days <= 0:
         return 10.0
-    # Logarithmic decay: today=10, 7 days=7, 30 days=5, 90 days=3
-    score = 10.0 - (2.5 * math.log1p(delta_days / 3))
+    score = 10.0 - (2.0 * math.log1p(delta_days / 3))
     return max(0.0, min(10.0, score))
 
 
 def score_citation_momentum(cited_by: int, days_old: int) -> float:
-    """
-    Score 0–10: Citation velocity (citations per day since publication).
-    Only useful for OpenAlex/SemanticScholar which provide citation counts.
-    """
-    if cited_by <= 0 or days_old <= 0:
-        return 0.0
+    """Score 0–10: Citation velocity. No penalty for very new papers."""
+    if days_old <= 7:
+        return 10.0  # Grace period: brand new papers have maximum momentum potential
+    if cited_by <= 0:
+        return 4.0   # Base floor for older papers with 0 citations
     velocity = cited_by / max(days_old, 1)
-    return min(velocity * 10, 10.0)
+    return min(4.0 + velocity * 10.0, 10.0)
 
 
 def score_domain_impact(domain: str) -> float:
-    """
-    Score: Multiplier based on how foundational/cross-disciplinary a domain is.
-    """
     return DOMAIN_INFLUENCE_WEIGHTS.get(domain, DOMAIN_INFLUENCE_WEIGHTS["default"])
 
 
 def get_cross_disciplinary_connections(domain: str) -> list[str]:
-    """Return list of other domains this paper might impact."""
-    return CROSS_DOMAIN_PAIRS.get(domain, [])
+    # Try exact match, otherwise try partial match
+    if domain in CROSS_DOMAIN_PAIRS:
+        return CROSS_DOMAIN_PAIRS[domain]
+    for key, pairs in CROSS_DOMAIN_PAIRS.items():
+        if key.lower() in domain.lower() or domain.lower() in key.lower():
+            return pairs
+    return []
 
 
 def score_title_quality(title: str) -> float:
-    """
-    Score 0–2 bonus: Penalize vague titles, reward specific ones.
-    """
+    """Bonus for specific titles."""
     words = title.split()
     if len(words) < 4:
         return 0.0
-    has_colon = ":" in title  # "Method: A Study of..." style = specific
+    has_colon = ":" in title
     has_numbers = any(c.isdigit() for c in title)
     specificity = (1.0 if has_colon else 0.0) + (0.5 if has_numbers else 0.0)
     length_bonus = min((len(words) - 4) * 0.05, 0.5)
     return min(specificity + length_bonus, 2.0)
 
 
-# ─────────────────────────────────────────────
-# SOURCE RELIABILITY ENGINE
-# ─────────────────────────────────────────────
-
-# Tiers: 1 (Highest) to 4 (Blogs/Media)
-SOURCE_TIERS = {
-    "Nature": 1.5, "Science": 1.5, "Cell": 1.5, "NEJM": 1.5, "Lancet": 1.5,
-    "PubMed": 1.2, "SemanticScholar": 1.1, "OpenAlex": 1.1,
-    "arXiv": 1.0, "bioRxiv": 1.0, "medRxiv": 1.0,
-    "default": 1.0
-}
-
 def score_source_reliability(source_name: str) -> float:
-    """Returns a multiplier based on the source's peer-review tier."""
-    for key, mult in SOURCE_TIERS.items():
+    tiers = {
+        "Nature": 1.3, "Science": 1.3, "Cell": 1.3, "NEJM": 1.3, "Lancet": 1.3,
+        "PubMed": 1.1, "SemanticScholar": 1.05, "OpenAlex": 1.05,
+        "arXiv": 1.0, "bioRxiv": 1.0, "medRxiv": 1.0,
+    }
+    for key, mult in tiers.items():
         if key.lower() in source_name.lower():
             return mult
-    return SOURCE_TIERS["default"]
+    return 1.0
+
 
 # ─────────────────────────────────────────────
 # COMPOSITE SCORING
 # ─────────────────────────────────────────────
 
 def compute_composite_score(paper: dict) -> dict:
-    """
-    Compute all sub-scores and a final composite score for a discovery.
-    Returns the discovery dict enriched with scoring data and ranking explanations.
-    """
     title    = paper.get("title", "")
     abstract = paper.get("abstract", "")
     domain   = paper.get("domain", "")
@@ -196,7 +183,6 @@ def compute_composite_score(paper: dict) -> dict:
     source   = paper.get("source", "Unknown")
     cited_by = int(paper.get("cited_by", 0) or 0)
 
-    # Compute days old
     try:
         clean = date_str[:10]
         pub_date = datetime.date.fromisoformat(clean)
@@ -210,12 +196,10 @@ def compute_composite_score(paper: dict) -> dict:
     recency     = score_recency(date_str)
     citation_v  = score_citation_momentum(cited_by, days_old)
     
-    # Multipliers
     domain_mult = score_domain_impact(domain)
     source_mult = score_source_reliability(source)
     title_bonus = score_title_quality(title)
 
-    # Weighted composite (out of 10)
     raw_composite = (
         novelty  * 0.35 +
         evidence * 0.35 +
@@ -223,54 +207,62 @@ def compute_composite_score(paper: dict) -> dict:
         citation_v * 0.15
     )
 
-    # Apply multipliers
-    composite = min(raw_composite * domain_mult * source_mult + title_bonus * 0.2, 10.0)
+    # Calculate 0-10 base
+    base_10 = min(raw_composite * domain_mult * source_mult + title_bonus * 0.2, 10.0)
+    
+    # Map to 0-100 scale (final_100)
+    final_100 = min(100, int(round(base_10 * 10)))
 
-    # Cross-disciplinary connections
     cross_domains = get_cross_disciplinary_connections(domain)
 
-    # Explanation Engine
-    explanation = {
-        "Evidence Strength": f"{evidence:.1f}/10",
-        "Novelty": f"{novelty:.1f}/10",
-        "Source Reliability": f"x{source_mult:.1f} ({source})",
-        "Cross-Field Impact": f"x{domain_mult:.2f} ({len(cross_domains)} domains)",
-    }
+    # Narrative AI Rationale Synthesizer
+    narrative = []
+    if novelty >= 8.0:
+        narrative.append("Groundbreaking novelty detected.")
+    elif novelty >= 6.0:
+        narrative.append("Novel mechanism or method proposed.")
+        
+    if evidence >= 8.0:
+        narrative.append("Empirical/theoretical confidence: High.")
+    elif evidence >= 6.0:
+        narrative.append("Empirical/theoretical confidence: Moderate.")
+
+    if len(cross_domains) >= 2:
+        narrative.append(f"Cross-disciplinary potential: High, bridging {', '.join(cross_domains[:2])}.")
+    
+    if source_mult > 1.1:
+        narrative.append(f"Source Reliability: Premium ({source}).")
+    
+    if not narrative:
+        narrative.append("Solid emerging signal within its specific domain.")
+
+    explanation_str = " ".join(narrative)
 
     # Discovery Lifecycle Status
-    status = "Emerging"
-    if composite > 8.5:
-        status = "Breakthrough"
-    elif composite > 7.0:
-        status = "Growing"
+    status = "Emerging Signal"
+    if final_100 >= 85:
+        status = "Breakthrough Signal"
+    elif final_100 >= 75:
+        status = "Strong Signal"
 
     paper["scores"] = {
         "novelty":     round(novelty, 2),
         "evidence":    round(evidence, 2),
         "recency":     round(recency, 2),
         "citation_v":  round(citation_v, 2),
-        "composite":   round(composite, 2),
+        "composite":   final_100,  # Now stores the 100-point integer
     }
-    paper["explanation"] = explanation
+    paper["explanation"] = explanation_str
     paper["status"] = status
     paper["cross_disciplinary"] = cross_domains
     paper["days_old"] = days_old
     return paper
 
 
-# ─────────────────────────────────────────────
-# BATCH SCORER + RANKER
-# ─────────────────────────────────────────────
-
 def score_and_rank(papers: list[dict], top_n: int = 15) -> list[dict]:
-    """
-    Score all papers and return top_n ranked by composite score.
-    Ensures domain diversity: at most 3 papers per domain in top results.
-    """
     scored = [compute_composite_score(p) for p in papers]
     scored.sort(key=lambda p: p["scores"]["composite"], reverse=True)
 
-    # Domain-diverse selection
     domain_counts: dict[str, int] = {}
     diverse_top: list[dict] = []
     remainder:   list[dict] = []
@@ -285,48 +277,8 @@ def score_and_rank(papers: list[dict], top_n: int = 15) -> list[dict]:
         if len(diverse_top) >= top_n:
             break
 
-    # Fill to top_n if needed
     needed = top_n - len(diverse_top)
     if needed > 0:
         diverse_top.extend(remainder[:needed])
 
     return diverse_top
-
-
-if __name__ == "__main__":
-    import json
-    from pathlib import Path
-    import sys
-
-    # Test with a small mock dataset
-    mock = [
-        {
-            "title": "AlphaFold3 Predicts Protein Complexes: A Novel Approach",
-            "abstract": "We demonstrate unprecedented accuracy in predicting protein-ligand complexes. Our method outperforms all previous state-of-the-art methods by 23%. Validated on n=500 benchmark structures. Statistical significance p<0.001.",
-            "domain": "Structural Biology",
-            "date": datetime.date.today().isoformat(),
-            "cited_by": 42,
-            "source": "arXiv",
-            "url": "https://arxiv.org/abs/2501.00001",
-            "id": "2501.00001",
-            "authors": ["Doe J", "Smith A"],
-            "pdf_url": "",
-        },
-        {
-            "title": "Quantum Error Correction Breakthrough",
-            "abstract": "First demonstration of fault-tolerant quantum computing at scale. We show that logical qubit error rates can be reduced by an order of magnitude. Our results suggest we have resolved a key barrier to practical quantum computing.",
-            "domain": "Quantum Computing",
-            "date": (datetime.date.today() - datetime.timedelta(days=2)).isoformat(),
-            "cited_by": 18,
-            "source": "arXiv",
-            "url": "https://arxiv.org/abs/2501.00002",
-            "id": "2501.00002",
-            "authors": ["Lee K"],
-            "pdf_url": "",
-        },
-    ]
-    ranked = score_and_rank(mock, top_n=5)
-    for i, p in enumerate(ranked, 1):
-        print(f"\n#{i} [{p['scores']['composite']:.1f}/10] {p['title'][:70]}")
-        print(f"   Scores: {p['scores']}")
-        print(f"   Cross-domain: {p['cross_disciplinary']}")

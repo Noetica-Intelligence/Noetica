@@ -6,6 +6,7 @@ Generates a premium dark/light mode HTML email digest with an Insight-First arch
 import re
 import datetime
 import html as html_lib
+from feedback import build_feedback_url
 
 # ─────────────────────────────────────────────
 # DOMAIN → COLOR MAPPING (Curated Premium Colors)
@@ -79,8 +80,9 @@ def domain_badge(domain: str) -> str:
     return f'<span class="badge" style="background:{bg};color:{fg};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;border:1px solid {fg}40;">{esc}</span>'
 
 
-def paper_card(rank: int, discovery: dict) -> str:
+def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     """Generate a full discovery card HTML block with an Insight-First hierarchy."""
+    did      = discovery.get("id", "unknown")
     title    = html_lib.escape(latex_to_unicode(discovery.get("title", "Untitled")))
     raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
     abstract = html_lib.escape(raw_abs[:300]) + ("..." if len(raw_abs) > 300 else "")
@@ -94,6 +96,10 @@ def paper_card(rank: int, discovery: dict) -> str:
     domain   = discovery.get("domain", "Other")
     scores   = discovery.get("scores", {})
     status   = discovery.get("status", "Emerging Signal")
+    
+    # Generate Feedback URLs
+    useful_url = build_feedback_url(did, subscriber_email, "Useful")
+    noise_url  = build_feedback_url(did, subscriber_email, "Not Useful")
     
     # New Architectural Fields
     strat_imp = html_lib.escape(discovery.get("strategic_implication", "Incremental advancement detected."))
@@ -158,8 +164,15 @@ def paper_card(rank: int, discovery: dict) -> str:
 
       <!-- Action Buttons -->
       <div style="margin-top:20px;">
-        <a href="{url}" class="btn-primary" style="background:#0f172a;color:#ffffff;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;">View Source</a>
+        <a href="{url}" class="btn-primary" style="background:#0f172a;color:#ffffff;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;display:inline-block;text-transform:uppercase;letter-spacing:0.5px;margin-right:8px;">View Source</a>
         {pdf_btn}
+      </div>
+      
+      <!-- Feedback Buttons -->
+      <div style="margin-top:24px; padding-top:16px; border-top:1px dashed #e2e8f0; text-align:right;">
+        <span style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-right:12px;">Calibrate Model:</span>
+        <a href="{useful_url}" style="background:#f1f5f9;color:#0f172a;padding:4px 10px;border-radius:4px;text-decoration:none;font-size:10px;font-weight:700;margin-right:4px;">👍 Useful</a>
+        <a href="{noise_url}" style="background:#f1f5f9;color:#0f172a;padding:4px 10px;border-radius:4px;text-decoration:none;font-size:10px;font-weight:700;">👎 Noise</a>
       </div>
 
     </div>"""
@@ -172,7 +185,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
     wildcard = papers[-1] if total > 1 else None
     main_papers = papers[:-1] if wildcard else papers
 
-    cards_html = "\n".join(paper_card(i+1, p) for i, p in enumerate(main_papers))
+    cards_html = "\n".join(paper_card(i+1, p, subscriber_email) for i, p in enumerate(main_papers))
 
     wildcard_html = ""
     if wildcard:

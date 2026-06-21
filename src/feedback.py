@@ -86,6 +86,44 @@ def build_feedback_buttons_html(discovery_id: str, email: str) -> str:
         + "</div>"
     )
 
+def ingest_feedback_from_sheet():
+    """
+    Downloads the published Google Form CSV and saves responses to the DB.
+    FEEDBACK_SHEET_ID should be the direct CSV download link.
+    """
+    if not FEEDBACK_SHEET_ID:
+        print("ℹ️  No FEEDBACK_SHEET_ID found. Skipping feedback ingestion.")
+        return
+
+    print("📥 Ingesting feedback from Google Sheet...")
+    try:
+        # Require 'urllib.request' to download the CSV
+        import urllib.request
+        import csv
+        import io
+        from database import save_feedback
+
+        req = urllib.request.Request(FEEDBACK_SHEET_ID)
+        with urllib.request.urlopen(req, timeout=15) as response:
+            csv_data = response.read().decode('utf-8')
+        
+        reader = csv.reader(io.StringIO(csv_data))
+        header = next(reader, None)
+        
+        count = 0
+        for row in reader:
+            if len(row) >= 4:
+                # Assuming Form columns: Timestamp, Email, Discovery_ID, Rating
+                email = row[1]
+                did = row[2]
+                rating = row[3]
+                save_feedback(did, email, rating)
+                count += 1
+                
+        print(f"✅ Ingested {count} feedback events.")
+    except Exception as e:
+        print(f"⚠️  Failed to ingest feedback: {e}")
+
 
 def build_global_feedback_footer_html(email: str) -> str:
     """Footer feedback buttons for the overall digest (not per-discovery)."""

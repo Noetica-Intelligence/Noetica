@@ -129,19 +129,22 @@ def _advance_status(current: str, score: float) -> str:
 
 def _compute_trend_score(cursor: sqlite3.Cursor, discovery_id: str, today_score: float) -> float:
     """
-    Compute velocity: (today_score - score_7_days_ago) / 7.
-    Returns 0.0 if no history exists yet.
+    Compute velocity: (today_score - oldest_score) / days_since_oldest.
+    Returns 0.0 if no history exists or it's day 1.
     """
-    week_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+    today = datetime.date.today()
     cursor.execute(
-        "SELECT score FROM score_history WHERE discovery_id=? AND recorded_date<=? ORDER BY recorded_date DESC LIMIT 1",
-        (discovery_id, week_ago)
+        "SELECT score, recorded_date FROM score_history WHERE discovery_id=? ORDER BY recorded_date ASC LIMIT 1",
+        (discovery_id,)
     )
     row = cursor.fetchone()
     if not row:
         return 0.0
+    
     old_score = row["score"]
-    days = 7
+    old_date = datetime.date.fromisoformat(row["recorded_date"][:10])
+    days = max(1, (today - old_date).days)
+    
     return round((today_score - old_score) / days, 4)
 
 

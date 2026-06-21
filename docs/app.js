@@ -22,7 +22,7 @@ async function loadDiscoveries() {
                 <h3 class="d-title">${d.title}</h3>
                 <div class="d-meta">
                     <span class="d-domain">${d.domain}</span>
-                    <span class="d-score">Score: ${(d.score * 100).toFixed(1)}</span>
+                    <span class="d-score">Impact: ${(d.score * 100).toFixed(1)}</span>
                 </div>
             `;
             listEl.appendChild(card);
@@ -41,7 +41,7 @@ async function openModal(discoveryId) {
     const sourcesEl = document.getElementById('modal-sources');
 
     // Reset contents
-    titleEl.innerText = "Loading data...";
+    titleEl.innerText = "Processing Data...";
     tagsEl.innerHTML = "";
     abstractEl.innerHTML = "";
     sourcesEl.innerHTML = "";
@@ -56,16 +56,19 @@ async function openModal(discoveryId) {
         titleEl.innerText = d.title;
         
         tagsEl.innerHTML = `
-            <span class="modal-tag">${d.domain}</span>
-            <span class="modal-tag">Status: ${d.status}</span>
-            <span class="modal-tag">Impact: ${(d.score * 100).toFixed(1)}</span>
+            <span class="modal-tag domain">${d.domain}</span>
+            <span class="modal-tag status">Status: ${d.status}</span>
+            <span class="modal-tag impact">Impact: ${(d.score * 100).toFixed(1)}</span>
         `;
 
         abstractEl.innerText = d.abstract || "No abstract available for this discovery.";
 
         if (d.sources && d.sources.length > 0) {
             sourcesEl.innerHTML = d.sources.map(s => 
-                `<a href="${s}" target="_blank">📄 Source Link</a>`
+                `<a href="${s}" target="_blank">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    Source Link
+                </a>`
             ).join('');
         }
     } catch (err) {
@@ -93,28 +96,40 @@ async function loadGraph() {
 
         document.getElementById('loader').style.display = 'none';
 
+        // Vibrant neon color palette matching the new CSS
+        const colors = {
+            technology: '#00f0ff', // Cyan
+            concept: '#ec4899',    // Pink
+            default: '#a855f7',    // Purple
+            bg: '#04070a',         // Deep Space Background
+            links: 'rgba(0, 240, 255, 0.15)'
+        };
+
         const Graph = window.Graph = ForceGraph3D()
             (document.getElementById('3d-graph'))
             .graphData(graphData)
             .nodeLabel('name')
-            .nodeColor(node => node.group === 'Technology' ? '#66fcf1' : (node.group === 'Concept' ? '#ff0055' : '#8a2be2'))
+            .nodeColor(node => node.group === 'Technology' ? colors.technology : (node.group === 'Concept' ? colors.concept : colors.default))
             .nodeRelSize(6)
             .linkWidth(1.5)
-            .linkColor(() => 'rgba(102, 252, 241, 0.2)')
-            .linkDirectionalParticles(3) // Adds the moving laser beams
-            .linkDirectionalParticleWidth(2.5)
-            .linkDirectionalParticleColor(() => '#ffffff')
-            .linkDirectionalParticleSpeed(d => d.value * 0.005 || 0.005)
-            .backgroundColor('#020205') // Deeper pitch black space
+            .linkColor(() => colors.links)
+            .linkDirectionalParticles(4) // More particles
+            .linkDirectionalParticleWidth(3.5) // Thicker laser beams
+            .linkDirectionalParticleColor(link => {
+                // Randomly assign cyan or purple laser beams to links for a dynamic look
+                return Math.random() > 0.5 ? colors.technology : colors.default;
+            })
+            .linkDirectionalParticleSpeed(d => d.value * 0.005 || 0.006)
+            .backgroundColor(colors.bg)
             .onNodeClick(node => {
                 // Focus on node
-                const distance = 40;
+                const distance = 50;
                 const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
                 
                 Graph.cameraPosition(
                     { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
                     node, // lookAt
-                    3000  // ms transition
+                    2500  // ms transition
                 );
             });
 
@@ -122,76 +137,19 @@ async function loadGraph() {
         let angle = 0;
         setInterval(() => {
             Graph.cameraPosition({
-                x: 300 * Math.sin(angle),
-                z: 300 * Math.cos(angle)
+                x: 350 * Math.sin(angle),
+                z: 350 * Math.cos(angle)
             });
-            angle += Math.PI / 1000;
+            angle += Math.PI / 1200;
         }, 30);
 
     } catch (err) {
         console.error("Failed to load graph", err);
-        document.getElementById('loader').innerText = "ERROR LOADING KNOWLEDGE GRAPH";
-        document.getElementById('loader').style.color = "#ff4444";
+        document.getElementById('loader').innerText = "ERROR LOADING ZIG KNOWLEDGE ENGINE";
+        document.getElementById('loader').style.color = "#ec4899";
     }
 }
 
 // Initialize
 loadDiscoveries();
 loadGraph();
-
-// Theme Toggle Logic
-const themeToggle = document.getElementById('theme-toggle');
-const sunIcon = document.getElementById('sun-icon');
-const moonIcon = document.getElementById('moon-icon');
-
-// Check for saved theme
-const savedTheme = localStorage.getItem('theme') || 'dark';
-if (savedTheme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    sunIcon.style.display = 'none';
-    moonIcon.style.display = 'block';
-}
-
-function updateGraphColors(theme) {
-    if (!window.Graph) return;
-    
-    if (theme === 'light') {
-        window.Graph
-            .backgroundColor('#f8fafc')
-            .nodeColor(node => node.group === 'Technology' ? '#2563eb' : (node.group === 'Concept' ? '#e11d48' : '#7c3aed'))
-            .linkColor(() => 'rgba(37, 99, 235, 0.2)')
-            .linkDirectionalParticleColor(() => '#1e40af');
-    } else {
-        window.Graph
-            .backgroundColor('#020205')
-            .nodeColor(node => node.group === 'Technology' ? '#66fcf1' : (node.group === 'Concept' ? '#ff0055' : '#8a2be2'))
-            .linkColor(() => 'rgba(102, 252, 241, 0.2)')
-            .linkDirectionalParticleColor(() => '#ffffff');
-    }
-}
-
-themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    if (newTheme === 'light') {
-        sunIcon.style.display = 'none';
-        moonIcon.style.display = 'block';
-    } else {
-        sunIcon.style.display = 'block';
-        moonIcon.style.display = 'none';
-    }
-    
-    updateGraphColors(newTheme);
-});
-
-// Watch for graph load to apply initial theme colors
-const checkGraphInterval = setInterval(() => {
-    if (window.Graph) {
-        updateGraphColors(document.documentElement.getAttribute('data-theme') || 'dark');
-        clearInterval(checkGraphInterval);
-    }
-}, 100);

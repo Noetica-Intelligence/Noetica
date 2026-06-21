@@ -40,7 +40,8 @@ def fetch_recent_oncology_trials(days_back=7):
             abstract = desc_module.get('briefSummary', '')
             
             trials.append({
-                "nct_id": nct_id,
+                "id": f"nct_{nct_id}",
+                "source": "ClinicalTrials.gov",
                 "title": f"[Clinical Trial] {title}",
                 "status": status,
                 "abstract": abstract,

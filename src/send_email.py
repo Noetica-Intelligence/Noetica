@@ -50,18 +50,39 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipien
         print("❌ Missing environment variables or target email.")
         return False
 
-    msg = MIMEMultipart("alternative")
+    msg = MIMEMultipart("related")
     msg["Subject"] = subject
     msg["From"]    = f"Noetica Intelligence System <{SENDER_EMAIL}>"
     msg["To"]      = target_email
     msg["X-Priority"] = "1"  # Mark as high priority
 
+    # Create the alternative part for text/html
+    msg_alt = MIMEMultipart("alternative")
+    msg.attach(msg_alt)
+
     # Plain text fallback
     if not plain_fallback:
         plain_fallback = "Your Scientific Intelligence Digest is ready. Open in an HTML-capable email client to view the full digest."
 
-    msg.attach(MIMEText(plain_fallback, "plain", "utf-8"))
-    msg.attach(MIMEText(html_body,      "html",  "utf-8"))
+    msg_alt.attach(MIMEText(plain_fallback, "plain", "utf-8"))
+    msg_alt.attach(MIMEText(html_body,      "html",  "utf-8"))
+
+    # Embed the logo via CID
+    try:
+        from email.mime.image import MIMEImage
+        import pathlib
+        
+        logo_path = pathlib.Path("assets/logo.png")
+        if logo_path.exists():
+            with open(logo_path, "rb") as img_file:
+                msg_img = MIMEImage(img_file.read())
+                msg_img.add_header("Content-ID", "<logo.png>")
+                msg_img.add_header("Content-Disposition", "inline", filename="logo.png")
+                msg.attach(msg_img)
+        else:
+            print(f"⚠️  Logo not found at {logo_path}, email will send without embedded logo.")
+    except Exception as e:
+        print(f"⚠️  Failed to embed logo: {e}")
 
     try:
         print(f"📧 Connecting to {SMTP_HOST}:{SMTP_PORT}...")

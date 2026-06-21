@@ -256,7 +256,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           <!-- ══ HEADER (NETWORK TELEMETRY) ══ -->
           <div class="header-box" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:48px 40px;margin-bottom:40px;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,0.05);">
             
-            <img src="https://raw.githubusercontent.com/Noetica-Intelligence/Noetica/main/assets/logo.png" alt="Noetica Logo" width="64" height="64" style="display:block;margin:0 auto;margin-bottom:24px;border-radius:16px;border:1px solid #e2e8f0;" />
+            <img src="cid:logo.png" alt="Noetica Logo" width="64" height="64" style="display:block;margin:0 auto;margin-bottom:24px;border-radius:16px;border:1px solid #e2e8f0;" />
             
             <h1 class="header-title" style="margin:0 0 8px 0;font-size:32px;font-weight:800;color:#0f172a;letter-spacing:-1px;">
               Intelligence Briefing

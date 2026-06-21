@@ -109,7 +109,6 @@ def main() -> int:
     # ── Test mode ──────────────────────────────────────
     if args.send_test:
         print("\n📧 Sending test email...")
-        from send_email import send_digest
         ok = send_digest(
             "🔬 TEST — Scientific Intelligence System V1",
             "<html><body><h1>System is working!</h1></body></html>",

@@ -15,7 +15,7 @@ from v2_fetchers import fetch_v2_intelligence
 
 def ingest_to_v3_db():
     print("="*60)
-    print("🚀 V3 Ingestion Engine (Zig Core)")
+    print("--- V3 Ingestion Engine (Zig Core) ---")
     print("="*60)
 
     print("\n[1/3] Fetching global intelligence (Papers, Patents, Grants, Open Source, Clinical Trials)...")
@@ -41,7 +41,7 @@ def ingest_to_v3_db():
     )
     
     if result.returncode != 0:
-        print(f"❌ Zig engine failed: {result.stderr.decode('utf-8')}")
+        print(f"ERROR: Zig engine failed: {result.stderr.decode('utf-8')}")
         return
         
     # Read output from Zig
@@ -56,7 +56,7 @@ def ingest_to_v3_db():
         scored_nodes = parsed_data.get("nodes", [])
         graph_edges = parsed_data.get("edges", [])
     except json.JSONDecodeError:
-        print("❌ Failed to parse output from Zig engine. Raw output:")
+        print("ERROR: Failed to parse output from Zig engine. Raw output:")
         print(scored_json)
         return
 
@@ -132,10 +132,10 @@ def ingest_to_v3_db():
             edge_count += 1
                 
         db.commit()
-        print(f"✅ V3 Ingestion Complete: {new_count} new nodes, {updated_count} updated nodes, {edge_count} edges mapped.")
+        print(f"SUCCESS: V3 Ingestion Complete: {new_count} new nodes, {updated_count} updated nodes, {edge_count} edges mapped.")
     except Exception as e:
         db.rollback()
-        print(f"❌ Database error: {e}")
+        print(f"ERROR: Database error: {e}")
     finally:
         db.close()
 

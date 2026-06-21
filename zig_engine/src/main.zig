@@ -15,6 +15,7 @@ pub fn main() !void {
     
     const input_data = @embedFile("temp_input.json");
     
+    
     var parsed = try std.json.parseFromSlice([]Discovery, allocator, input_data, .{
         .ignore_unknown_fields = true,
     });

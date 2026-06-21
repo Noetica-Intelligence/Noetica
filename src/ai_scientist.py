@@ -42,7 +42,7 @@ This signals an imminent paradigm shift in personalized therapeutics. The fusion
 
     db = SessionLocal()
     # Grab the top 3 highest scoring discoveries mathematically ranked by Zig
-    top_discoveries = db.query(Discovery).order_by(Discovery.score.desc()).limit(3).all()
+    top_discoveries = db.query(Discovery).order_by(Discovery.significance_score.desc()).limit(3).all()
     db.close()
 
     if not top_discoveries:
@@ -56,7 +56,7 @@ and what their collective impact is on the trajectory of human civilization. Do 
 Discoveries:
 """
     for i, d in enumerate(top_discoveries):
-        prompt += f"\n[{i+1}] {d.title}\nDomain: {d.domain}\nAbstract: {d.abstract}\n"
+        prompt += f"\n[{i+1}] {d.title}\nDomain: {d.primary_domain}\nAbstract: {d.abstract}\n"
 
     logger.info("Transmitting to Gemini Neural Net...")
     try:

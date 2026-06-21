@@ -48,7 +48,11 @@ def get_subscribers() -> list[dict]:
         }]
 
     # Fetch CSV from Google Sheets
-    csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+    if sheet_id.startswith("http"):
+        csv_url = sheet_id
+    else:
+        csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+        
     print(f"📥 Fetching subscribers from Google Sheet...")
     
     try:

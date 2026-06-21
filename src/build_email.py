@@ -191,7 +191,7 @@ def emerging_trend_item(topic: str, desc: str) -> str:
     </div>"""
 
 
-def build_email_html(papers: list[dict], date_str: str) -> str:
+def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[dict] = None, subscriber_email: str = "") -> str:
     """Build the complete HTML email from ranked papers."""
     today = datetime.date.today().strftime("%A, %B %d, %Y")
     total = len(papers)
@@ -288,25 +288,15 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
 
           <!-- ══ EMERGING TRENDS ══ -->
           <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
-            <div style="color:#ea580c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;font-weight:700;">📈 Emerging Trends Assessed</div>
-            {emerging_trend_item("AI-Assisted Science", "LLMs generating and verifying novel hypotheses")}
-            {emerging_trend_item("Quantum-Classical Hybrid Algorithms", "Near-term quantum advantage in optimization")}
-            {emerging_trend_item("Circadian Pharmacology", "Timing-dependent drug efficacy across oncology trials")}
-            {emerging_trend_item("Foundation Models for Biology", "Protein/DNA/RNA language models converging")}
-            {emerging_trend_item("Causal AI", "Moving from correlation to mechanism in ML")}
+            <div style="color:#ea580c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;font-weight:700;">📈 Emerging Trends Detected</div>
+            {_build_trends_html(emerging_trends)}
           </div>
 
           <!-- ══ FOOTER ══ -->
           <div style="text-align:center;padding:32px 24px;color:#64748b;font-size:13px;border-top:1px solid #e2e8f0;">
-            <p style="margin:0 0 20px 0;font-weight:500;">
-              Was this digest useful?<br><br>
-              <a href="mailto:feedback@noetica.local?subject=Very Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Very Useful</a>
-              <a href="mailto:feedback@noetica.local?subject=Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Useful</a>
-              <a href="mailto:feedback@noetica.local?subject=Neutral" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Neutral</a>
-              <a href="mailto:feedback@noetica.local?subject=Not Useful" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Not Useful</a>
-            </p>
+            {_build_footer_feedback(subscriber_email)}
             <p style="margin:0 0 8px 0;font-weight:600;color:#0f172a;">Noetica Intelligence System</p>
-            <p style="margin:0;">Powered by arXiv · PubMed · bioRxiv · Semantic Scholar</p>
+            <p style="margin:0;">Powered by arXiv · PubMed · bioRxiv · Semantic Scholar · USPTO</p>
             <p style="margin:12px 0 0 0;font-size:11px;color:#94a3b8;">Confidential Intelligence Briefing for Authorized Personnel Only.</p>
           </div>
 
@@ -317,6 +307,47 @@ def build_email_html(papers: list[dict], date_str: str) -> str:
   </table>
 </body>
 </html>"""
+
+
+def _build_trends_html(trends: list[dict] | None) -> str:
+    """Build HTML for real detected trends, or show defaults if no data yet."""
+    if not trends:
+        # Fallback to known static trends if detector has no data yet
+        defaults = [
+            ("AI-Assisted Science", "LLMs generating and verifying novel hypotheses"),
+            ("Quantum-Classical Hybrid Algorithms", "Near-term quantum advantage in optimization"),
+            ("Circadian Pharmacology", "Timing-dependent drug efficacy across oncology trials"),
+            ("Foundation Models for Biology", "Protein/DNA/RNA language models converging"),
+            ("Causal AI", "Moving from correlation to mechanism in ML"),
+        ]
+        return "\n".join(emerging_trend_item(t, d) for t, d in defaults)
+
+    items = []
+    for t in trends[:6]:
+        icon = "🔥" if t.get("type") == "convergence" else "📈"
+        name = t.get("name", "")
+        desc = t.get("description", "")
+        items.append(emerging_trend_item(f"{icon} {name}", desc))
+    return "\n".join(items)
+
+
+def _build_footer_feedback(email: str) -> str:
+    """Build footer feedback buttons — wired to feedback.py if available."""
+    try:
+        from feedback import build_global_feedback_footer_html
+        return build_global_feedback_footer_html(email)
+    except Exception:
+        # Graceful fallback: original static mailto buttons
+        return (
+            '<p style="margin:0 0 20px 0;font-weight:500;">'
+            'Was this digest useful?<br><br>'
+            '<a href="mailto:feedback@noetica.local?subject=Very Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Very Useful</a>'
+            '<a href="mailto:feedback@noetica.local?subject=Useful" style="background:#f1f5f9;color:#2563eb;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Useful</a>'
+            '<a href="mailto:feedback@noetica.local?subject=Neutral" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Neutral</a>'
+            '<a href="mailto:feedback@noetica.local?subject=Not Useful" style="background:#f1f5f9;color:#475569;padding:8px 12px;border-radius:6px;text-decoration:none;margin:0 4px;">Not Useful</a>'
+            '</p>'
+        )
+
 
 
 def build_email_subject(papers: list[dict], date_str: str) -> str:

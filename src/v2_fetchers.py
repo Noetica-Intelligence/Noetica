@@ -98,20 +98,64 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
 # For V2 MVP, we simulate a patent fetcher structure.
 
 def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
-    """Simulated fetch for recent patents."""
-    results = [
-        {
-            "id": f"pat_mock_1",
-            "title": f"[PATENT] Novel methods for {query}",
-            "abstract": f"A patent describing commercialization techniques and methods related to {query}.",
-            "authors": ["Inventor A", "Inventor B"],
-            "source": "USPTO",
-            "domain": "Technology Patent",
-            "date": datetime.today().isoformat(),
-            "url": "https://patents.google.com/",
-        }
-    ]
+    """
+    Fetch real patents from PatentsView API (USPTO).
+    Free, no API key required. Rate-limit: ~45 req/min.
+    Docs: https://search.patentsview.org/docs/
+    """
+    import json as _json
+    url = "https://search.patentsview.org/api/v1/patent/"
+    
+    payload = _json.dumps({
+        "q": {"_text_any": {"patent_abstract": query}},
+        "f": [
+            "patent_id", "patent_title", "patent_abstract",
+            "patent_date", "assignee_organization", "inventor_last_name",
+            "cpc_group_id"
+        ],
+        "o": {"patent_date": "desc"},
+        "s": [{"patent_date": "desc"}],
+        "per_page": max_results,
+    })
+    
+    req = urllib.request.Request(
+        url,
+        data=payload.encode("utf-8"),
+        method="POST",
+        headers={"Content-Type": "application/json", "User-Agent": "Noetica/1.0"},
+    )
+    
+    results = []
+    try:
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = _json.loads(response.read().decode())
+            for pat in data.get("patents", []):
+                pid     = pat.get("patent_id", "")
+                title   = pat.get("patent_title", "").strip()
+                abstract= (pat.get("patent_abstract") or "")[:800]
+                date    = (pat.get("patent_date") or "")[:10]
+                assignee= pat.get("assignee_organization") or "Unknown Assignee"
+                inventors = [
+                    inv.get("inventor_last_name", "")
+                    for inv in (pat.get("inventors") or [])[:3]
+                ]
+                results.append({
+                    "id":       f"patent:{pid}",
+                    "title":    f"[PATENT] {title}",
+                    "abstract": abstract or f"Patent covering methods related to {query}.",
+                    "authors":  inventors if inventors else [assignee],
+                    "source":   "USPTO (PatentsView)",
+                    "domain":   "Technology Patent",
+                    "date":     date,
+                    "url":      f"https://patents.google.com/patent/US{pid}",
+                    "pdf_url":  "",
+                })
+    except Exception as e:
+        print(f"⚠️  PatentsView fetch error for '{query}': {e}")
+        # Graceful fallback — empty list, no mock data
+    
     return results
+
 
 # ─────────────────────────────────────────────
 # ORCHESTRATOR FOR V2 FETCHERS

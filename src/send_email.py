@@ -39,18 +39,21 @@ def validate_config() -> bool:
     return True
 
 
-def send_digest(subject: str, html_body: str, plain_fallback: str = "") -> bool:
+def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipient_email: str = "") -> bool:
     """
     Send the digest email via Gmail SMTP.
     Returns True on success, False on failure.
     """
-    if not validate_config():
+    target_email = recipient_email if recipient_email else RECIPIENT_EMAIL
+    
+    if not SENDER_EMAIL or not SENDER_PASSWORD or not target_email:
+        print("❌ Missing environment variables or target email.")
         return False
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"]    = f"Scientific Intelligence System <{SENDER_EMAIL}>"
-    msg["To"]      = RECIPIENT_EMAIL
+    msg["From"]    = f"Noetica Intelligence System <{SENDER_EMAIL}>"
+    msg["To"]      = target_email
     msg["X-Priority"] = "1"  # Mark as high priority
 
     # Plain text fallback
@@ -67,8 +70,8 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "") -> bool:
             server.starttls()
             server.ehlo()
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
-            server.sendmail(SENDER_EMAIL, [RECIPIENT_EMAIL], msg.as_string())
-        print(f"✅ Email sent successfully to {RECIPIENT_EMAIL}")
+            server.sendmail(SENDER_EMAIL, [target_email], msg.as_string())
+        print(f"✅ Email sent successfully to {target_email}")
         return True
     except smtplib.SMTPAuthenticationError:
         print("❌ SMTP Authentication failed.")

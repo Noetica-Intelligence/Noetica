@@ -63,22 +63,24 @@ def latex_to_unicode(text: str) -> str:
         r"\alpha": "α", r"\beta": "β", r"\gamma": "γ", r"\delta": "δ",
         r"\ell": "ℓ", r"\mu": "μ", r"\pi": "π", r"\sigma": "σ",
         r"\theta": "θ", r"\infty": "∞",
-        r"\epsilon": "ε", r"\Omega": "Ω", r"\Delta": "Δ"
+        r"\epsilon": "ε", r"\Omega": "Ω", r"\Delta": "Δ",
+        r"\to": "→", r"\nu": "ν",
     }
-    
-    # Strip literal dollar signs that enclose simple variables (e.g. $x$)
-    text = re.sub(r'\$([a-zA-Z])\$', r'\1', text)
     
     for old, new in replacements.items():
         text = text.replace(old, new)
         
+    # Strip remaining $ signs used as math mode delimiters (e.g., $x$, $\ell\ell\nu\nu$, $(p=1)$)
+    # We remove any $ that wraps text, to clean up the abstract.
+    text = re.sub(r'\$([^\$]+)\$', r'\1', text)
+    
     return text
 
 
 def domain_badge(domain: str) -> str:
     fg, bg = DOMAIN_COLORS.get(domain, DOMAIN_COLORS["default"])
     esc = html_lib.escape(domain)
-    # Using CSS classes for dark mode support where possible, inline as fallback
+    # Inline style fallback for badges
     return f'<span class="badge" style="background:{bg};color:{fg};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;border:1px solid {fg}40;">{esc}</span>'
 
 
@@ -86,11 +88,11 @@ def cross_domain_tags(domains: list[str]) -> str:
     if not domains:
         return ""
     tags = " ".join(
-        f'<span class="cross-tag" style="background:#f8fafc;color:#64748b;border:1px solid #cbd5e1;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;">'
+        f'<span class="cross-tag" style="background:#f8fafc;color:#64748b;border:1px solid #cbd5e1;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;display:inline-block;margin-right:4px;margin-bottom:4px;">'
         f'→ {html_lib.escape(d)}</span>'
         for d in domains[:4]
     )
-    return f'<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;">{tags}</div>'
+    return f'<div style="margin-top:6px;">{tags}</div>'
 
 
 def score_color_class(score: int) -> str:
@@ -137,17 +139,20 @@ def paper_card(rank: int, discovery: dict) -> str:
     return f"""
     <div class="card" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
 
-      <!-- Header Row -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          {domain_badge(domain)}
-          <span class="status-badge" style="background:{status_bg};border:1px solid {status_fg}40;color:{status_fg};padding:3px 8px;border-radius:6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800;">{status}</span>
-        </div>
-        <div style="text-align:right;">
-          <div class="{s_class} score-display" style="font-size:24px;font-weight:800;line-height:1;">{composite_100}<span style="font-size:14px;opacity:0.6;font-weight:600;">/100</span></div>
-          <div class="score-label" style="color:#94a3b8;font-size:10px;letter-spacing:1.5px;margin-top:4px;font-weight:700;">SIGNAL</div>
-        </div>
-      </div>
+      <!-- Header Row (Table used for 100% email client compatibility) -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
+        <tr>
+          <td align="left" valign="middle">
+            {domain_badge(domain)}
+            <span style="display:inline-block; width:8px;"></span>
+            <span class="status-badge" style="background:{status_bg};border:1px solid {status_fg}40;color:{status_fg};padding:3px 8px;border-radius:6px;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800;display:inline-block;">{status}</span>
+          </td>
+          <td align="right" valign="middle">
+            <div class="{s_class} score-display" style="font-size:24px;font-weight:800;line-height:1;margin-bottom:4px;">{composite_100}<span style="font-size:14px;opacity:0.6;font-weight:600;">/100</span></div>
+            <div class="score-label" style="color:#94a3b8;font-size:10px;letter-spacing:1px;font-weight:700;">SIGNAL</div>
+          </td>
+        </tr>
+      </table>
 
       <!-- Title -->
       <h2 style="margin:0 0 10px 0;font-size:22px;font-weight:800;line-height:1.3;letter-spacing:-0.5px;">
@@ -168,16 +173,16 @@ def paper_card(rank: int, discovery: dict) -> str:
       </div>
 
       <!-- Truncated Abstract -->
-      <p class="abstract-text" style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 20px 0;font-style:italic;">
+      <p class="abstract-text" style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 12px 0;font-style:italic;">
         "{abstract}"
       </p>
 
       <!-- Cross-disciplinary -->
-      {f'<div class="cross-label" style="color:#94a3b8;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-weight:700;">Cross-Disciplinary Architecture</div>' if cross else ""}
+      {f'<div class="cross-label" style="color:#94a3b8;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;font-weight:700;">Cross-Disciplinary Architecture</div>' if cross else ""}
       {cross_domain_tags(cross)}
 
       <!-- Action Buttons -->
-      <div style="margin-top:24px;padding-top:16px;border-top:1px solid #f1f5f9;">
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
         <a href="{url}" class="btn-primary" style="background:#0f172a;color:#ffffff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;display:inline-block;">Read Publication</a>
         {pdf_btn}
       </div>
@@ -203,8 +208,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         wc_expl   = html_lib.escape(wildcard.get("explanation", "Detected unusual cross-domain intersection."))
         wildcard_html = f"""
         <div class="wildcard-card" style="background:linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);border:1px solid #ddd6fe;border-radius:16px;padding:32px;margin-bottom:24px;">
-          <div style="color:#7c3aed;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:800;display:flex;align-items:center;gap:8px;">
-            <span style="font-size:16px;">⚡</span> OUTSIDE YOUR FIELD
+          <div style="color:#7c3aed;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:800;">
+            <span style="font-size:16px;vertical-align:middle;">⚡</span> <span style="vertical-align:middle;">OUTSIDE YOUR FIELD</span>
           </div>
           <div style="margin-bottom:12px;">{domain_badge(wc_domain)}</div>
           <h3 style="color:#4c1d95;font-size:20px;margin:0 0 12px 0;font-weight:800;line-height:1.3;">
@@ -229,31 +234,11 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
 <style>
   body {{ margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif; -webkit-font-smoothing:antialiased; background-color:#f8fafc; }}
   
-  /* Atomic Node CSS */
-  .atomic-node {{
-    width: 64px; height: 64px; border-radius: 16px;
-    background: #ffffff; border: 1px solid #e2e8f0;
-    position: relative; overflow: hidden; margin-bottom: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: inline-block;
-  }}
-  .atomic-core {{
-    position: absolute; top: 26px; left: 26px; right: 26px; bottom: 26px;
-    background: #6366f1; border-radius: 50%; box-shadow: 0 0 8px rgba(99,102,241,0.5);
-  }}
-  .atomic-ring {{
-    position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px;
-    border: 1px solid #10b981; border-radius: 50%; opacity: 0.8;
-  }}
-  .ring-1 {{ transform: rotate(0deg) scaleY(0.4); }}
-  .ring-2 {{ transform: rotate(60deg) scaleY(0.4); }}
-  .ring-3 {{ transform: rotate(120deg) scaleY(0.4); }}
-
   /* Dark Mode Support via Media Query */
   @media (prefers-color-scheme: dark) {{
     body {{ background-color: #000000 !important; }}
     .main-wrapper {{ background-color: #000000 !important; }}
     
-    .atomic-node {{ background: #000000 !important; border: 1px solid #1e293b !important; box-shadow: 0 0 20px rgba(16,185,129,0.15) !important; }}
     .header-box {{ background: #0f172a !important; border-color: #1e293b !important; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8) !important; }}
     .header-title {{ color: #ffffff !important; }}
     .header-metric {{ color: #ffffff !important; }}
@@ -288,22 +273,17 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
 </style>
 </head>
 <body class="main-wrapper">
-  <table width="100%" cellpadding="0" cellspacing="0">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td align="center" style="padding:40px 20px;">
 
-      <table width="700" cellpadding="0" cellspacing="0" style="max-width:700px;width:100%;">
+      <table width="700" cellpadding="0" cellspacing="0" border="0" style="max-width:700px;width:100%;">
         <tr><td>
 
           <!-- ══ HEADER ══ -->
           <div class="header-box" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:48px 40px;margin-bottom:40px;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,0.05);">
             
-            <!-- Pure CSS Atomic Node Logo -->
-            <div class="atomic-node">
-              <div class="atomic-ring ring-1"></div>
-              <div class="atomic-ring ring-2"></div>
-              <div class="atomic-ring ring-3"></div>
-              <div class="atomic-core"></div>
-            </div>
+            <!-- Robust image logo hosted from GitHub, replacing broken pure CSS shape -->
+            <img src="https://raw.githubusercontent.com/Noetica-Intelligence/Noetica/main/assets/logo.png" alt="Noetica Logo" width="80" height="80" style="display:block;margin:0 auto;margin-bottom:24px;border-radius:20px;border:1px solid #e2e8f0;" />
             
             <div style="font-size:11px;letter-spacing:4px;color:#64748b;text-transform:uppercase;margin-bottom:12px;font-weight:800;">Noetica Intelligence</div>
             <h1 class="header-title" style="margin:0 0 12px 0;font-size:36px;font-weight:800;color:#0f172a;letter-spacing:-1px;">
@@ -313,11 +293,15 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           </div>
 
           <!-- ══ SECTION LABEL ══ -->
-          <div style="color:#94a3b8;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;padding:0 8px;font-weight:800;display:flex;align-items:center;gap:12px;">
-            <div style="height:1px;background:#e2e8f0;flex:1;"></div>
-            <span>Detected Signals</span>
-            <div style="height:1px;background:#e2e8f0;flex:1;"></div>
-          </div>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+            <tr>
+              <td width="35%" style="border-top:1px solid #e2e8f0;"></td>
+              <td width="30%" align="center" style="color:#94a3b8;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:800;padding:0 10px;">
+                Detected Signals
+              </td>
+              <td width="35%" style="border-top:1px solid #e2e8f0;"></td>
+            </tr>
+          </table>
 
           <!-- ══ PAPER CARDS ══ -->
           {cards_html}

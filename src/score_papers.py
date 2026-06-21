@@ -215,28 +215,34 @@ def compute_composite_score(paper: dict) -> dict:
 
     cross_domains = get_cross_disciplinary_connections(domain)
 
-    # Narrative AI Rationale Synthesizer
-    narrative = []
+    # ─────────────────────────────────────────────
+    # NEW: STRATEGIC IMPLICATION SYNTHESIS
+    # ─────────────────────────────────────────────
+    implications = []
     if novelty >= 8.0:
-        narrative.append("Groundbreaking novelty detected.")
+        implications.append(f"Challenges foundational assumptions within {domain}. High probability of paradigm shift.")
     elif novelty >= 6.0:
-        narrative.append("Novel mechanism or method proposed.")
+        implications.append(f"Introduces novel methodology to {domain}, expanding theoretical boundaries.")
+    else:
+        implications.append(f"Incremental advancement in {domain} literature.")
         
     if evidence >= 8.0:
-        narrative.append("Empirical/theoretical confidence: High.")
+        implications.append("Supported by rigorous mathematical/empirical architecture. Validation confidence is extremely high.")
     elif evidence >= 6.0:
-        narrative.append("Empirical/theoretical confidence: Moderate.")
+        implications.append("Demonstrates moderate theoretical confidence; early-stage validation.")
 
-    if len(cross_domains) >= 2:
-        narrative.append(f"Cross-disciplinary potential: High, bridging {', '.join(cross_domains[:2])}.")
-    
     if source_mult > 1.1:
-        narrative.append(f"Source Reliability: Premium ({source}).")
-    
-    if not narrative:
-        narrative.append("Solid emerging signal within its specific domain.")
+        implications.append("Signal amplified by premium source tier.")
 
-    explanation_str = " ".join(narrative)
+    # ─────────────────────────────────────────────
+    # NEW: KNOWLEDGE GRAPH EDGE SYNTHESIS
+    # ─────────────────────────────────────────────
+    kg_edge = ""
+    if len(cross_domains) >= 1:
+        # e.g. "Primary vector bridging Theoretical Physics with Quantum Computing methodologies."
+        kg_edge = f"Primary convergence vector linking {domain} frameworks with {cross_domains[0]} architecture."
+        if len(cross_domains) >= 2:
+            kg_edge += f" Secondary resonance with {cross_domains[1]}."
 
     # Discovery Lifecycle Status
     status = "Emerging Signal"
@@ -252,7 +258,10 @@ def compute_composite_score(paper: dict) -> dict:
         "citation_v":  round(citation_v, 2),
         "composite":   final_100,  # Now stores the 100-point integer
     }
-    paper["explanation"] = explanation_str
+    
+    # Updated Output Payload
+    paper["strategic_implication"] = " ".join(implications)
+    paper["knowledge_graph_edge"]  = kg_edge
     paper["status"] = status
     paper["cross_disciplinary"] = cross_domains
     paper["days_old"] = days_old

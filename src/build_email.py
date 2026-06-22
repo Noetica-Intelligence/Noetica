@@ -107,6 +107,23 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
 
     composite_100 = scores.get("composite", 65)
 
+    # Compute Source Aggregation String
+    st_data = discovery.get("source_types")
+    source_agg_str = "1 paper"
+    if isinstance(st_data, dict):
+        parts = []
+        for st_name, count in st_data.items():
+            plural = "s" if count > 1 else ""
+            parts.append(f"{count} {st_name}{plural}")
+        if parts:
+            source_agg_str = ", ".join(parts)
+    elif isinstance(st_data, list) and st_data:
+        # Fallback for old list schema
+        parts = []
+        for st_name in st_data:
+            parts.append(f"1 {st_name}")
+        source_agg_str = ", ".join(parts)
+
     pdf_btn = ""
     if pdf_url:
         pdf_btn = f' &nbsp;<a href="{pdf_url}" class="btn-pdf" style="background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;padding:6px 14px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;display:inline-block;">PDF</a>'
@@ -142,8 +159,13 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
       <h2 style="margin:0 0 8px 0;font-size:20px;font-weight:800;line-height:1.4;letter-spacing:-0.5px;">
         <a href="{url}" class="card-title" style="color:#0f172a;text-decoration:none;">{title}</a>
       </h2>
-      <div class="meta-text" style="color:#64748b;font-size:13px;margin-bottom:24px;font-weight:500;">
+      <div class="meta-text" style="color:#64748b;font-size:13px;margin-bottom:8px;font-weight:500;">
         {authors} &nbsp;·&nbsp; <span style="color:#0284c7;font-weight:600;">{source}</span>
+      </div>
+      
+      <!-- Source Aggregation -->
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:24px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;">
+        ↳ Aggregated from: {source_agg_str}
       </div>
 
       <!-- Strategic Implication (The Core Insight) -->
@@ -224,6 +246,26 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           <a href="{wc_url}" style="color:#ef4444;font-weight:700;font-size:12px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;">Analyze Anomaly →</a>
         </div>"""
 
+    # Generate Emerging Trends HTML
+    trends_html = ""
+    if emerging_trends:
+        trends_items = ""
+        for t in emerging_trends[:5]: # Show max 5
+            icon = "🔥" if t.get("type") == "surge" else "🧬"
+            trends_items += f"""
+            <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #e2e8f0;">
+              <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">{icon} {t.get('name', '')}</div>
+              <div style="font-size:12px;color:#64748b;">{t.get('description', '')}</div>
+            </div>"""
+            
+        trends_html = f"""
+        <!-- ══ EMERGING TRENDS ══ -->
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+          <div style="font-size:11px;color:#64748b;text-transform:uppercase;font-weight:800;letter-spacing:1px;margin-bottom:16px;">Network Intelligence: Fast-Growing Domains</div>
+          {trends_items}
+        </div>
+        """
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -295,6 +337,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
               </tr>
             </table>
           </div>
+          
+          {trends_html}
 
           <!-- ══ PAPER CARDS ══ -->
           {cards_html}

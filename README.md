@@ -1,68 +1,82 @@
----
-title: Noetica Backend
-emoji: 🌌
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
----
 <div align="center">
-# 🌌 Noetica
+  <img src="https://raw.githubusercontent.com/Noetica-Intelligence/Noetica/main/docs/assets/noetica_logo.png" width="120" alt="Noetica Logo" />
+  <h1>🌌 Noetica</h1>
 
-**Mapping the Evolution of Human Knowledge.**
+  **Mapping the Evolution of Human Knowledge.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Zig](https://img.shields.io/badge/Zig-0.16.0-orange.svg)](https://ziglang.org/)
-[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
-[![Database](https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-336791.svg)]()
-[![Cloud](https://img.shields.io/badge/Cloud-Hugging%20Face%20%7C%20GitHub%20Pages-FFD21E.svg)]()
+  [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+  [![Zig Engine](https://img.shields.io/badge/Zig-0.16.0-F7A41D.svg?style=flat-square)](https://ziglang.org/)
+  [![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat-square)](https://www.python.org/)
+  [![Database](https://img.shields.io/badge/Database-PostgreSQL_|_SQLite-336791.svg?style=flat-square)]()
+  [![Cloud](https://img.shields.io/badge/Cloud-Hugging_Face_|_GitHub_Pages-FFD21E.svg?style=flat-square)]()
 
-*Noetica optimizes for Evidence, Scientific Significance, and Civilizational Importance.*
+  *Optimizing for Evidence, Scientific Significance, and Civilizational Importance.*
 
-**[🚀 VIEW THE LIVE 3D GALAXY DASHBOARD (GitHub Pages)](#)** 
-*(Note: Replace the # above with your actual GitHub Pages URL)*
-
+  **[🚀 VIEW THE LIVE 3D GALAXY DASHBOARD (GitHub Pages)](#)** 
 </div>
 
 ---
 
-## 📖 Official Definition
+## 📖 The Official Definition
 
-Noetica is an open-source scientific intelligence network designed to discover, rank, connect, explain, and forecast the evolution of human knowledge across all disciplines. 
+**Noetica** is an open-source scientific intelligence network designed to discover, rank, connect, explain, and forecast the evolution of human knowledge across all disciplines.
 
 Most systems optimize for attention, engagement, and trending topics. **Noetica optimizes for evidence.** We do not merely track papers. Noetica tracks discoveries, ideas, technologies, theories, knowledge networks, emerging disciplines, and civilization-scale transformations.
 
-### 🧬 Non-Negotiable Principles
-1. **Rank discoveries, not papers.**
-2. **Evidence over popularity.**
-3. **Social media weight = 0%.**
-4. **Knowledge is a graph, not a folder structure.**
-5. **Forecast with probabilities, never certainty.**
+Single papers are noise. Trajectories are signal. Papers are leaves; the Discovery is the tree. Noetica maps the forest.
 
 ---
 
-## 🏗️ Architecture (V3 Dual-Cloud)
+## 🧬 The 10 Non-Negotiable Principles
 
-Noetica operates on a cutting-edge hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) Knowledge Graph calculations, and an autonomous LLM Agent (Gemini) for scientific synthesis. 
+These principles override all feature decisions:
 
-It is deployed using a completely free **Serverless Dual-Cloud Architecture**.
+1. **Optimize for scientific significance**, not popularity.
+2. **Social media is a sensor**, not a scoring factor.
+3. **Discoveries are primary entities** — not papers.
+4. **Knowledge graph** over flat category trees.
+5. **Taxonomy must self-evolve** — not be hardcoded.
+6. **Evidence beats attention** — always.
+7. **Cross-disciplinary discoveries** receive higher priority.
+8. **Open-source first**.
+9. **Personalization without echo chambers** (the 80/20 forced exploration rule).
+10. **Long-term civilizational impact** > short-term hype.
+
+---
+
+## 🏛️ V3 Dual-Engine Architecture
+
+Noetica operates on an enterprise-grade hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) Knowledge Graph calculations, and an autonomous LLM Agent for scientific synthesis.
 
 ```mermaid
 graph TD
-    A[Global Intel Sources] -->|arXiv, PubMed, ClinicalTrials| B(Python Ingestion Engine)
-    B -->|JSON Payload| C{Zig Native Engine}
-    C -->|O N² Traversal & Math| D[(SQLite Database)]
-    D -->|Top 3 Breakthroughs| E[Gemini AI Scientist]
-    E -->|Synthesis Report| F[FastAPI Backend - Hugging Face]
-    D --> F
-    F -->|REST API| G[3D Visual Galaxy UI - GitHub Pages]
+    A[Global Intel Sources] -->|arXiv, PubMed, Crunchbase, Patents| B(Python V3 Ingestion Engine)
+    B -->|JSON Payload via stdin| C{Zig Native Engine}
+    C -->|Math, Graph, Biosignals| D[(PostgreSQL / SQLite Dual-Engine)]
+    D -->|Top Breakthroughs| E[LLM Polymath Agent]
+    E -->|Synthesis & Digest| F[Resend / SendGrid Delivery]
 ```
 
-### Components
-- **The Ingestion Layer:** Pulls real-time data from global scientific APIs, including targeted Oncology trials.
-- **The Zig Core (`/zig_engine`):** A high-performance mathematics engine that calculates discovery significance, maps cross-disciplinary edges, and assigns **Civilizational Impact Forecast** probabilities.
-- **The LLM Agent (`/src/ai_scientist.py`):** An autonomous agent acting as a Polymath Computational Oncologist that synthesizes the Zig rankings into a unified impact report using Google Gemini 1.5 Pro.
-- **The 3D Visualizer (`/docs`):** A frontend utilizing WebGL and Force-Directed Graphs to render the Knowledge Graph as an interactive 3D particle simulation.
+### Core Layers
+- **The Intelligence Fetchers:** Pulls real-time signals from arXiv, PubMed, ClinicalTrials, Semantic Scholar Conferences, NIH Grants, GitHub repos, and Crunchbase startup funding.
+- **The Zig Core (`/zig_engine`):** A high-performance mathematics engine that calculates discovery significance, maps Jaccard semantic edges, and runs PageRank network centrality.
+- **The Database Abstraction (`/src/database.py`):** Automatically scales from local SQLite to high-throughput PostgreSQL using dynamic schema mapping.
+- **The Delivery Waterfall (`/src/send_email.py`):** Prioritizes HTTP API execution for enterprise ESPs (Resend, SendGrid) before falling back to legacy SMTP.
+
+---
+
+## 🌍 The Three Timelines of Knowledge
+
+Noetica tracks discoveries across three parallel scopes:
+
+| Timeline | Scope | Core Question | Example |
+|----------|-------|---------------|---------|
+| **Foundational** | 5,000+ years | What changed civilization? | *Calculus, Germ Theory, Transistors* |
+| **Modern** | Last 50 years | What changed science? | *CRISPR-Cas9, AlphaFold, mRNA* |
+| **Emerging** | Last 5 years | What might change the future? | *Quantum Error Correction, LLMs* |
+
+Every node in the Noetica Knowledge Graph is tracked across its historical lifecycle:
+`Speculative` ➔ `Emerging` ➔ `Growing` ➔ `Breakthrough` ➔ `Established` ➔ `Foundational` ➔ `Civilizational` ➔ `Historical`
 
 ---
 
@@ -85,31 +99,22 @@ graph TD
    pip install -r requirements.txt
    ```
 
-3. **Run the V3 Knowledge Graph Pipeline**
+3. **Configure Environment (Optional for V3 Enterprise Mode)**
    ```bash
-   python backend/ingest_v3.py
+   export DATABASE_URL="postgresql://user:pass@localhost:5432/noetica"
+   export RESEND_API_KEY="re_123456789"
+   export GEMINI_API_KEY="AI..."
    ```
 
-4. **Synthesize Data using AI**
+4. **Run the Intelligence Pipeline**
    ```bash
-   export GEMINI_API_KEY="your-api-key"
-   python src/ai_scientist.py
+   python src/main.py
    ```
-
-5. **Boot the Visual Dashboard**
-   ```bash
-   uvicorn backend.app.main:app --host 0.0.0.0 --port 10000
-   ```
-
----
-
-## 🌍 The Discovery Lifecycle
-
-Every node in the Noetica Knowledge Graph is tracked across its historical lifecycle:
-`Speculative` ➔ `Emerging` ➔ `Growing` ➔ `Breakthrough` ➔ `Established` ➔ `Foundational` ➔ `Civilizational` ➔ `Historical`
+   *To run a safe test trace without modifying production databases or dispatching emails, append `--dry-run`.*
 
 ---
 
 <div align="center">
+  <br>
   <i>Human understanding is the ultimate objective.</i>
 </div>

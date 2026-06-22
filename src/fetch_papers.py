@@ -341,31 +341,96 @@ def fetch_semantic_scholar(query: str, max_results: int = 5) -> list[dict]:
 # DISCOVERY CLUSTERING ENGINE
 # ─────────────────────────────────────────────
 
+def jaccard_similarity(text1: str, text2: str) -> float:
+    """Compute token Jaccard similarity between two strings."""
+    if not text1 or not text2:
+        return 0.0
+    
+    def tokenize(t):
+        import re
+        t = t.lower()
+        t = re.sub(r'[^a-z0-9\s]', '', t)
+        tokens = set(t.split())
+        # Remove common stopwords to improve signal
+        stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "with", "to", "for", "of", "is", "are", "was", "were", "by", "this", "that"}
+        return tokens - stopwords
+        
+    set1 = tokenize(text1)
+    set2 = tokenize(text2)
+    
+    if not set1 and not set2:
+        return 1.0
+    if not set1 or not set2:
+        return 0.0
+        
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return float(intersection) / float(union)
+
 def cluster_discoveries(papers: list[dict]) -> list[dict]:
     """
     Cluster duplicate papers from multiple sources into a single Discovery entity.
+    Uses both exact title matching and abstract Jaccard similarity.
     """
-    seen_titles = {}
     clusters = []
     
     for p in papers:
-        norm = "".join(c.lower() for c in p["title"] if c.isalnum())[:60]
-        if not norm:
+        norm_title = "".join(c.lower() for c in p["title"] if c.isalnum())[:60]
+        if not norm_title:
             continue
             
-        if norm in seen_titles:
-            # Merge into existing discovery cluster
-            existing = seen_titles[norm]
-            if "cluster_urls" not in existing:
-                existing["cluster_urls"] = []
-            existing["cluster_urls"].append(p.get("url", ""))
+        matched_cluster = None
+        
+        for cluster in clusters:
+            # 1. Exact title match
+            c_norm_title = "".join(c.lower() for c in cluster["title"] if c.isalnum())[:60]
+            if norm_title == c_norm_title:
+                matched_cluster = cluster
+                break
+                
+            # 2. Abstract Jaccard similarity
+            sim = jaccard_similarity(p.get("abstract", ""), cluster.get("abstract", ""))
+            if sim > 0.75: # 75% token overlap is very high
+                matched_cluster = cluster
+                break
+                
+        if matched_cluster:
+            # Aggregate into the Discovery object
+            source_entry = {
+                "type": p.get("source_types", ["paper"])[0],
+                "name": p.get("source", "Unknown"),
+                "url": p.get("url", ""),
+                "id": p.get("id", "")
+            }
+            if "sources" not in matched_cluster:
+                # Initialize the first-class sources list
+                matched_cluster["sources"] = [{
+                    "type": matched_cluster.get("source_types", ["paper"])[0],
+                    "name": matched_cluster.get("source", "Unknown"),
+                    "url": matched_cluster.get("url", ""),
+                    "id": matched_cluster.get("id", "")
+                }]
+            matched_cluster["sources"].append(source_entry)
             
-            # Prefer PubMed or peer-reviewed over arXiv for metadata
-            if existing.get("source") == "arXiv" and p.get("source") != "arXiv":
-                existing["source"] = p.get("source")
-                existing["id"] = p.get("id")
+            # Aggregate authors
+            new_authors = [a for a in p.get("authors", []) if a not in matched_cluster.get("authors", [])]
+            matched_cluster["authors"].extend(new_authors)
+            
+            # Prefer peer-reviewed metadata over preprints
+            if matched_cluster.get("source") == "arXiv" and p.get("source") != "arXiv":
+                matched_cluster["source"] = p.get("source")
+                matched_cluster["id"] = p.get("id")
+                # Update title to the peer-reviewed version if different
+                if len(p["title"]) > 10:
+                    matched_cluster["title"] = p["title"]
         else:
-            seen_titles[norm] = p
+            # Initialize as a new Discovery
+            p["sources"] = [{
+                "type": p.get("source_types", ["paper"])[0],
+                "name": p.get("source", "Unknown"),
+                "url": p.get("url", ""),
+                "id": p.get("id", "")
+            }]
             clusters.append(p)
             
     return clusters

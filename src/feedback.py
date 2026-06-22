@@ -32,7 +32,7 @@ import urllib.request
 import urllib.parse
 
 
-FEEDBACK_FORM_BASE = os.environ.get("FEEDBACK_FORM_BASE_URL", "")
+FEEDBACK_FORM_BASE = os.environ.get("FEEDBACK_FORM_BASE_URL", "https://docs.google.com/forms/d/e/1FAIpQLSdXVKKAbLeZNQ73md-Jt3IMXR1tpg0NbU0MVqXFLJ2N1KqARQ/viewform?usp=pp_url&entry.264714182={discovery_id}&entry.55145288={email}&entry.1700330847={rating}")
 FEEDBACK_SHEET_ID  = os.environ.get("FEEDBACK_SHEET_ID", "")
 
 # Rating labels and their URL-safe values

@@ -23,7 +23,10 @@ from fetch_papers import (
     fetch_semantic_scholar, cluster_discoveries,
     ARXIV_CATEGORIES, PUBMED_QUERIES, OPENALEX_CONCEPTS,
 )
-from v2_fetchers import fetch_nih_grants, fetch_github_repos, fetch_patents
+from v2_fetchers import (
+    fetch_nih_grants, fetch_github_repos, fetch_patents,
+    fetch_conferences, fetch_crunchbase
+)
 from fetch_clinical_trials import fetch_recent_oncology_trials
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -126,6 +129,26 @@ def _fetch_all_patents():
         results.extend(batch)
     return results
 
+def _fetch_all_conferences():
+    results = []
+    for venue in ["NeurIPS", "ICML", "Nature", "Cell"]:
+        batch = fetch_conferences(venue, max_results=2)
+        for p in batch:
+            p["source_types"] = ["paper"]
+        results.extend(batch)
+        time.sleep(1)
+    return results
+
+def _fetch_all_crunchbase():
+    results = []
+    for q in ["biotech", "artificial intelligence", "quantum computing"]:
+        batch = fetch_crunchbase(q, max_results=2)
+        for p in batch:
+            p["source_types"] = ["funding"]
+        results.extend(batch)
+        time.sleep(1)
+    return results
+
 def _fetch_clinical_trials():
     trials = fetch_recent_oncology_trials(days_back=7)
     for t in trials:
@@ -143,7 +166,8 @@ SOURCE_REGISTRY = [
         "type":        "paper",
         "enabled":     True,
         "fetcher":     _fetch_all_arxiv,
-        "description": "Preprints across Physics, Math, CS, Biology, and more",
+        "rate_limit":  1.0,
+        "description": "Preprint server for physics, math, and CS",
     },
     {
         "name":        "PubMed",
@@ -201,21 +225,20 @@ SOURCE_REGISTRY = [
         "fetcher":     _fetch_clinical_trials,
         "description": "Oncology clinical trials — real-world translation signal",
     },
-    # ── FUTURE SOURCES (add here, set enabled=False until ready) ──────────────
-    # {
-    #     "name":    "USPTO PatentsView",
-    #     "type":    "patent",
-    #     "enabled": False,
-    #     "fetcher": _fetch_uspto_patents,
-    #     "description": "Real USPTO patent data via PatentsView API",
-    # },
-    # {
-    #     "name":    "Crunchbase",
-    #     "type":    "funding",
-    #     "enabled": False,
-    #     "fetcher": _fetch_crunchbase,
-    #     "description": "Startup funding rounds — capital allocation signal",
-    # },
+    {
+        "name":        "Conferences",
+        "type":        "paper",
+        "enabled":     True,
+        "fetcher":     _fetch_all_conferences,
+        "description": "Peer-reviewed AI/Bio conference proceedings",
+    },
+    {
+        "name":        "Crunchbase",
+        "type":        "funding",
+        "enabled":     True,
+        "fetcher":     _fetch_all_crunchbase,
+        "description": "Startup funding rounds — capital allocation signal",
+    },
 ]
 
 

@@ -135,6 +135,97 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
 
 
 # ─────────────────────────────────────────────
+# SEMANTIC SCHOLAR API (CONFERENCE PROCEEDINGS)
+# ─────────────────────────────────────────────
+
+def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
+    """Fetch recent conference proceedings via Semantic Scholar."""
+    safe_venue = urllib.parse.quote(venue)
+    url = f"https://api.semanticscholar.org/graph/v1/paper/search?query={safe_venue}&fields=title,abstract,authors,year,url,venue&limit={max_results}"
+    
+    req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+    results = []
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            for item in data.get("data", []):
+                title = item.get("title", "")
+                abstract = item.get("abstract", "No abstract available.")
+                
+                authors = [a.get("name", "") for a in item.get("authors", [])]
+                if not authors:
+                    authors = ["Unknown Author"]
+                
+                results.append({
+                    "id": f"ss_{item.get('paperId', 'unknown')}",
+                    "title": f"[CONFERENCE] {title}",
+                    "abstract": abstract,
+                    "authors": authors[:3],
+                    "source": item.get("venue", venue),
+                    "domain": "Conference Proceedings",
+                    "date": datetime.date(item.get("year", datetime.date.today().year), 1, 1).isoformat(),
+                    "url": item.get("url", "")
+                })
+    except Exception as e:
+        print(f"⚠️ Conference Fetch Error for '{venue}': {e}")
+        
+    return results
+
+
+# ─────────────────────────────────────────────
+# CRUNCHBASE API (STARTUP FUNDING)
+# ─────────────────────────────────────────────
+import os
+CRUNCHBASE_API_KEY = os.environ.get("CRUNCHBASE_API_KEY", "")
+
+def fetch_crunchbase(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
+    """Fetch startup funding rounds matching scientific domains."""
+    if not CRUNCHBASE_API_KEY:
+        print(f"⚠️ Crunchbase API Key missing. Skipping real funding data for '{query}'.")
+        return []
+
+    # Requires paid API key for /v3.1/organizations. We use an abstracted proxy endpoint pattern here.
+    safe_query = urllib.parse.quote(query)
+    url = f"https://api.crunchbase.com/api/v4/searches/organizations"
+    
+    payload = {
+        "field_ids": ["identifier", "short_description", "funding_total", "last_funding_at"],
+        "query": [{"type": "predicate", "field_id": "short_description", "operator_id": "contains", "values": [query]}],
+        "limit": max_results
+    }
+    
+    req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method="POST")
+    req.add_header("X-cb-user-key", CRUNCHBASE_API_KEY)
+    req.add_header("Content-Type", "application/json")
+    
+    results = []
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            for item in data.get("entities", []):
+                props = item.get("properties", {})
+                title = props.get("identifier", {}).get("value", "Unknown Startup")
+                desc = props.get("short_description", "")
+                funding = props.get("funding_total", {}).get("value_usd", 0)
+                date = props.get("last_funding_at", datetime.today().isoformat())
+                
+                results.append({
+                    "id": f"cb_{item.get('uuid', 'unknown')}",
+                    "title": f"[STARTUP FUNDING] {title} raised ${funding}",
+                    "abstract": desc,
+                    "authors": [title],
+                    "source": "Crunchbase",
+                    "domain": "Venture Capital",
+                    "date": date,
+                    "url": f"https://www.crunchbase.com/organization/{props.get('identifier', {}).get('permalink', '')}"
+                })
+    except Exception as e:
+        print(f"⚠️ Crunchbase Fetch Error for '{query}': {e}")
+        
+    return results
+
+
+# ─────────────────────────────────────────────
 # ORCHESTRATOR FOR V2 FETCHERS
 # ─────────────────────────────────────────────
 

@@ -5,8 +5,10 @@ All credentials must be provided via environment variables or GitHub Secrets.
 """
 
 import os
+import json
 import smtplib
 import datetime
+import urllib.request
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -18,6 +20,8 @@ from email.mime.text import MIMEText
 SENDER_EMAIL    = os.environ.get("SENDER_EMAIL", "")
 SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD", "")   # Gmail App Password
 RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "")   # Your inbox
+RESEND_API_KEY  = os.environ.get("RESEND_API_KEY", "")    # V3 Delivery
+SENDGRID_API_KEY= os.environ.get("SENDGRID_API_KEY", "")  # V3 Delivery
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -28,10 +32,14 @@ def validate_config() -> bool:
     missing = []
     if not SENDER_EMAIL:
         missing.append("SENDER_EMAIL")
-    if not SENDER_PASSWORD:
-        missing.append("SENDER_PASSWORD")
+    
+    # We only strictly need SENDER_PASSWORD if no V3 API keys exist
+    if not SENDER_PASSWORD and not RESEND_API_KEY and not SENDGRID_API_KEY:
+        missing.append("SENDER_PASSWORD (or RESEND_API_KEY/SENDGRID_API_KEY)")
+        
     if not RECIPIENT_EMAIL:
         missing.append("RECIPIENT_EMAIL")
+        
     if missing:
         print(f"❌ Missing environment variables: {', '.join(missing)}")
         print("   Set them as GitHub Secrets or local environment variables.")
@@ -39,35 +47,95 @@ def validate_config() -> bool:
     return True
 
 
+def _send_via_resend(target_email: str, subject: str, html_body: str) -> bool:
+    print("📧 Sending via Resend API (V3)...")
+    url = "https://api.resend.com/emails"
+    payload = {
+        "from": f"Noetica Intelligence <{SENDER_EMAIL}>",
+        "to": [target_email],
+        "subject": subject,
+        "html": html_body
+    }
+    req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method="POST")
+    req.add_header("Authorization", f"Bearer {RESEND_API_KEY}")
+    req.add_header("Content-Type", "application/json")
+    
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status in (200, 201):
+                print(f"✅ Email sent successfully to {target_email} via Resend")
+                return True
+    except Exception as e:
+        print(f"❌ Resend API failed: {e}")
+    return False
+
+
+def _send_via_sendgrid(target_email: str, subject: str, html_body: str) -> bool:
+    print("📧 Sending via SendGrid API (V3)...")
+    url = "https://api.sendgrid.com/v3/mail/send"
+    payload = {
+        "personalizations": [{"to": [{"email": target_email}]}],
+        "from": {"email": SENDER_EMAIL, "name": "Noetica Intelligence"},
+        "subject": subject,
+        "content": [{"type": "text/html", "value": html_body}]
+    }
+    req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method="POST")
+    req.add_header("Authorization", f"Bearer {SENDGRID_API_KEY}")
+    req.add_header("Content-Type", "application/json")
+    
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status in (200, 201, 202):
+                print(f"✅ Email sent successfully to {target_email} via SendGrid")
+                return True
+    except Exception as e:
+        print(f"❌ SendGrid API failed: {e}")
+    return False
+
+
 def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipient_email: str = "") -> bool:
     """
-    Send the digest email via Gmail SMTP.
+    Send the digest email using the optimal delivery infrastructure (V3 fallback waterfall).
     Returns True on success, False on failure.
     """
     target_email = recipient_email if recipient_email else RECIPIENT_EMAIL
     
-    if not SENDER_EMAIL or not SENDER_PASSWORD or not target_email:
+    if not SENDER_EMAIL or not target_email:
         print("❌ Missing environment variables or target email.")
+        return False
+
+    # 1. Try Resend
+    if RESEND_API_KEY:
+        success = _send_via_resend(target_email, subject, html_body)
+        if success: return True
+        print("⚠️ Resend failed, falling back to next available provider...")
+
+    # 2. Try SendGrid
+    if SENDGRID_API_KEY:
+        success = _send_via_sendgrid(target_email, subject, html_body)
+        if success: return True
+        print("⚠️ SendGrid failed, falling back to SMTP...")
+
+    # 3. Fallback to Gmail SMTP
+    if not SENDER_PASSWORD:
+        print("❌ SMTP fallback failed: SENDER_PASSWORD is not set.")
         return False
 
     msg = MIMEMultipart("related")
     msg["Subject"] = subject
     msg["From"]    = f"Noetica Intelligence System <{SENDER_EMAIL}>"
     msg["To"]      = target_email
-    msg["X-Priority"] = "1"  # Mark as high priority
+    msg["X-Priority"] = "1"
 
-    # Create the alternative part for text/html
     msg_alt = MIMEMultipart("alternative")
     msg.attach(msg_alt)
 
-    # Plain text fallback
     if not plain_fallback:
-        plain_fallback = "Your Scientific Intelligence Digest is ready. Open in an HTML-capable email client to view the full digest."
+        plain_fallback = "Your Scientific Intelligence Digest is ready. Open in an HTML-capable email client."
 
     msg_alt.attach(MIMEText(plain_fallback, "plain", "utf-8"))
     msg_alt.attach(MIMEText(html_body,      "html",  "utf-8"))
 
-    # Embed the logo via CID
     try:
         from email.mime.image import MIMEImage
         import pathlib
@@ -79,36 +147,29 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipien
                 msg_img.add_header("Content-ID", "<logo.png>")
                 msg_img.add_header("Content-Disposition", "inline", filename="logo.png")
                 msg.attach(msg_img)
-        else:
-            print(f"⚠️  Logo not found at {logo_path}, email will send without embedded logo.")
     except Exception as e:
-        print(f"⚠️  Failed to embed logo: {e}")
+        pass
 
     try:
-        print(f"📧 Connecting to {SMTP_HOST}:{SMTP_PORT}...")
+        print(f"📧 Connecting to {SMTP_HOST}:{SMTP_PORT} via SMTP...")
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
             server.ehlo()
             server.starttls()
             server.ehlo()
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, [target_email], msg.as_string())
-        print(f"✅ Email sent successfully to {target_email}")
+        print(f"✅ Email sent successfully to {target_email} via SMTP")
         return True
     except smtplib.SMTPAuthenticationError:
-        print("❌ SMTP Authentication failed.")
-        print("   → Check SENDER_EMAIL and SENDER_PASSWORD (Gmail App Password, not account password)")
-        print("   → Ensure 2FA is enabled on your Gmail account")
-        print("   → Generate App Password: myaccount.google.com → Security → App passwords")
-        return False
+        print("❌ SMTP Authentication failed. Check App Password.")
     except smtplib.SMTPRecipientsRefused as e:
         print(f"❌ Recipient refused: {e}")
-        return False
     except smtplib.SMTPException as e:
         print(f"❌ SMTP error: {e}")
-        return False
     except Exception as e:
-        print(f"❌ Unexpected error sending email: {e}")
-        return False
+        print(f"❌ Unexpected error sending email via SMTP: {e}")
+        
+    return False
 
 
 def build_plain_text_summary(papers: list[dict]) -> str:

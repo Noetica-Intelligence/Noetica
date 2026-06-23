@@ -223,8 +223,19 @@ def main() -> int:
         name     = sub.get("Name") or email.split("@")[0]
         time_str = sub.get("Reading Time", "15 Minutes")
         limit    = get_paper_limit_for_time(time_str)
+        freq_str = sub.get("Report Frequency", "Daily").lower()
 
         print(f"\n   👤 [{i}/{len(subscribers)}] {name} ({email}) — {time_str} → {limit} discoveries")
+
+        # Enforce Report Frequency
+        if "weekly" in freq_str:
+            if datetime.date.today().weekday() != 6: # 6 is Sunday
+                print(f"   ⏭️  Skipping (Weekly subscriber; delivers on Sundays)")
+                continue
+        elif "monthly" in freq_str:
+            if datetime.date.today().day != 1:
+                print(f"   ⏭️  Skipping (Monthly subscriber; delivers on the 1st)")
+                continue
 
         user_papers     = filter_papers_for_subscriber(scored_papers, sub)
         user_top_papers = user_papers[:limit]

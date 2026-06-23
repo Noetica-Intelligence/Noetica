@@ -70,7 +70,7 @@ def ingest_feedback_from_sheet() -> int:
     Expected columns: Timestamp, Discovery ID, Email, Rating
     Returns the number of new feedback rows ingested.
     """
-    if not FEEDBACK_SHEET_ID:
+    if not FEEDBACK_SHEET_ID or len(FEEDBACK_SHEET_ID.strip()) < 5:
         return 0
 
     from database import save_feedback  # avoid circular at module level

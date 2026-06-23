@@ -23,6 +23,11 @@ jobs:
         with:
           version: 0.13.0 # Fallback version for stability
 
+      - name: Build Zig Engine
+        run: |
+          cd zig_engine
+          zig build
+
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -30,9 +35,9 @@ jobs:
 
       - name: Generate & Send Email Report
         env:
-          SENDER_EMAIL: ${{ secrets.GMAIL_EMAIL }}
-          SENDER_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          RECIPIENT_EMAIL: ${{ secrets.GMAIL_EMAIL }}
+          SENDER_EMAIL: ${{ secrets.NOETICA_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.NOETICA_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.NOETICA_EMAIL }}
           NOETICA_SUBSCRIBERS: ${{ secrets.NOETICA_SUBSCRIBERS }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           FEEDBACK_SHEET_ID: ${{ secrets.FEEDBACK_SHEET_ID }}

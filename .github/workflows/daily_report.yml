@@ -2,7 +2,7 @@ name: Noetica Daily Intelligence
 
 on:
   schedule:
-    - cron: '30 2 * * *' # 02:30 UTC = 08:00 AM IST daily
+    - cron: '20 2 * * *' # 02:20 UTC = 07:50 AM IST (offset to ensure delivery by 08:00 AM IST)
   workflow_dispatch: # Allow manual trigger from GitHub UI
 
 jobs:

@@ -105,7 +105,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     strat_imp = html_lib.escape(discovery.get("strategic_implication", "Incremental advancement detected."))
     kg_edge   = html_lib.escape(discovery.get("knowledge_graph_edge", ""))
 
-    composite_100 = scores.get("composite", 65)
+    composite_score = scores.get("composite", 6.5)
 
     # Compute Source Aggregation String
     st_data = discovery.get("source_types")
@@ -146,7 +146,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
         <tr>
           <td align="left" valign="middle">
-            <span class="net-score" style="background:#f8fafc;color:#475569;border:1px solid #e2e8f0;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:1px;margin-right:8px;">NET:{composite_100}</span>
+            <span class="net-score" style="background:#f8fafc;color:#475569;border:1px solid #e2e8f0;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:1px;margin-right:8px;">NET:{composite_score:.1f}</span>
             {domain_badge(domain)}
           </td>
           <td align="right" valign="middle">

@@ -28,16 +28,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 sqlalchemy
 
-      - name: Execute V3 Data Ingestion & Graph Computation
-        run: |
-          # Sets up the local SQLite database and pipes data to the Zig engine
-          python backend/ingest_v3.py
-
       - name: Generate & Send Email Report
         env:
-          SENDER_EMAIL: ${{ secrets.NOETICA_EMAIL }}
-          SENDER_PASSWORD: ${{ secrets.NOETICA_APP_PASSWORD }}
-          RECIPIENT_EMAIL: ${{ secrets.NOETICA_EMAIL }}
+          SENDER_EMAIL: ${{ secrets.GMAIL_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.GMAIL_EMAIL }}
           NOETICA_SUBSCRIBERS: ${{ secrets.NOETICA_SUBSCRIBERS }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           FEEDBACK_SHEET_ID: ${{ secrets.FEEDBACK_SHEET_ID }}

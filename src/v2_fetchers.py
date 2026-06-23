@@ -2,11 +2,9 @@ import urllib.request
 import urllib.parse
 import json
 import time
-import ssl
+import os
+import datetime
 from typing import List, Dict, Any
-from datetime import datetime
-
-ssl._create_default_https_context = ssl._create_unverified_context
 
 # ─────────────────────────────────────────────
 # NIH REPORTER API (GRANT TRACKING)
@@ -175,7 +173,6 @@ def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
 # ─────────────────────────────────────────────
 # CRUNCHBASE API (STARTUP FUNDING)
 # ─────────────────────────────────────────────
-import os
 CRUNCHBASE_API_KEY = os.environ.get("CRUNCHBASE_API_KEY", "")
 
 def fetch_crunchbase(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
@@ -207,7 +204,7 @@ def fetch_crunchbase(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
                 title = props.get("identifier", {}).get("value", "Unknown Startup")
                 desc = props.get("short_description", "")
                 funding = props.get("funding_total", {}).get("value_usd", 0)
-                date = props.get("last_funding_at", datetime.today().isoformat())
+                date = props.get("last_funding_at", datetime.date.today().isoformat())
                 
                 results.append({
                     "id": f"cb_{item.get('uuid', 'unknown')}",

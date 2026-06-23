@@ -43,6 +43,10 @@ def execute_query(cursor, query: str, params: tuple = ()):
             query = query.replace("INSERT OR IGNORE INTO score_history", "INSERT INTO score_history")
             query += " ON CONFLICT (discovery_id, recorded_date) DO NOTHING"
             
+        elif "INSERT OR IGNORE INTO alert_history" in query:
+            query = query.replace("INSERT OR IGNORE INTO alert_history", "INSERT INTO alert_history")
+            query += " ON CONFLICT (rule_id, discovery_id, fired_date) DO NOTHING"
+            
         elif "INSERT OR REPLACE INTO field_momentum" in query:
             query = query.replace("INSERT OR REPLACE INTO field_momentum", "INSERT INTO field_momentum")
             query += " ON CONFLICT (field, recorded_date) DO UPDATE SET paper_count=EXCLUDED.paper_count, avg_score=EXCLUDED.avg_score"
@@ -82,7 +86,7 @@ def init_db():
     # ── Score History Table (powers trend_score) ────────────────────────────
     execute_query(cursor, """
         CREATE TABLE IF NOT EXISTS score_history (
-            id          SERIAL PRIMARY KEY,
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
             discovery_id TEXT NOT NULL,
             recorded_date TEXT NOT NULL,
             score        REAL NOT NULL,
@@ -93,7 +97,7 @@ def init_db():
     # ── User Feedback Table ─────────────────────────────────────────────────
     execute_query(cursor, """
         CREATE TABLE IF NOT EXISTS user_feedback (
-            id              SERIAL PRIMARY KEY,
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
             discovery_id    TEXT NOT NULL,
             subscriber_email TEXT,
             rating          TEXT NOT NULL,

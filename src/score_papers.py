@@ -210,8 +210,8 @@ def compute_composite_score(paper: dict) -> dict:
     # Calculate 0-10 base
     base_10 = min(raw_composite * domain_mult * source_mult + title_bonus * 0.2, 10.0)
     
-    # Map to 0-100 scale (final_100)
-    final_100 = min(100, int(round(base_10 * 10)))
+    # Map to 0-10 scale (final_score)
+    final_score = round(base_10, 1)
 
     cross_domains = get_cross_disciplinary_connections(domain)
 
@@ -246,9 +246,9 @@ def compute_composite_score(paper: dict) -> dict:
 
     # Discovery Lifecycle Status
     status = "Emerging Signal"
-    if final_100 >= 85:
+    if final_score >= 8.5:
         status = "Breakthrough Signal"
-    elif final_100 >= 75:
+    elif final_score >= 7.5:
         status = "Strong Signal"
 
     paper["scores"] = {
@@ -256,7 +256,7 @@ def compute_composite_score(paper: dict) -> dict:
         "evidence":    round(evidence, 2),
         "recency":     round(recency, 2),
         "citation_v":  round(citation_v, 2),
-        "composite":   final_100,  # Now stores the 100-point integer
+        "composite":   final_score,  # Now stores the 10-point float
     }
     
     # Updated Output Payload

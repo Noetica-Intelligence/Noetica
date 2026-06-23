@@ -21,14 +21,12 @@ To avoid alert fatigue:
 import os
 import json
 import datetime
-import sqlite3
 import smtplib
 from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-DB_PATH = Path("data") / "scientific_intelligence.db"
-
+from database import _connect, get_cursor, execute_query
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ALERT RULES
@@ -98,9 +96,9 @@ ALERT_RULES: list[dict] = [
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _init_alert_table():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.execute("""
+    conn = _connect()
+    cursor = get_cursor(conn)
+    execute_query(cursor, """
         CREATE TABLE IF NOT EXISTS alert_history (
             id              INTEGER PRIMARY KEY AUTOINCREMENT,
             rule_id         TEXT NOT NULL,
@@ -115,20 +113,23 @@ def _init_alert_table():
 
 def _already_alerted(rule_id: str, discovery_id: str) -> bool:
     """Returns True if this rule already fired for this discovery today."""
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = _connect()
+    cursor = get_cursor(conn)
     today = datetime.date.today().isoformat()
-    row = conn.execute(
+    execute_query(cursor, 
         "SELECT 1 FROM alert_history WHERE rule_id=? AND discovery_id=? AND fired_date=?",
         (rule_id, discovery_id, today)
-    ).fetchone()
+    )
+    row = cursor.fetchone()
     conn.close()
     return row is not None
 
 
 def _record_alert(rule_id: str, discovery_id: str):
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = _connect()
+    cursor = get_cursor(conn)
     today = datetime.date.today().isoformat()
-    conn.execute(
+    execute_query(cursor, 
         "INSERT OR IGNORE INTO alert_history (rule_id, discovery_id, fired_date) VALUES (?,?,?)",
         (rule_id, discovery_id, today)
     )

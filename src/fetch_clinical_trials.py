@@ -1,5 +1,6 @@
-import requests
-from datetime import datetime, timedelta
+import urllib.request
+import urllib.parse
+from datetime import datetime, timedelta, date
 import json
 import logging
 
@@ -22,10 +23,13 @@ def fetch_recent_oncology_trials(days_back=7):
         "format": "json"
     }
     
+    query_string = urllib.parse.urlencode(params)
+    url = f"{CLINICAL_TRIALS_API_URL}?{query_string}"
+    
     try:
-        response = requests.get(CLINICAL_TRIALS_API_URL, params=params)
-        response.raise_for_status()
-        data = response.json()
+        req = urllib.request.Request(url, headers={"User-Agent": "Noetica/1.0"})
+        with urllib.request.urlopen(req, timeout=15) as response:
+            data = json.loads(response.read().decode())
         
         trials = []
         for study in data.get('studies', []):
@@ -46,7 +50,10 @@ def fetch_recent_oncology_trials(days_back=7):
                 "status": status,
                 "abstract": abstract,
                 "url": f"https://clinicaltrials.gov/study/{nct_id}",
-                "domain": "Clinical Oncology"
+                "domain": "Clinical Oncology",
+                "authors": ["ClinicalTrials.gov"],
+                "date": date.today().isoformat(),
+                "pdf_url": ""
             })
             
         logger.info(f"Successfully fetched {len(trials)} clinical trials.")
@@ -59,4 +66,4 @@ def fetch_recent_oncology_trials(days_back=7):
 if __name__ == "__main__":
     trials = fetch_recent_oncology_trials()
     for t in trials[:3]:
-        print(f"{t['nct_id']}: {t['title']} ({t['status']})")
+        print(f"{t['id']}: {t['title']} ({t['status']})")

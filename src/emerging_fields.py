@@ -10,12 +10,10 @@ Reads from the field_momentum table in the database (written by save_discoveries
 """
 
 import datetime
-import sqlite3
 from pathlib import Path
 from collections import defaultdict
 
-DB_PATH = Path("data") / "scientific_intelligence.db"
-
+from database import _connect, get_cursor, execute_query
 
 # ─────────────────────────────────────────────────────────────────────────────
 # KNOWN CROSS-DOMAIN CONVERGENCES (seeds for the detector)
@@ -71,16 +69,20 @@ def _load_field_momentum(days: int = 30) -> dict[str, list[dict]]:
     Load field_momentum records from the DB for the last N days.
     Returns { field: [{"date": ..., "count": ..., "avg_score": ...}, ...] }
     """
-    if not DB_PATH.exists():
-        return {}
-
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = _connect()
+    cursor = get_cursor(conn)
     threshold = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
-    rows = conn.execute(
-        "SELECT * FROM field_momentum WHERE recorded_date >= ? ORDER BY recorded_date ASC",
-        (threshold,)
-    ).fetchall()
+    
+    try:
+        execute_query(cursor, 
+            "SELECT * FROM field_momentum WHERE recorded_date >= ? ORDER BY recorded_date ASC",
+            (threshold,)
+        )
+        rows = cursor.fetchall()
+    except Exception:
+        # Table might not exist yet if DB is fresh
+        rows = []
+    
     conn.close()
 
     result: dict[str, list[dict]] = defaultdict(list)

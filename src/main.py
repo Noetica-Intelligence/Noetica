@@ -157,6 +157,47 @@ def main() -> int:
     print(f"\n⚖️  [3/6] Scoring and ranking {len(papers)} discoveries...")
     scored_papers = score_and_rank(papers, top_n=len(papers))
 
+    # ── Step 3b: Zig Engine Graph & BioSignal Analysis ───────────────────────
+    print(f"\n⚡ [3b/6] Running Zig Engine graph analysis...")
+    import subprocess
+    try:
+        zig_input_path = "zig_engine/input.json"
+        with open(zig_input_path, "w", encoding="utf-8") as f:
+            json.dump(scored_papers, f)
+            
+        zig_bin = "zig_engine/zig-out/bin/zig_engine"
+        if os.name == "nt":
+            zig_bin += ".exe"
+            
+        if os.path.exists(zig_bin):
+            res = subprocess.run([zig_bin], capture_output=True, text=True, cwd="zig_engine")
+            if res.returncode == 0:
+                zig_data = json.loads(res.stdout)
+                zig_nodes = {n["id"]: n for n in zig_data.get("nodes", [])}
+                
+                # Merge zig scores into papers
+                for p in scored_papers:
+                    p_id = p.get("id")
+                    if p_id in zig_nodes:
+                        zn = zig_nodes[p_id]
+                        # Zig computes a robust network influence score [0, 10]
+                        p["network_influence"] = zn.get("influence", 0)
+                        p["network_centrality"] = zn.get("centrality", "Isolated")
+                        p["biosignal"] = zn.get("primary_signal", "none")
+                        
+                        # Add a bonus to the final score based on network influence
+                        p["composite_score"] = min(10.0, p.get("composite_score", 0) + (zn.get("influence", 0) * 0.2))
+                
+                # Sort again by updated score
+                scored_papers = sorted(scored_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
+                print("   ✅ Zig Engine enrichment complete.")
+            else:
+                print(f"   ⚠️  Zig Engine failed (code {res.returncode}): {res.stderr}")
+        else:
+            print("   ⚠️  Zig Engine binary not found. Skipping network analysis.")
+    except Exception as e:
+        print(f"   ⚠️  Failed to run Zig Engine: {e}")
+
     # ── Step 4: Save to Knowledge Base (with trend score + lifecycle) ─────────
     print(f"\n💾 [4/6] Saving to Knowledge Base...")
     save_discoveries(scored_papers)

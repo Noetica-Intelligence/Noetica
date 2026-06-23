@@ -62,9 +62,38 @@ def get_subscribers() -> list[dict]:
             
         reader = csv.DictReader(lines)
         subscribers = []
-        for row in reader:
+        for raw_row in reader:
+            row = {}
+            for k, v in raw_row.items():
+                if not k: continue
+                k_lower = k.lower()
+                val = v.strip() if v else ""
+                
+                if "email" in k_lower:
+                    row["Email"] = val
+                elif "name" in k_lower:
+                    row["Name"] = val
+                elif "expertise" in k_lower or "best describes" in k_lower:
+                    row["Expertise Level"] = val
+                elif "time" in k_lower or "dedicate" in k_lower:
+                    row["Reading Time"] = val
+                elif "frequency" in k_lower or "often" in k_lower:
+                    row["Report Frequency"] = val
+                elif "fields" in k_lower or ("interest" in k_lower and "outside" not in k_lower):
+                    row["Interests"] = val
+                elif "types" in k_lower or "preferences" in k_lower:
+                    row["Discovery Preferences"] = val
+                elif "outside" in k_lower or "exploration" in k_lower:
+                    row["Exploration Preference"] = val
+                elif "consent" in k_lower:
+                    row["Consent"] = val
+
+            # Default missing consent column to yes so it doesn't fail if they forgot the question
+            if "Consent" not in row:
+                row["Consent"] = "yes"
+
             # Only include users who consented and provided an email
-            if row.get("Email") and str(row.get("Consent", "")).strip().lower() == "yes":
+            if row.get("Email") and str(row.get("Consent", "yes")).strip().lower() == "yes":
                 subscribers.append(row)
                 
         print(f"✅ Loaded {len(subscribers)} active subscribers.")

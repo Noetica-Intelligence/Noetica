@@ -72,7 +72,13 @@ def get_subscribers() -> list[dict]:
         
     except urllib.error.URLError as e:
         print(f"❌ Error fetching Google Sheet. Is it Published to the Web? {e}")
-        return []
+        print("⚠️ Falling back to hardcoded subscriber list.")
+        return [
+            {"Email": "skanishmd321@gmail.com", "Name": "Anish", "Reading Time": "15 Minutes", "Interests": "All", "Exploration Preference": "Yes", "Report Frequency": "Daily"},
+            {"Email": "rizwanahmed2603@gmail.com", "Name": "रैंडी", "Reading Time": "30 Minutes", "Interests": "All", "Exploration Preference": "Yes", "Report Frequency": "Daily"},
+            {"Email": "maxaer399@gmail.com", "Name": "Bahadur Ghoda", "Reading Time": "15 Minutes", "Interests": "All", "Exploration Preference": "Yes", "Report Frequency": "Daily"},
+            {"Email": "nawazishalam835@gmail.com", "Name": "Nawazish Alam", "Reading Time": "5 Minutes", "Interests": "All", "Exploration Preference": "No", "Report Frequency": "Daily"}
+        ]
     except Exception as e:
         print(f"❌ Unexpected error reading subscribers: {e}")
         return []

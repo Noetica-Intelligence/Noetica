@@ -24,8 +24,8 @@ pub fn computeEdge(d1_domain: []const u8, d2_domain: []const u8, d1_title: []con
     };
 
     var overlap_count: f64 = 0.0;
-    for (&high_value_tokens) |token| {
-        if (std.mem.indexOf(u8, d1_title, token.*) != null and std.mem.indexOf(u8, d2_title, token.*) != null) {
+    for (high_value_tokens) |token| {
+        if (std.mem.indexOf(u8, d1_title, token) != null and std.mem.indexOf(u8, d2_title, token) != null) {
             overlap_count += 1.0;
         }
     }

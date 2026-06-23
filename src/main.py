@@ -170,7 +170,10 @@ def main() -> int:
             zig_bin += ".exe"
             
         if os.path.exists(zig_bin):
-            res = subprocess.run([zig_bin], capture_output=True, text=True, cwd="zig_engine")
+            run_bin = "./zig-out/bin/zig_engine"
+            if os.name == "nt":
+                run_bin += ".exe"
+            res = subprocess.run([run_bin], capture_output=True, text=True, cwd="zig_engine")
             if res.returncode == 0:
                 zig_data = json.loads(res.stdout)
                 zig_nodes = {n["id"]: n for n in zig_data.get("nodes", [])}

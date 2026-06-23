@@ -47,7 +47,7 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
                     "authors": [pi],
                     "source": "NIH RePORTER",
                     "domain": "Biomedical Funding",
-                    "date": item.get("project_start_date", datetime.today().isoformat()),
+                    "date": item.get("project_start_date", datetime.date.today().isoformat()),
                     "url": f"https://reporter.nih.gov/project-details/{item.get('appl_id')}",
                     "funding_amount": cost
                 })
@@ -80,7 +80,7 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
                     "authors": [item.get("owner", {}).get("login", "Unknown")],
                     "source": "GitHub",
                     "domain": "Open Source Software",
-                    "date": item.get("updated_at", datetime.today().isoformat()),
+                    "date": item.get("updated_at", datetime.date.today().isoformat()),
                     "url": item.get("html_url", ""),
                     "stars": item.get("stargazers_count", 0)
                 })
@@ -114,7 +114,7 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
                 if not authors:
                     authors = ["Unknown Inventor/Assignee"]
                 
-                pub_date = item.get("firstPublicationDate", datetime.today().isoformat())
+                pub_date = item.get("firstPublicationDate", datetime.date.today().isoformat())
                 
                 results.append({
                     "id": f"pat_{item.get('id', 'unknown')}",

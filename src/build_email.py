@@ -168,6 +168,11 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         ↳ Aggregated from: {source_agg_str}
       </div>
 
+      <!-- Abstract Summary -->
+      <div style="font-size:14px;color:#334155;line-height:1.6;margin-bottom:20px;">
+        {abstract}
+      </div>
+
       <!-- Strategic Implication (The Core Insight) -->
       <div class="rationale-box" style="background:#f8fafc; border-left:3px solid #0f172a; padding:16px; border-radius:0 8px 8px 0;">
          <div class="rationale-title" style="font-size:10px;color:#0f172a;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:8px;">Strategic Implication</div>
@@ -178,11 +183,6 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
 
       <!-- Knowledge Graph Connections -->
       {kg_html}
-
-      <!-- Abstract (Demoted) -->
-      <div class="abstract-text" style="margin-top:20px; font-size:12px; color:#94a3b8; font-style:italic; line-height:1.6; border-top:1px solid #f1f5f9; padding-top:16px;">
-         Reference: "{abstract}"
-      </div>
 
       <!-- Action Buttons -->
       <div style="margin-top:20px;">

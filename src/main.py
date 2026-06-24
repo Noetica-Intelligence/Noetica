@@ -26,7 +26,7 @@ from score_papers     import score_and_rank
 from ai_synthesis     import generate_personalized_synthesis
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
-from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests
+from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
 from database         import save_discoveries
 from alerts           import check_and_fire_alerts           # ← NEW: alert system
 from emerging_fields  import get_emerging_trends             # ← NEW: real trend detection
@@ -84,10 +84,20 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
     """
     interests_str = sub.get("Interests", "")
     interests = parse_interests(interests_str)
+    
+    discovery_prefs_str = sub.get("Discovery Preferences", "")
+    allowed_types = parse_discovery_preferences(discovery_prefs_str)
+    
     exploration = str(sub.get("Exploration Preference", "yes")).strip().lower() == "yes"
 
     filtered = []
     for p in all_papers:
+        # 1. Enforce Discovery Preferences strictly
+        p_types = p.get("source_types", ["paper"])
+        if not any(t in allowed_types for t in p_types):
+            continue
+
+        # 2. Check if it matches interests
         if not interests:
             filtered.append(p)
             continue
@@ -99,9 +109,12 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
         if matched:
             filtered.append(p)
 
-    # 20% forced exploration — inject top non-matching discoveries
+    # 20% forced exploration — inject top non-matching discoveries (must still match allowed_types!)
     if exploration and len(filtered) < len(all_papers):
-        non_matching    = [p for p in all_papers if p not in filtered]
+        non_matching = [
+            p for p in all_papers 
+            if p not in filtered and any(t in allowed_types for t in p.get("source_types", ["paper"]))
+        ]
         exploration_count = max(1, int(len(filtered) * 0.25))
         filtered.extend(non_matching[:exploration_count])
 

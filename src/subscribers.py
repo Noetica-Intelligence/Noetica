@@ -129,3 +129,27 @@ def parse_interests(interest_str: str) -> list[str]:
     if not interest_str or interest_str.lower() == "all":
         return []
     return [i.strip() for i in interest_str.split(",")]
+
+def parse_discovery_preferences(pref_str: str) -> list[str]:
+    """Map Google Form checkbox strings to system source types."""
+    if not pref_str:
+        # Default to papers if nothing selected
+        return ["paper"]
+        
+    pref_str = pref_str.lower()
+    types = set()
+    
+    if "research papers" in pref_str or "scientific conferences" in pref_str:
+        types.add("paper")
+    if "patents" in pref_str:
+        types.add("patent")
+    if "research grants" in pref_str:
+        types.add("grant")
+    if "startup funding" in pref_str:
+        types.add("funding")
+    if "open source projects" in pref_str:
+        types.add("repo")
+    if "clinical trials" in pref_str:
+        types.add("trial")
+        
+    return list(types) if types else ["paper"]

@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from source_registry  import fetch_all_intelligence         # ← NEW: plug-in registry
 from score_papers     import score_and_rank
+from ai_synthesis     import generate_personalized_synthesis
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests
@@ -246,8 +247,14 @@ def main() -> int:
 
         print(f"   🏆 Selected {len(user_top_papers)} personalized discoveries.")
 
-        # Build email with real emerging trends
-        html_body = build_email_html(user_top_papers, today, emerging_trends=emerging_trends, subscriber_email=email)
+        # Generate Personalized AI Synthesis
+        expertise_str = sub.get("Expertise Level", "Intermediate")
+        interests_str = sub.get("Interests", "All")
+        print(f"   🧠 Generating AI synthesis for expertise: {expertise_str}...")
+        ai_synthesis_html = generate_personalized_synthesis(user_top_papers, expertise_str, interests_str)
+
+        # Build email with real emerging trends and AI synthesis
+        html_body = build_email_html(user_top_papers, today, emerging_trends=emerging_trends, subscriber_email=email, ai_synthesis_html=ai_synthesis_html)
         subject   = build_email_subject(user_top_papers, today)
         plain     = build_plain_text_summary(user_top_papers)
 

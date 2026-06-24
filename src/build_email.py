@@ -200,7 +200,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     </div>"""
 
 
-def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[dict] = None, subscriber_email: str = "") -> str:
+def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[dict] = None, subscriber_email: str = "", ai_synthesis_html: str = "") -> str:
     today = datetime.date.today().strftime("%A, %B %d, %Y")
     total = len(papers)
 
@@ -244,6 +244,21 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           </div>
           
           <a href="{wc_url}" style="color:#ef4444;font-weight:700;font-size:12px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;">Analyze Anomaly →</a>
+        </div>"""
+
+    # Generate AI Synthesis HTML
+    ai_synthesis_formatted = ""
+    if ai_synthesis_html:
+        ai_synthesis_formatted = f"""
+        <div style="background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:32px;margin-bottom:40px;box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
+          <div style="display:flex;align-items:center;margin-bottom:16px;">
+            <div style="background:linear-gradient(135deg, #6366f1, #c026d3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;">
+              ✨ Noetica AI Synthesis
+            </div>
+          </div>
+          <div style="color:#e2e8f0;font-size:15px;line-height:1.7;font-weight:400;">
+            {ai_synthesis_html}
+          </div>
         </div>"""
 
     # Generate Emerging Trends HTML
@@ -337,6 +352,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
               </tr>
             </table>
           </div>
+          
+          {ai_synthesis_formatted}
           
           {trends_html}
 

@@ -1,5 +1,3 @@
-# NOETICA
-
 ## Official Name
 Noetica
 

@@ -293,4 +293,4 @@ def fetch_all_intelligence() -> list[dict]:
     all_items = cluster_discoveries(all_items)
 
     print(f"\n✅ Total unique discoveries after clustering: {len(all_items)}")
-    return all_items[:max_total]
+    return all_items

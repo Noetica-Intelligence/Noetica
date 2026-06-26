@@ -5,6 +5,7 @@ import time
 import os
 import datetime
 from typing import List, Dict, Any
+import xml.etree.ElementTree as ET
 
 # ─────────────────────────────────────────────
 # NIH REPORTER API (GRANT TRACKING)
@@ -171,55 +172,72 @@ def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
 
 
 # ─────────────────────────────────────────────
-# CRUNCHBASE API (STARTUP FUNDING)
+# UNIFIED RSS AGGREGATOR (STARTUP FUNDING)
 # ─────────────────────────────────────────────
-CRUNCHBASE_API_KEY = os.environ.get("CRUNCHBASE_API_KEY", "")
+import re
+import hashlib
 
-def fetch_crunchbase(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
-    """Fetch startup funding rounds matching scientific domains."""
-    if not CRUNCHBASE_API_KEY:
-        print(f"⚠️ Crunchbase API Key missing. Skipping real funding data for '{query}'.")
-        return []
-
-    # Requires paid API key for /v3.1/organizations. We use an abstracted proxy endpoint pattern here.
-    safe_query = urllib.parse.quote(query)
-    url = f"https://api.crunchbase.com/api/v4/searches/organizations"
+def fetch_startup_funding_rss(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
+    """Fetch startup funding rounds using unified RSS aggregation (Google News + TechCrunch)."""
+    safe_query = urllib.parse.quote(f"{query} startup funding raise")
     
-    payload = {
-        "field_ids": ["identifier", "short_description", "funding_total", "last_funding_at"],
-        "query": [{"type": "predicate", "field_id": "short_description", "operator_id": "contains", "values": [query]}],
-        "limit": max_results
-    }
-    
-    req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method="POST")
-    req.add_header("X-cb-user-key", CRUNCHBASE_API_KEY)
-    req.add_header("Content-Type", "application/json")
+    # Global unified net
+    feeds = [
+        f"https://news.google.com/rss/search?q={safe_query}&hl=en-US&gl=US&ceid=US:en",
+        "https://techcrunch.com/category/fundings-exits/feed/"
+    ]
     
     results = []
-    try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            for item in data.get("entities", []):
-                props = item.get("properties", {})
-                title = props.get("identifier", {}).get("value", "Unknown Startup")
-                desc = props.get("short_description", "")
-                funding = props.get("funding_total", {}).get("value_usd", 0)
-                date = props.get("last_funding_at", datetime.date.today().isoformat())
+    seen_titles = set()
+    
+    for feed_url in feeds:
+        req = urllib.request.Request(feed_url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                xml_data = response.read()
+                root = ET.fromstring(xml_data)
                 
-                results.append({
-                    "id": f"cb_{item.get('uuid', 'unknown')}",
-                    "title": f"[STARTUP FUNDING] {title} raised ${funding}",
-                    "abstract": desc,
-                    "authors": [title],
-                    "source": "Crunchbase",
-                    "domain": "Venture Capital",
-                    "date": date,
-                    "url": f"https://www.crunchbase.com/organization/{props.get('identifier', {}).get('permalink', '')}"
-                })
-    except Exception as e:
-        print(f"⚠️ Crunchbase Fetch Error for '{query}': {e}")
-        
-    return results
+                for item in root.findall(".//item"):
+                    title = item.findtext("title", "")
+                    link = item.findtext("link", "")
+                    desc = item.findtext("description", "")
+                    pub_date = item.findtext("pubDate", datetime.date.today().isoformat())
+                    
+                    # Ensure relevance for global generic feeds
+                    if "techcrunch" in feed_url:
+                        if query.lower() not in title.lower() and query.lower() not in desc.lower():
+                            continue
+                            
+                    if title in seen_titles:
+                        continue
+                    seen_titles.add(title)
+                    
+                    clean_desc = re.sub('<[^<]+>', '', desc).strip()
+                    if len(clean_desc) > 300:
+                        clean_desc = clean_desc[:300] + "..."
+                        
+                    doc_id = "rss_" + hashlib.md5(link.encode()).hexdigest()[:10]
+                    
+                    results.append({
+                        "id": doc_id,
+                        "title": f"[STARTUP FUNDING] {title}",
+                        "abstract": clean_desc,
+                        "authors": ["Venture News"],
+                        "source": "Aggregated VC Feeds",
+                        "domain": "Venture Capital",
+                        "date": pub_date,
+                        "url": link
+                    })
+                    
+                    if len(results) >= max_results:
+                        break
+        except Exception as e:
+            print(f"⚠️ RSS Fetch Error for '{feed_url}': {e}")
+            
+        if len(results) >= max_results:
+            break
+            
+    return results[:max_results]
 
 
 # ─────────────────────────────────────────────

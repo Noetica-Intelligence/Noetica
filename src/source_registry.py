@@ -139,10 +139,10 @@ def _fetch_all_conferences():
         time.sleep(1)
     return results
 
-def _fetch_all_crunchbase():
+def _fetch_all_funding():
     results = []
     for q in ["biotech", "artificial intelligence", "quantum computing"]:
-        batch = fetch_crunchbase(q, max_results=2)
+        batch = fetch_startup_funding_rss(q, max_results=2)
         for p in batch:
             p["source_types"] = ["funding"]
         results.extend(batch)
@@ -233,11 +233,11 @@ SOURCE_REGISTRY = [
         "description": "Peer-reviewed AI/Bio conference proceedings",
     },
     {
-        "name":        "Crunchbase",
+        "name":        "Venture Capital Feeds",
         "type":        "funding",
         "enabled":     True,
-        "fetcher":     _fetch_all_crunchbase,
-        "description": "Startup funding rounds — capital allocation signal",
+        "fetcher":     _fetch_all_funding,
+        "description": "Startup funding rounds from unified RSS streams",
     },
 ]
 

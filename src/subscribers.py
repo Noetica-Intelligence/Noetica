@@ -147,9 +147,13 @@ def parse_discovery_preferences(pref_str: str) -> list[str]:
         types.add("grant")
     if "startup funding" in pref_str:
         types.add("funding")
-    if "open source projects" in pref_str:
+    if "open source projects" in pref_str or "datasets" in pref_str:
         types.add("repo")
     if "clinical trials" in pref_str:
         types.add("trial")
+        
+    # Meta-categories that imply wanting papers/general intelligence
+    if "cross-disciplinary" in pref_str or "emerging frontiers" in pref_str or "forecasts" in pref_str:
+        types.add("paper")
         
     return list(types) if types else ["paper"]

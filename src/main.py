@@ -102,9 +102,12 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
             filtered.append(p)
             continue
 
-        domain = p.get("domain", "").lower()
-        title  = p.get("title", "").lower()
-        matched = any(i.lower() in domain or i.lower() in title for i in interests)
+        domain   = p.get("domain", "").lower()
+        title    = p.get("title", "").lower()
+        abstract = p.get("abstract", "").lower()
+        
+        # Match if the interest keyword is in the domain, title, or the abstract!
+        matched = any(i.lower() in domain or i.lower() in title or i.lower() in abstract for i in interests)
 
         if matched:
             filtered.append(p)
@@ -251,8 +254,29 @@ def main() -> int:
                 print(f"   ⏭️  Skipping (Monthly subscriber; delivers on the 1st)")
                 continue
 
-        user_papers     = filter_papers_for_subscriber(scored_papers, sub)
-        user_top_papers = user_papers[:limit]
+        user_papers = filter_papers_for_subscriber(scored_papers, sub)
+        
+        # --- Enforce Discovery Type Quota (V2 Feature) ---
+        discovery_prefs_str = sub.get("Discovery Preferences", "")
+        allowed_types = parse_discovery_preferences(discovery_prefs_str)
+        user_top_papers = []
+        
+        # 1. Guarantee at least 1 of each requested type (if available)
+        for t in allowed_types:
+            for p in user_papers:
+                if t in p.get("source_types", ["paper"]) and p not in user_top_papers:
+                    user_top_papers.append(p)
+                    break
+                    
+        # 2. Fill the rest with the highest scoring remaining discoveries
+        for p in user_papers:
+            if len(user_top_papers) >= limit:
+                break
+            if p not in user_top_papers:
+                user_top_papers.append(p)
+                
+        # Sort again by score to ensure they appear in order of importance
+        user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         if not user_top_papers:
             print(f"   ⚠️  No matching discoveries for this subscriber's interests.")

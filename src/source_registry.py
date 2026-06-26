@@ -25,7 +25,7 @@ from fetch_papers import (
 )
 from v2_fetchers import (
     fetch_nih_grants, fetch_github_repos, fetch_patents,
-    fetch_conferences, fetch_crunchbase
+    fetch_conferences, fetch_startup_funding_rss
 )
 from fetch_clinical_trials import fetch_recent_oncology_trials
 
@@ -102,8 +102,12 @@ def _fetch_all_semantic_scholar():
 
 def _fetch_all_nih():
     results = []
-    for q in ["CRISPR gene editing", "machine learning medicine", "quantum biology"]:
-        batch = fetch_nih_grants(q, max_results=3)
+    queries = [
+        "CRISPR gene editing", "machine learning medicine", "quantum biology",
+        "neuroscience", "oncology", "synthetic biology", "nanomedicine"
+    ]
+    for q in queries:
+        batch = fetch_nih_grants(q, max_results=2)
         for p in batch:
             p["source_types"] = ["grant"]
         results.extend(batch)
@@ -112,8 +116,12 @@ def _fetch_all_nih():
 
 def _fetch_all_github():
     results = []
-    for q in ["deep-learning", "bioinformatics", "quantum-computing", "drug-discovery"]:
-        batch = fetch_github_repos(q, max_results=3)
+    queries = [
+        "deep-learning", "bioinformatics", "quantum-computing", "drug-discovery",
+        "robotics", "artificial-intelligence", "computational-biology", "materials-science"
+    ]
+    for q in queries:
+        batch = fetch_github_repos(q, max_results=2)
         for p in batch:
             p["source_types"] = ["repo"]
         results.extend(batch)
@@ -122,7 +130,11 @@ def _fetch_all_github():
 
 def _fetch_all_patents():
     results = []
-    for q in ["CRISPR therapeutics", "AI drug discovery", "quantum error correction"]:
+    queries = [
+        "CRISPR therapeutics", "AI drug discovery", "quantum error correction",
+        "autonomous vehicles", "nanomaterials", "neural interface", "gene therapy"
+    ]
+    for q in queries:
         batch = fetch_patents(q, max_results=2)
         for p in batch:
             p["source_types"] = ["patent"]
@@ -131,7 +143,7 @@ def _fetch_all_patents():
 
 def _fetch_all_conferences():
     results = []
-    for venue in ["NeurIPS", "ICML", "Nature", "Cell"]:
+    for venue in ["NeurIPS", "ICML", "Nature", "Cell", "Science", "CVPR"]:
         batch = fetch_conferences(venue, max_results=2)
         for p in batch:
             p["source_types"] = ["paper"]
@@ -141,7 +153,11 @@ def _fetch_all_conferences():
 
 def _fetch_all_funding():
     results = []
-    for q in ["biotech", "artificial intelligence", "quantum computing"]:
+    queries = [
+        "biotech", "artificial intelligence", "quantum computing",
+        "robotics", "cleantech", "space tech", "healthtech"
+    ]
+    for q in queries:
         batch = fetch_startup_funding_rss(q, max_results=2)
         for p in batch:
             p["source_types"] = ["funding"]

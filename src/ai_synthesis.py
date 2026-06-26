@@ -23,8 +23,8 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
 
     try:
         genai.configure(api_key=api_key)
-        # 1.5 Flash is incredibly fast, cheap, and excellent at synthesis
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # 1.5 Pro is explicitly designed for complex reasoning and deep scientific synthesis
+        model = genai.GenerativeModel('gemini-1.5-pro')
         
         # Build the context
         paper_context = ""

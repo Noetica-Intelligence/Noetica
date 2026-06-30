@@ -84,41 +84,41 @@
         
         <div class="reading-pane">
             <section class="doc-section">
-                <div class="doc-section-title">
+                <div class="doc-section-title reveal-on-scroll">
                     05 / BioSignal Scoring
                     <span>MATHEMATICAL MODELS</span>
                 </div>
                 
-                <p class="doc-intro">
+                <p class="doc-intro reveal-on-scroll">
                     Noetica separates the signal from the noise using a combination of TF-IDF extraction, temporal momentum, and PageRank network centrality executed at bare-metal speeds in Zig.
                 </p>
                 
-                <div class="glass-card">
+                <div class="glass-card reveal-on-scroll">
                     <h4>The Problem with Keyword Matching</h4>
                     <p class="doc-paragraph">
                         Traditional keyword alerts (e.g., Google Scholar Alerts) simply check if a word exists in a document. This leads to massive false-positive rates when the keyword is merely cited in passing. Noetica calculates the <em>mathematical weight</em> of the concept within the topology of the text.
                     </p>
                 </div>
 
-                <h2>PageRank Centrality</h2>
-                <p class="doc-paragraph">
+                <h2 class="reveal-on-scroll">PageRank Centrality</h2>
+                <p class="doc-paragraph reveal-on-scroll">
                     Within the Zig engine, Noetica constructs a graph where nodes represent documents and edges represent conceptual similarities (derived via term frequency vectors). 
                 </p>
-                <p class="doc-paragraph">
+                <p class="doc-paragraph reveal-on-scroll">
                     The algorithm iteratively computes the PageRank $PR(u)$ for each document $u$:
                 </p>
-                <p class="doc-paragraph" style="text-align: center;">
+                <p class="doc-paragraph reveal-on-scroll" style="text-align: center;">
                     $$ PR(u) = \frac{1-d}{N} + d \sum_{v \in B(u)} \frac{PR(v)}{L(v)} $$
                 </p>
-                <p class="doc-paragraph">
+                <p class="doc-paragraph reveal-on-scroll">
                     Where $d$ is the damping factor (typically 0.85), $B(u)$ is the set of documents strongly related to $u$, and $L(v)$ is the number of out-links from $v$. A high PageRank score means a paper is not only novel but highly central to the cluster of discoveries fetched that day.
                 </p>
 
-                <h2>Momentum & Impact Multipliers</h2>
-                <p class="doc-paragraph">
+                <h2 class="reveal-on-scroll">Momentum & Impact Multipliers</h2>
+                <p class="doc-paragraph reveal-on-scroll">
                     Papers are further penalized or boosted based on metadata:
                 </p>
-                <ul>
+                <ul class="reveal-on-scroll">
                     <li><strong>Impact Factor:</strong> Papers from high-impact domains receive a baseline multiplier.</li>
                     <li><strong>Temporal Decay:</strong> Older discoveries suffer exponential decay in significance unless they possess overwhelming citation momentum.</li>
                 </ul>

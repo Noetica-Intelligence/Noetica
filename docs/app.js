@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- THEME TOGGLE LOGIC ---
     const themeToggleBtn = document.getElementById('theme-toggle');
     const iconSun = document.getElementById('theme-icon-sun');
     const iconMoon = document.getElementById('theme-icon-moon');
@@ -55,4 +56,33 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme('system');
         }
     });
+
+    // --- INTERSECTION OBSERVER FOR SCROLL REVEALS ---
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+    
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Stagger effect if multiple elements appear at once
+                    setTimeout(() => {
+                        entry.target.classList.add('is-visible');
+                    }, index * 50); // 50ms stagger
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -50px 0px', // Trigger slightly before the element fully enters
+            threshold: 0.1
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    } else {
+        // Fallback if reduced motion is enabled or IntersectionObserver is missing
+        revealElements.forEach(el => el.classList.add('is-visible'));
+    }
 });

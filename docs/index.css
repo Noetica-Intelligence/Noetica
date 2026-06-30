@@ -13,6 +13,13 @@
     
     --color-accent: #000000;
     
+    /* Animation System */
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+    --duration-fast: 200ms;
+    --duration-med: 500ms;
+    --duration-slow: 800ms;
+    
     --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-serif: 'Lora', Georgia, Cambria, serif;
     --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
@@ -34,7 +41,6 @@
         --color-text-muted: #999999;
         --color-border: #333333;
         --color-border-glow: rgba(255, 255, 255, 0.1);
-        
         --color-accent: #FFFFFF;
     }
 }
@@ -50,7 +56,6 @@ html[data-theme="light"] {
     --color-text-muted: #666666;
     --color-border: #E5E5E5;
     --color-border-glow: rgba(0, 0, 0, 0.05);
-    
     --color-accent: #000000;
 }
 
@@ -65,7 +70,6 @@ html[data-theme="dark"] {
     --color-text-muted: #999999;
     --color-border: #333333;
     --color-border-glow: rgba(255, 255, 255, 0.1);
-    
     --color-accent: #FFFFFF;
 }
 
@@ -81,7 +85,35 @@ body {
     font-family: var(--font-sans);
     line-height: 1.625;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color var(--duration-med) var(--ease-out-quint), 
+                color var(--duration-med) var(--ease-out-quint);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated Scientific Grid Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(var(--color-border-glow) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-border-glow) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: -1;
+    pointer-events: none;
+    transform: translate3d(0, 0, 0);
+    animation: gridPan 60s linear infinite;
+    opacity: 0.5;
+    transition: opacity var(--duration-med) var(--ease-out-quint);
+}
+
+@keyframes gridPan {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(50px, 50px, 0); }
 }
 
 /* Header bar */
@@ -99,7 +131,7 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: all var(--duration-med) var(--ease-out-quint);
 }
 
 .logo-block {
@@ -113,7 +145,7 @@ body {
 .logo-img {
     height: 40px;
     width: auto;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform var(--duration-med) var(--ease-out-quint);
 }
 
 .logo-block:hover .logo-img {
@@ -157,13 +189,39 @@ body {
     border-radius: 6px;
     cursor: pointer;
     color: var(--color-text-secondary);
-    transition: all 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-out-quint);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: var(--color-text-primary);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    opacity: 0.05;
+    transition: transform var(--duration-med) var(--ease-out-quint);
+    z-index: -1;
 }
 
 .theme-toggle-btn:hover {
     background: var(--color-surface-hover);
     color: var(--color-text-primary);
     border-color: var(--color-text-muted);
+    transform: scale(1.02);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.96);
+}
+
+.theme-toggle-btn:hover::before {
+    transform: translate(-50%, -50%) scale(2);
 }
 
 .theme-icon {
@@ -181,7 +239,8 @@ body {
     background: var(--color-surface);
     padding: 2.5rem 0;
     overflow-y: auto;
-    transition: all 0.3s ease;
+    transition: background-color var(--duration-med) var(--ease-out-quint),
+                border-color var(--duration-med) var(--ease-out-quint);
 }
 
 .toc-title {
@@ -201,13 +260,14 @@ body {
     color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 0.95rem;
-    transition: all 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-out-quint);
     border-left: 3px solid transparent;
 }
 
 .toc-item:hover {
     color: var(--color-text-primary);
     background: var(--color-surface-hover);
+    transform: translateX(4px);
 }
 
 .toc-item.active {
@@ -293,13 +353,16 @@ h3 {
 
 a {
     color: var(--color-text-primary);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    transition: opacity 0.2s ease;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    transition: background-size var(--duration-fast) var(--ease-out-quint);
 }
 
 a:hover {
-    opacity: 0.7;
+    background-size: 100% 1px;
 }
 
 /* Glass Cards */
@@ -309,6 +372,14 @@ a:hover {
     border-radius: 8px;
     padding: 2.5rem;
     margin: 2.5rem 0;
+    transition: all var(--duration-med) var(--ease-out-quint);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+}
+
+.glass-card:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    border-color: var(--color-text-muted);
 }
 
 .glass-card h4 {
@@ -363,4 +434,29 @@ pre code {
     padding: 0;
     border: none;
     color: inherit;
+}
+
+/* Scroll Reveal Animations */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--duration-slow) var(--ease-out-quint),
+                transform var(--duration-slow) var(--ease-out-quint);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

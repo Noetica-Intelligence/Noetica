@@ -81,39 +81,39 @@
         
         <div class="reading-pane">
             <section class="doc-section">
-                <div class="doc-section-title">
+                <div class="doc-section-title reveal-on-scroll">
                     04 / V2 Data Fetchers
                     <span>INGESTION PIPELINE</span>
                 </div>
                 
-                <p class="doc-intro">
+                <p class="doc-intro reveal-on-scroll">
                     The V2 Ingestion Pipeline represents a massive expansion over the legacy system, integrating global patents, open-source repositories, and clinical trials alongside traditional academic papers.
                 </p>
                 
-                <div class="glass-card">
+                <div class="glass-card reveal-on-scroll">
                     <h4>The Guaranteed Quota Algorithm</h4>
                     <p class="doc-paragraph">
                         In V1, generic queries could monopolize the user's digest (e.g., an overwhelming number of AI papers crowding out CRISPR patents). The V2 engine implements a strict Quota Guarantee: If a subscriber selects 5 different domains, Noetica ensures at least one discovery from each selected domain is included before filling the remaining slots by raw significance score.
                     </p>
                 </div>
 
-                <h2>Expanded Source Registry</h2>
-                <p class="doc-paragraph">
+                <h2 class="reveal-on-scroll">Expanded Source Registry</h2>
+                <p class="doc-paragraph reveal-on-scroll">
                     The source registry (`src/source_registry.py`) maps user domains to specific API endpoints and advanced search queries.
                 </p>
                 
-                <h3>1. arXiv (Academic Literature)</h3>
-                <p class="doc-paragraph">
+                <h3 class="reveal-on-scroll">1. arXiv (Academic Literature)</h3>
+                <p class="doc-paragraph reveal-on-scroll">
                     Pulls from the global preprint server. Filters out low-quality preprints using basic structural validation on the abstract.
                 </p>
 
-                <h3>2. CrossRef (Clinical & Patents)</h3>
-                <p class="doc-paragraph">
+                <h3 class="reveal-on-scroll">2. CrossRef (Clinical & Patents)</h3>
+                <p class="doc-paragraph reveal-on-scroll">
                     Leverages CrossRef's massive database to identify newly published clinical trials and registered patents across multiple disciplines (Oncology, Neuroscience, Robotics).
                 </p>
 
-                <h3>3. GitHub (Open Source Implementation)</h3>
-                <p class="doc-paragraph">
+                <h3 class="reveal-on-scroll">3. GitHub (Open Source Implementation)</h3>
+                <p class="doc-paragraph reveal-on-scroll">
                     Extracts trending repositories matching the subscriber's technical domains, ensuring that theoretical papers are paired with their practical code implementations.
                 </p>
 

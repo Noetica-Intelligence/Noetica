@@ -81,16 +81,16 @@
         
         <div class="reading-pane">
             <section class="doc-section">
-                <div class="doc-section-title">
+                <div class="doc-section-title reveal-on-scroll">
                     03 / Hybrid Architecture
                     <span>SYSTEM DESIGN</span>
                 </div>
                 
-                <p class="doc-intro">
+                <p class="doc-intro reveal-on-scroll">
                     Noetica leverages a high-performance Hybrid Architecture, utilizing Python for IO-bound orchestration and Zig for CPU-bound mathematical operations.
                 </p>
                 
-                <div class="glass-card">
+                <div class="glass-card reveal-on-scroll">
                     <h4>The Separation of Concerns</h4>
                     <p class="doc-paragraph">
                         Python is excellent at making HTTP requests, interacting with the Google Sheets API, querying SQL databases, and interfacing with LLMs (Gemini). However, Python is notoriously slow at large-scale graph computation and vector mathematics. 
@@ -100,17 +100,17 @@
                     </p>
                 </div>
 
-                <h2>The Orchestration Flow</h2>
-                <p class="doc-paragraph">
+                <h2 class="reveal-on-scroll">The Orchestration Flow</h2>
+                <p class="doc-paragraph reveal-on-scroll">
                     1. <strong>Python Ingestion (`src/main.py`):</strong> Python triggers the V2 fetchers to gather raw JSON data from arXiv, Google Patents, and GitHub.
                 </p>
-                <p class="doc-paragraph">
+                <p class="doc-paragraph reveal-on-scroll">
                     2. <strong>IPC Payload Transfer:</strong> Python dumps the aggregated corpus into `zig_engine/input.json`.
                 </p>
-                <p class="doc-paragraph">
+                <p class="doc-paragraph reveal-on-scroll">
                     3. <strong>Zig Execution (`zig_engine`):</strong> Python spawns a subprocess calling the compiled Zig binary. Zig parses the JSON, constructs the Knowledge Graph in memory, calculates network centrality, and outputs `zig_engine/output.json`.
                 </p>
-                <p class="doc-paragraph">
+                <p class="doc-paragraph reveal-on-scroll">
                     4. <strong>Python Synthesis:</strong> Python reads the finalized scores, injects them into the SQLite database, and prompts Gemini 1.5 Pro to synthesize the top results.
                 </p>
 

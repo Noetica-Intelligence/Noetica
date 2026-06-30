@@ -134,6 +134,16 @@ body::before {
     transition: all var(--duration-med) var(--ease-out-quint);
 }
 
+.kb-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #3B82F6 0%, #3B82F6 30%, #F59E0B 30%, #F59E0B 100%);
+}
+
 .logo-block {
     display: flex;
     align-items: center;
@@ -177,6 +187,13 @@ body::before {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+}
+
+.version-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
 }
 
 .theme-toggle-btn {

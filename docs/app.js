@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fallback if reduced motion is enabled or IntersectionObserver is missing
         revealElements.forEach(el => el.classList.add('is-visible'));
     }
-});
 
     // --- SCROLL PROGRESS BAR LOGIC ---
     const scrollProgress = document.getElementById('scroll-progress');
@@ -103,3 +102,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         document.body.classList.add('page-loaded');
     }, 50);
+
+});

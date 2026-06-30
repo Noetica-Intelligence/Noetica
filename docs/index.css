@@ -1,4 +1,4 @@
-﻿/* NoeticaDocuments - World Class UI/UX Theme */
+/* NoeticaDocuments - World Class UI/UX Theme */
 :root {
     /* DEFAULT LIGHT THEME VARIABLES */
     --color-bg: #FAFAFA;
@@ -192,6 +192,7 @@ body::after {
     gap: 1rem;
     text-decoration: none;
     color: inherit;
+    background-image: none !important;
     transition: transform var(--duration-fast) var(--ease-out-smooth),
                 opacity var(--duration-fast) var(--ease-out-smooth);
 }
@@ -199,6 +200,7 @@ body::after {
 .logo-block:hover {
     transform: translateY(-1px);
     opacity: 0.9;
+    background-size: 0 !important;
 }
 
 .logo-block:active {

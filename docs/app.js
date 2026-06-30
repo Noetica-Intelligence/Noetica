@@ -57,32 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- SCROLL PROGRESS BAR LOGIC ---
-    const scrollProgress = document.getElementById('scroll-progress');
-    
-    function updateScrollProgress() {
-        if (!scrollProgress) return;
-        const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
-        const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = winHeightPx > 0 ? (scrollPx / winHeightPx) * 100 : 0;
-        scrollProgress.style.width = scrolled + '%';
-    }
-
-    // Use requestAnimationFrame for smooth 60fps performance without thrashing
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateScrollProgress();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-    
-    // Initial call in case the page is already scrolled on load
-    updateScrollProgress();
-
     // --- INTERSECTION OBSERVER FOR SCROLL REVEALS ---
     const revealElements = document.querySelectorAll('.reveal-on-scroll');
     
@@ -112,3 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
         revealElements.forEach(el => el.classList.add('is-visible'));
     }
 });
+
+    // --- SCROLL PROGRESS BAR LOGIC ---
+    const scrollProgress = document.getElementById('scroll-progress');
+    if (scrollProgress) {
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+    }
+
+    // --- PAGE TRANSITION ON LOAD ---
+    // Add page-loaded class slightly after DOM content loaded to trigger CSS entrance animations
+    setTimeout(() => {
+        document.body.classList.add('page-loaded');
+    }, 50);

@@ -12,8 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./backend/
 COPY src/ ./src/
 COPY data/ ./data/
-COPY docs/ ./docs/
-COPY scientific_intel_v2.db .
 
 # Expose the port Hugging Face expects
 EXPOSE 7860

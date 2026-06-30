@@ -28,15 +28,19 @@
 
     <!-- Top Sticky Glass Header -->
     <header class="kb-header">
+        <!-- Scroll Progress Indicator -->
+        <div class="scroll-progress-container">
+            <div id="scroll-progress"></div>
+        </div>
         <a href="index.html" class="logo-block" style="text-decoration: none; display: flex; align-items: center; gap: 1rem;">
-            <img src="logo.jpg" alt="Noetica Logo" class="logo-img" style="height: 40px;">
+            <img src="logo.png" alt="Noetica Logo" class="logo-img" style="height: 40px;">
             <div style="display: flex; flex-direction: column;">
                 <span style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary); line-height: 1.1; letter-spacing: -0.5px;">NoeticaDocuments</span>
                 <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 2px;">OFFICIAL REFERENCE MANUAL</span>
             </div>
         </a>
         <div class="header-controls" style="display: flex; align-items: center; gap: 1.5rem;">
-            <span style="font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--color-text-primary);">Version 2.0.1</span>
+            <span class="version-text" style="font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--color-text-primary);">Version 1.0</span>
             <button class="theme-toggle-btn" id="theme-toggle" title="Cycle Theme (System / Light / Dark)">
                 <!-- Sun Icon -->
                 <svg class="theme-icon" id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">

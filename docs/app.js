@@ -57,6 +57,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- SCROLL PROGRESS BAR LOGIC ---
+    const scrollProgress = document.getElementById('scroll-progress');
+    
+    function updateScrollProgress() {
+        if (!scrollProgress) return;
+        const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
+        const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = winHeightPx > 0 ? (scrollPx / winHeightPx) * 100 : 0;
+        scrollProgress.style.width = scrolled + '%';
+    }
+
+    // Use requestAnimationFrame for smooth 60fps performance without thrashing
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateScrollProgress();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    // Initial call in case the page is already scrolled on load
+    updateScrollProgress();
+
     // --- INTERSECTION OBSERVER FOR SCROLL REVEALS ---
     const revealElements = document.querySelectorAll('.reveal-on-scroll');
     

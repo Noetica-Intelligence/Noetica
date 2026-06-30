@@ -3,61 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noetica | Civilizational Intelligence</title>
-    
-    <!-- Fonts -->
+    <meta name="description" content="NoeticaDocuments - Official Reference Manual for the Noetica Scientific Intelligence Engine.">
+    <title>NoeticaDocuments — Portal Root</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Three.js and Post-Processing -->
-    <script src="https://unpkg.com/three"></script>
-    
-    <!-- 3D Force Graph -->
-    <script src="https://unpkg.com/3d-force-graph"></script>
-    
-    <!-- External CSS -->
-    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-    <!-- 3D Canvas -->
-    <div id="3d-graph"></div>
-    <div id="loader">INITIALIZING ZIG ENGINE...</div>
-
-    <!-- UI Overlay -->
-    <div class="dashboard-container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand">
-                    <img src="./logo.jpg" alt="Noetica Logo" class="brand-logo">
-                    <div class="brand-text">
-                        <h1 class="logo-title">Noetica</h1>
-                        <div class="tagline">CIVILIZATIONAL INTELLIGENCE</div>
-                    </div>
-                </div>
+    <!-- Top Sticky Glass Header -->
+    <header class="kb-header">
+        <a href="index.html" class="logo-block">
+            <!-- Simplified abstract logo representing the Fractal N -->
+            <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 38px; width: 38px;">
+                <circle cx="100" cy="100" r="90" fill="#020617" stroke="#1E293B" stroke-width="4"/>
+                <path d="M 60,140 L 60,60 L 140,140 L 140,60" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="header-title-container">
+                <div class="header-title">NoeticaDocuments</div>
+                <div class="header-subtitle">Official Reference Manual</div>
             </div>
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <main class="kb-container">
+        
+        <!-- Sidebar Table of Contents -->
+        <nav class="sidebar-toc">
+            <div class="toc-title">Documentation Sections</div>
+            <a href="index.html" class="toc-item active">
+                <span class="num">00.</span> Introduction Portal
+            </a>
+            <a href="architecture.html" class="toc-item">
+                <span class="num">01.</span> Hybrid Architecture
+            </a>
+            <a href="ingestion.html" class="toc-item">
+                <span class="num">02.</span> V2 Data Fetchers
+            </a>
+            <a href="scoring.html" class="toc-item">
+                <span class="num">03.</span> BioSignal Scoring
+            </a>
+        </nav>
+        
+        <!-- Scholarly Document Reading Pane -->
+        <div class="reading-pane">
             
-            <div class="discovery-list" id="discovery-list">
-                <!-- Discovery cards injected here by JS -->
-            </div>
-        </div>
-    </div>
+            <section class="doc-section" id="section-portal-intro">
+                <div class="doc-section-title">
+                    00 / Reference Manual Introduction
+                    <span>PORTAL ROOT</span>
+                </div>
+                
+                <p class="doc-intro">
+                    Welcome to <strong>NoeticaDocuments</strong>, the canonical reference manual documenting the architectural orchestration, ingestion pipelines, and BioSignal solvers powering the Noetica Intelligence Engine.
+                </p>
+                
+                <div class="glass-card">
+                    <h4>The Core Philosophy</h4>
+                    <p class="doc-paragraph">
+                        Noetica is fundamentally designed as a <em>push-based</em> intelligence platform. Unlike traditional search engines where users must actively query for information, Noetica operates asynchronously in the background. It silently aggregates global scientific discoveries, computes their objective significance using a graph-theoretic approach in Zig, and pushes a highly-curated, personalized synthesis directly to researchers' inboxes.
+                    </p>
+                </div>
 
-    <!-- Modal for Discovery Details -->
-    <div class="modal-overlay" id="discovery-modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()" aria-label="Close">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <h2 class="modal-title" id="modal-title">Loading...</h2>
-            <div class="modal-tags" id="modal-tags"></div>
-            <div class="modal-abstract" id="modal-abstract"></div>
-            <div class="modal-sources" id="modal-sources"></div>
-        </div>
-    </div>
+                <h2>Why an Email Digest?</h2>
+                <p class="doc-paragraph">
+                    The cognitive load on modern researchers is unprecedented. Relying on an interactive web dashboard inherently demands user friction—the researcher must remember to log in, formulate a query, and navigate the UI. By shifting the delivery mechanism to a daily email digest synthesized by Gemini 1.5 Pro, Noetica guarantees absolute zero-friction consumption.
+                </p>
 
-    <!-- External Javascript -->
-    <script src="./app.js"></script>
+                <h2>Document Navigation</h2>
+                <p class="doc-paragraph">
+                    Use the sidebar on the left to navigate through the technical specifications of the Noetica Engine.
+                </p>
+                <ul>
+                    <li><a href="architecture.html">01. Hybrid Architecture</a>: Details on how Python and Zig interact.</li>
+                    <li><a href="ingestion.html">02. V2 Data Fetchers</a>: How Noetica pulls from arXiv, Patents, and GitHub.</li>
+                    <li><a href="scoring.html">03. BioSignal Scoring</a>: The math behind PageRank and clinical signal detection.</li>
+                </ul>
+
+            </section>
+        </div>
+    </main>
+
 </body>
 </html>

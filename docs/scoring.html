@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NoeticaDocuments - BioSignal Scoring">
+    <title>NoeticaDocuments — BioSignal Scoring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <header class="kb-header">
+        <a href="index.html" class="logo-block">
+            <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 38px; width: 38px;">
+                <circle cx="100" cy="100" r="90" fill="#020617" stroke="#1E293B" stroke-width="4"/>
+                <path d="M 60,140 L 60,60 L 140,140 L 140,60" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="header-title-container">
+                <div class="header-title">NoeticaDocuments</div>
+                <div class="header-subtitle">Official Reference Manual</div>
+            </div>
+        </a>
+    </header>
+
+    <main class="kb-container">
+        <nav class="sidebar-toc">
+            <div class="toc-title">Documentation Sections</div>
+            <a href="index.html" class="toc-item">
+                <span class="num">00.</span> Introduction Portal
+            </a>
+            <a href="architecture.html" class="toc-item">
+                <span class="num">01.</span> Hybrid Architecture
+            </a>
+            <a href="ingestion.html" class="toc-item">
+                <span class="num">02.</span> V2 Data Fetchers
+            </a>
+            <a href="scoring.html" class="toc-item active">
+                <span class="num">03.</span> BioSignal Scoring
+            </a>
+        </nav>
+        
+        <div class="reading-pane">
+            <section class="doc-section">
+                <div class="doc-section-title">
+                    03 / BioSignal Scoring
+                    <span>MATHEMATICAL MODELS</span>
+                </div>
+                
+                <p class="doc-intro">
+                    Noetica separates the signal from the noise using a combination of TF-IDF extraction, temporal momentum, and PageRank network centrality executed at bare-metal speeds in Zig.
+                </p>
+                
+                <div class="glass-card">
+                    <h4>The Problem with Keyword Matching</h4>
+                    <p class="doc-paragraph">
+                        Traditional keyword alerts (e.g., Google Scholar Alerts) simply check if a word exists in a document. This leads to massive false-positive rates when the keyword is merely cited in passing. Noetica calculates the <em>mathematical weight</em> of the concept within the topology of the text.
+                    </p>
+                </div>
+
+                <h2>PageRank Centrality</h2>
+                <p class="doc-paragraph">
+                    Within the Zig engine, Noetica constructs a graph where nodes represent documents and edges represent conceptual similarities (derived via term frequency vectors). 
+                </p>
+                <p class="doc-paragraph">
+                    The algorithm iteratively computes the PageRank $PR(u)$ for each document $u$:
+                </p>
+                <p class="doc-paragraph" style="text-align: center;">
+                    $$ PR(u) = \frac{1-d}{N} + d \sum_{v \in B(u)} \frac{PR(v)}{L(v)} $$
+                </p>
+                <p class="doc-paragraph">
+                    Where $d$ is the damping factor (typically 0.85), $B(u)$ is the set of documents strongly related to $u$, and $L(v)$ is the number of out-links from $v$. A high PageRank score means a paper is not only novel but highly central to the cluster of discoveries fetched that day.
+                </p>
+
+                <h2>Momentum & Impact Multipliers</h2>
+                <p class="doc-paragraph">
+                    Papers are further penalized or boosted based on metadata:
+                </p>
+                <ul>
+                    <li><strong>Impact Factor:</strong> Papers from high-impact domains receive a baseline multiplier.</li>
+                    <li><strong>Temporal Decay:</strong> Older discoveries suffer exponential decay in significance unless they possess overwhelming citation momentum.</li>
+                </ul>
+
+            </section>
+        </div>
+    </main>
+
+</body>
+</html>

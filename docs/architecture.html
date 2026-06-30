@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NoeticaDocuments - Architecture Documentation">
+    <title>NoeticaDocuments — Hybrid Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <header class="kb-header">
+        <a href="index.html" class="logo-block">
+            <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 38px; width: 38px;">
+                <circle cx="100" cy="100" r="90" fill="#020617" stroke="#1E293B" stroke-width="4"/>
+                <path d="M 60,140 L 60,60 L 140,140 L 140,60" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="header-title-container">
+                <div class="header-title">NoeticaDocuments</div>
+                <div class="header-subtitle">Official Reference Manual</div>
+            </div>
+        </a>
+    </header>
+
+    <main class="kb-container">
+        <nav class="sidebar-toc">
+            <div class="toc-title">Documentation Sections</div>
+            <a href="index.html" class="toc-item">
+                <span class="num">00.</span> Introduction Portal
+            </a>
+            <a href="architecture.html" class="toc-item active">
+                <span class="num">01.</span> Hybrid Architecture
+            </a>
+            <a href="ingestion.html" class="toc-item">
+                <span class="num">02.</span> V2 Data Fetchers
+            </a>
+            <a href="scoring.html" class="toc-item">
+                <span class="num">03.</span> BioSignal Scoring
+            </a>
+        </nav>
+        
+        <div class="reading-pane">
+            <section class="doc-section">
+                <div class="doc-section-title">
+                    01 / Hybrid Architecture
+                    <span>SYSTEM DESIGN</span>
+                </div>
+                
+                <p class="doc-intro">
+                    Noetica leverages a high-performance Hybrid Architecture, utilizing Python for IO-bound orchestration and Zig for CPU-bound mathematical operations.
+                </p>
+                
+                <div class="glass-card">
+                    <h4>The Separation of Concerns</h4>
+                    <p class="doc-paragraph">
+                        Python is excellent at making HTTP requests, interacting with the Google Sheets API, querying SQL databases, and interfacing with LLMs (Gemini). However, Python is notoriously slow at large-scale graph computation and vector mathematics. 
+                    </p>
+                    <p class="doc-paragraph">
+                        Zig, on the other hand, is a systems programming language with manual memory management and bare-metal performance, making it the perfect candidate to execute our PageRank and TF-IDF matrix multiplications over thousands of discovery nodes.
+                    </p>
+                </div>
+
+                <h2>The Orchestration Flow</h2>
+                <p class="doc-paragraph">
+                    1. <strong>Python Ingestion (`src/main.py`):</strong> Python triggers the V2 fetchers to gather raw JSON data from arXiv, Google Patents, and GitHub.
+                </p>
+                <p class="doc-paragraph">
+                    2. <strong>IPC Payload Transfer:</strong> Python dumps the aggregated corpus into `zig_engine/input.json`.
+                </p>
+                <p class="doc-paragraph">
+                    3. <strong>Zig Execution (`zig_engine`):</strong> Python spawns a subprocess calling the compiled Zig binary. Zig parses the JSON, constructs the Knowledge Graph in memory, calculates network centrality, and outputs `zig_engine/output.json`.
+                </p>
+                <p class="doc-paragraph">
+                    4. <strong>Python Synthesis:</strong> Python reads the finalized scores, injects them into the SQLite database, and prompts Gemini 1.5 Pro to synthesize the top results.
+                </p>
+
+            </section>
+        </div>
+    </main>
+
+</body>
+</html>

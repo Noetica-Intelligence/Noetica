@@ -9,20 +9,51 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            let activeTheme = savedTheme;
+            if (savedTheme === 'system') {
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                activeTheme = systemDark ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', activeTheme);
+        })();
+    </script>
 </head>
 <body>
 
     <header class="kb-header">
         <a href="index.html" class="logo-block">
-            <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 38px; width: 38px;">
-                <circle cx="100" cy="100" r="90" fill="#020617" stroke="#1E293B" stroke-width="4"/>
-                <path d="M 60,140 L 60,60 L 140,140 L 140,60" fill="none" stroke="#10B981" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div class="header-title-container">
-                <div class="header-title">NoeticaDocuments</div>
-                <div class="header-subtitle">Official Reference Manual</div>
-            </div>
+            <img src="noetica_logo_with_name.png" alt="Noetica Logo" class="logo-img" style="height: 45px; filter: grayscale(100%) contrast(1.2);">
         </a>
+        <div class="header-controls">
+            <button class="theme-toggle-btn" id="theme-toggle" title="Cycle Theme (System / Light / Dark)">
+                <!-- Sun Icon -->
+                <svg class="theme-icon" id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <!-- Moon Icon -->
+                <svg class="theme-icon" id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <!-- Monitor Icon (System) -->
+                <svg class="theme-icon" id="theme-icon-system" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <span class="theme-text" id="theme-text" style="font-family: var(--font-mono); font-size: 0.75rem; margin-left: 0.4rem; text-transform: uppercase;">System</span>
+            </button>
+        </div>
     </header>
 
     <main class="kb-container">
@@ -31,21 +62,27 @@
             <a href="index.html" class="toc-item">
                 <span class="num">00.</span> Introduction Portal
             </a>
+            <a href="principles.html" class="toc-item">
+                <span class="num">01.</span> Non-Negotiable Principles
+            </a>
+            <a href="timelines.html" class="toc-item">
+                <span class="num">02.</span> The Three Timelines
+            </a>
             <a href="architecture.html" class="toc-item active">
-                <span class="num">01.</span> Hybrid Architecture
+                <span class="num">03.</span> Hybrid Architecture
             </a>
             <a href="ingestion.html" class="toc-item">
-                <span class="num">02.</span> V2 Data Fetchers
+                <span class="num">04.</span> V2 Data Fetchers
             </a>
             <a href="scoring.html" class="toc-item">
-                <span class="num">03.</span> BioSignal Scoring
+                <span class="num">05.</span> BioSignal Scoring
             </a>
         </nav>
         
         <div class="reading-pane">
             <section class="doc-section">
                 <div class="doc-section-title">
-                    01 / Hybrid Architecture
+                    03 / Hybrid Architecture
                     <span>SYSTEM DESIGN</span>
                 </div>
                 
@@ -80,6 +117,6 @@
             </section>
         </div>
     </main>
-
+    <script src="app.js"></script>
 </body>
 </html>

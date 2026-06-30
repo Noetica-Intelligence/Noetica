@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="NoeticaDocuments - BioSignal Scoring">
-    <title>NoeticaDocuments — BioSignal Scoring</title>
+    <meta name="description" content="NoeticaDocuments - Timelines">
+    <title>NoeticaDocuments — The Three Timelines</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
     <link rel="stylesheet" href="index.css">
     <script>
         (function() {
@@ -32,7 +29,6 @@
         </a>
         <div class="header-controls">
             <button class="theme-toggle-btn" id="theme-toggle" title="Cycle Theme (System / Light / Dark)">
-                <!-- Sun Icon -->
                 <svg class="theme-icon" id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -44,11 +40,9 @@
                     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
-                <!-- Moon Icon -->
                 <svg class="theme-icon" id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
-                <!-- Monitor Icon (System) -->
                 <svg class="theme-icon" id="theme-icon-system" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                     <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -68,7 +62,7 @@
             <a href="principles.html" class="toc-item">
                 <span class="num">01.</span> Non-Negotiable Principles
             </a>
-            <a href="timelines.html" class="toc-item">
+            <a href="timelines.html" class="toc-item active">
                 <span class="num">02.</span> The Three Timelines
             </a>
             <a href="architecture.html" class="toc-item">
@@ -77,7 +71,7 @@
             <a href="ingestion.html" class="toc-item">
                 <span class="num">04.</span> V2 Data Fetchers
             </a>
-            <a href="scoring.html" class="toc-item active">
+            <a href="scoring.html" class="toc-item">
                 <span class="num">05.</span> BioSignal Scoring
             </a>
         </nav>
@@ -85,44 +79,60 @@
         <div class="reading-pane">
             <section class="doc-section">
                 <div class="doc-section-title">
-                    05 / BioSignal Scoring
-                    <span>MATHEMATICAL MODELS</span>
+                    02 / The Three Timelines
+                    <span>TEMPORAL SCOPE</span>
                 </div>
                 
                 <p class="doc-intro">
-                    Noetica separates the signal from the noise using a combination of TF-IDF extraction, temporal momentum, and PageRank network centrality executed at bare-metal speeds in Zig.
+                    Noetica categorizes discoveries into three distinct temporal tiers running in parallel. This ensures that the engine distinguishes between immediate breakthroughs and historical foundations.
                 </p>
-                
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timeline</th>
+                            <th>Scope</th>
+                            <th>Core Question</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Foundational</strong></td><td>5,000+ years</td><td>What changed civilization?</td></tr>
+                        <tr><td><strong>Modern</strong></td><td>Last 50 years</td><td>What changed science?</td></tr>
+                        <tr><td><strong>Emerging</strong></td><td>Last 5 years</td><td>What might change the future?</td></tr>
+                    </tbody>
+                </table>
+
                 <div class="glass-card">
-                    <h4>The Problem with Keyword Matching</h4>
+                    <h4>Example: Foundational Tier 0 Breakthroughs</h4>
                     <p class="doc-paragraph">
-                        Traditional keyword alerts (e.g., Google Scholar Alerts) simply check if a word exists in a document. This leads to massive false-positive rates when the keyword is merely cited in passing. Noetica calculates the <em>mathematical weight</em> of the concept within the topology of the text.
+                        Discoveries in this tier possess a 10/10 Civilization Score. For instance:
                     </p>
+                    <ul>
+                        <li><strong>Zero:</strong> No algebra, calculus, computers, AI without it.</li>
+                        <li><strong>Calculus:</strong> Enables modern engineering, physics, and ML algorithms.</li>
+                        <li><strong>Electromagnetism:</strong> Without Maxwell, there is no radio, internet, or computers.</li>
+                        <li><strong>Relativity:</strong> GPS systems fail without Einstein's equations.</li>
+                        <li><strong>Quantum Mechanics:</strong> Foundation for semiconductors, lasers, and MRI machines.</li>
+                    </ul>
                 </div>
 
-                <h2>PageRank Centrality</h2>
+                <h2>The Discovery Entity</h2>
                 <p class="doc-paragraph">
-                    Within the Zig engine, Noetica constructs a graph where nodes represent documents and edges represent conceptual similarities (derived via term frequency vectors). 
+                    The unit of analysis in Noetica is <strong>not</strong> a paper. It is a <strong>Discovery</strong>.
                 </p>
+                <pre><code>Discovery (e.g., CRISPR)
+│
+├── Papers (thousands)
+├── Patents
+├── Grants
+├── Datasets
+├── Conferences
+├── Startups
+├── Products
+└── Researchers</code></pre>
                 <p class="doc-paragraph">
-                    The algorithm iteratively computes the PageRank $PR(u)$ for each document $u$:
+                    A paper is merely a leaf on the tree. The Discovery is the tree itself, persisting across the three timelines.
                 </p>
-                <p class="doc-paragraph" style="text-align: center;">
-                    $$ PR(u) = \frac{1-d}{N} + d \sum_{v \in B(u)} \frac{PR(v)}{L(v)} $$
-                </p>
-                <p class="doc-paragraph">
-                    Where $d$ is the damping factor (typically 0.85), $B(u)$ is the set of documents strongly related to $u$, and $L(v)$ is the number of out-links from $v$. A high PageRank score means a paper is not only novel but highly central to the cluster of discoveries fetched that day.
-                </p>
-
-                <h2>Momentum & Impact Multipliers</h2>
-                <p class="doc-paragraph">
-                    Papers are further penalized or boosted based on metadata:
-                </p>
-                <ul>
-                    <li><strong>Impact Factor:</strong> Papers from high-impact domains receive a baseline multiplier.</li>
-                    <li><strong>Temporal Decay:</strong> Older discoveries suffer exponential decay in significance unless they possess overwhelming citation momentum.</li>
-                </ul>
-
             </section>
         </div>
     </main>

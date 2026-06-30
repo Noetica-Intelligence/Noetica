@@ -177,20 +177,21 @@ def main() -> int:
     # ── Step 3b: Zig Engine Graph & BioSignal Analysis ───────────────────────
     print(f"\n⚡ [3b/6] Running Zig Engine graph analysis...")
     import subprocess
+    from pathlib import Path
+    
     try:
-        zig_input_path = "zig_engine/input.json"
+        project_root = Path(__file__).parent.parent
+        zig_dir = project_root / "zig_engine"
+        zig_input_path = zig_dir / "input.json"
+        
         with open(zig_input_path, "w", encoding="utf-8") as f:
             json.dump(scored_papers, f)
             
-        zig_bin = "zig_engine/zig-out/bin/zig_engine"
-        if os.name == "nt":
-            zig_bin += ".exe"
+        zig_bin_name = "zig_engine.exe" if os.name == "nt" else "zig_engine"
+        zig_bin_path = zig_dir / "zig-out" / "bin" / zig_bin_name
             
-        if os.path.exists(zig_bin):
-            run_bin = "./zig-out/bin/zig_engine"
-            if os.name == "nt":
-                run_bin += ".exe"
-            res = subprocess.run([run_bin], capture_output=True, text=True, cwd="zig_engine")
+        if zig_bin_path.exists():
+            res = subprocess.run([str(zig_bin_path)], capture_output=True, text=True, cwd=str(zig_dir))
             if res.returncode == 0:
                 zig_data = json.loads(res.stdout)
                 zig_nodes = {n["id"]: n for n in zig_data.get("nodes", [])}

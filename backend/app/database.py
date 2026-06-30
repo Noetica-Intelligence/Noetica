@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Fallback to SQLite if Postgres is not available natively on Windows
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "sqlite:///./scientific_intel_v2.db"
+    "sqlite:///./data/scientific_intelligence.db"
 )
 
 # SQLite requires specific connect_args for multithreading

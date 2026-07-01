@@ -75,7 +75,7 @@ def ingest_feedback_from_sheet() -> int:
 
     from database import save_feedback  # avoid circular at module level
 
-    csv_url = f"https://docs.google.com/spreadsheets/d/{FEEDBACK_SHEET_ID}/export?format=csv"
+    csv_url = FEEDBACK_SHEET_ID if FEEDBACK_SHEET_ID.startswith("http") else f"https://docs.google.com/spreadsheets/d/{FEEDBACK_SHEET_ID}/export?format=csv"
     try:
         req  = urllib.request.Request(csv_url, headers={"User-Agent": "Noetica/1.0"})
         with urllib.request.urlopen(req, timeout=10) as resp:

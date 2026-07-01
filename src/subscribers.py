@@ -60,9 +60,20 @@ def get_subscribers() -> list[dict]:
         with urllib.request.urlopen(req) as response:
             lines = [line.decode('utf-8') for line in response.readlines()]
             
-        reader = csv.DictReader(lines)
+        reader = csv.reader(lines)
+        headers = next(reader)
+        unique_headers = []
+        seen = set()
+        for h in headers:
+            if h in seen:
+                unique_headers.append(f"{h}_duplicate_{len(seen)}")
+            else:
+                unique_headers.append(h)
+                seen.add(h)
+                
+        dict_reader = csv.DictReader(lines[1:], fieldnames=unique_headers)
         subscribers = []
-        for raw_row in reader:
+        for raw_row in dict_reader:
             row = {}
             for k, v in raw_row.items():
                 if not k: continue
@@ -70,7 +81,8 @@ def get_subscribers() -> list[dict]:
                 val = v.strip() if v else ""
                 
                 if "email" in k_lower:
-                    row["Email"] = val
+                    if not row.get("Email") or val:
+                        row["Email"] = val
                 elif "name" in k_lower:
                     row["Name"] = val
                 elif "expertise" in k_lower or "best describes" in k_lower:
@@ -79,21 +91,34 @@ def get_subscribers() -> list[dict]:
                     row["Reading Time"] = val
                 elif "frequency" in k_lower or "often" in k_lower:
                     row["Report Frequency"] = val
-                elif "fields" in k_lower or ("interest" in k_lower and "outside" not in k_lower):
-                    row["Interests"] = val
+                elif "fields" in k_lower or ("interest" in k_lower and "outside" not in k_lower) or "sub-domain" in k_lower or "division" in k_lower:
+                    if "Interests" in row and val:
+                        row["Interests"] += "," + val
+                    elif val:
+                        row["Interests"] = val
                 elif "types" in k_lower or "preferences" in k_lower:
                     row["Discovery Preferences"] = val
                 elif "outside" in k_lower or "exploration" in k_lower:
                     row["Exploration Preference"] = val
                 elif "consent" in k_lower:
                     row["Consent"] = val
+                elif "opt-out" in k_lower or "unsubscribed" in k_lower:
+                    row["OptOut"] = val
+                elif "active" in k_lower or "status" in k_lower:
+                    row["Active"] = val
 
             # Default missing consent column to yes so it doesn't fail if they forgot the question
             if "Consent" not in row:
                 row["Consent"] = "yes"
 
-            # Only include users who consented and provided an email
-            if row.get("Email") and str(row.get("Consent", "yes")).strip().lower() == "yes":
+            # Only include users who provided an email and did not explicitly decline consent
+            consent_str = str(row.get("Consent", "yes")).strip().lower()
+            if row.get("Email") and consent_str not in ["no", "i disagree", "false"]:
+                # Check for opt-out or inactive status
+                if str(row.get("OptOut", "no")).strip().lower() == "yes":
+                    continue
+                if str(row.get("Active", "yes")).strip().lower() == "no":
+                    continue
                 subscribers.append(row)
                 
         print(f"✅ Loaded {len(subscribers)} active subscribers.")

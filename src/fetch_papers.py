@@ -74,7 +74,8 @@ MAX_PAPERS_TOTAL  = int(os.environ.get("MAX_PAPERS_TOTAL", "60"))
 
 def safe_get(url: str, timeout: int = 20) -> bytes | None:
     """HTTP GET with retry logic."""
-    headers = {"User-Agent": "ScientificIntelligenceBot/1.0 (research digest; contact: research@example.com)"}
+    email = os.environ.get("NOETICA_EMAIL", "research@example.com")
+    headers = {"User-Agent": f"ScientificIntelligenceBot/1.0 (research digest; contact: {email})"}
     req = urllib.request.Request(url, headers=headers)
     for attempt in range(3):
         try:
@@ -216,12 +217,13 @@ def fetch_pubmed(query: str, max_results: int = 5) -> list[dict]:
 def fetch_openalex(concept_id: str, max_results: int = 3) -> list[dict]:
     """Fetch recent highly-cited works from OpenAlex for a concept."""
     since = days_ago(7)
+    email = os.environ.get("NOETICA_EMAIL", "research@example.com")
     url = (
         f"https://api.openalex.org/works?"
         f"filter=concepts.id:{concept_id},from_publication_date:{since},is_oa:true"
         f"&sort=cited_by_count:desc"
         f"&per-page={max_results}"
-        f"&mailto=research@example.com"
+        f"&mailto={email}"
     )
     raw = safe_get(url)
     if not raw:

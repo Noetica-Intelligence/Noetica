@@ -14,7 +14,10 @@ async def list_discoveries(skip: int = 0, limit: int = 50, db: Session = Depends
     def fetch():
         return db.query(Discovery).order_by(Discovery.significance_score.desc()).offset(skip).limit(limit).all()
         
-    discoveries = await asyncio.to_thread(fetch)
+    try:
+        discoveries = await asyncio.to_thread(fetch)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Database query failed")
     # Simple dict conversion for MVP
     return [
         {
@@ -35,7 +38,11 @@ async def get_discovery(discovery_id: str, db: Session = Depends(get_db)):
     def fetch():
         return db.query(Discovery).filter(Discovery.id == discovery_id).first()
         
-    d = await asyncio.to_thread(fetch)
+    try:
+        d = await asyncio.to_thread(fetch)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Database query failed")
+        
     if not d:
         raise HTTPException(status_code=404, detail="Discovery not found")
     return {
@@ -65,7 +72,10 @@ async def get_knowledge_graph(skip: int = 0, limit: int = 200, db: Session = Dep
         ).all()
         return nodes_db, edges_db
         
-    nodes_db, edges_db = await asyncio.to_thread(fetch)
+    try:
+        nodes_db, edges_db = await asyncio.to_thread(fetch)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Database query failed")
     
     nodes = [
         {"id": n.node_id, "name": n.node_name, "group": n.node_type} 

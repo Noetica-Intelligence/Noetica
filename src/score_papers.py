@@ -211,7 +211,7 @@ def compute_composite_score(paper: dict) -> dict:
     base_10 = min(raw_composite * domain_mult * source_mult + title_bonus * 0.2, 10.0)
     
     # Add a deterministic jitter to break exact score ties based on string lengths
-    jitter = ((len(title) + len(abstract)) % 9) * 0.01
+    jitter = ((len(title or "") + len(abstract or "")) % 9) * 0.01
     
     # Map to 0-10 scale (final_score)
     final_score = round(base_10 + jitter, 2)

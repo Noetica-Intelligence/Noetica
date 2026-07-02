@@ -94,7 +94,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
         abstract = html_lib.escape(raw_abs[:300]) + ("..." if len(raw_abs) > 300 else "")
         
-    authors  = ", ".join(html_lib.escape(a) for a in (discovery.get("authors") or [])[:3])
+    authors  = ", ".join(html_lib.escape(a or "Unknown") for a in (discovery.get("authors") or [])[:3])
     if len(discovery.get("authors") or []) > 3:
         authors += " et al."
     date     = discovery.get("date", "")[:10]

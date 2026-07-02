@@ -5,7 +5,7 @@ Uses Gemini to generate a tailored executive summary for the user's specific exp
 
 import os
 try:
-    import google.generativeai as genai
+    from google import genai
 except ImportError:
     genai = None
 
@@ -21,9 +21,8 @@ def format_abstract_pointwise(abstract: str) -> str:
         return abstract
 
     try:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         # 1.5 Flash is highly generous on the free tier
-        model = genai.GenerativeModel('gemini-1.5-flash')
         
         prompt = f"""You are an expert science communicator.
 Your task is to rewrite this scientific abstract into a highly accessible, easy-to-understand 3-point format.
@@ -39,7 +38,10 @@ Do not use Markdown formatting (like **, ##, etc). Use raw HTML tags (<b>, <i>, 
 ORIGINAL ABSTRACT:
 {abstract}
 """
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
         text = response.text.strip()
         
         # Convert markdown bold to HTML bold just in case the AI ignored instructions
@@ -65,9 +67,8 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
         return ""
 
     try:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         # 1.5 Flash for strategic synthesis to avoid Pro rate limits on free tier
-        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Build the context
         paper_context = ""
@@ -97,7 +98,10 @@ TOP DISCOVERIES TODAY:
 {paper_context}
 """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
         text = response.text.strip()
         
         # Convert newlines to HTML breaks if they didn't use HTML

@@ -104,9 +104,17 @@ TOP DISCOVERIES TODAY:
 {paper_context}
 """
 
-        # Using Llama 3.3 70B on Groq for lightning-fast, highly-intelligent synthesis
+        # Dynamic Expertise Router
+        exp_lower = expertise.lower()
+        if "advanced" in exp_lower or "research" in exp_lower or "industry" in exp_lower:
+            target_model = "gpt-oss-120b"
+            print(f"      ↳ Routing to Deep Reasoning Model ({target_model})")
+        else:
+            target_model = "llama-3.3-70b-versatile"
+            print(f"      ↳ Routing to Versatile Synthesis Model ({target_model})")
+
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=target_model,
             messages=[
                 {"role": "system", "content": "You are the Noetica AI Intelligence Director."},
                 {"role": "user", "content": prompt}

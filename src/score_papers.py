@@ -86,7 +86,7 @@ CROSS_DOMAIN_PAIRS = {
 
 def score_novelty(title: str, abstract: str) -> float:
     """Score 0–10 based on breakthrough keywords minus hype."""
-    text = (title + " " + abstract).lower()
+    text = ((title or "") + " " + (abstract or "")).lower()
     signal_hits = sum(1 for kw in BREAKTHROUGH_SIGNALS if kw in text)
     hype_hits   = sum(1 for kw in HYPE_PENALTIES if kw in text)
     # Base 5.0 for passing filters. Each hit gives +2.0.
@@ -96,7 +96,7 @@ def score_novelty(title: str, abstract: str) -> float:
 
 def score_evidence(abstract: str) -> float:
     """Score 0–10 based on experimental/theoretical methodology."""
-    text = abstract.lower()
+    text = (abstract or "").lower()
     method_hits = sum(1 for kw in METHODOLOGY_QUALITY if kw in text)
     numbers = len(re.findall(r'\b\d+\.?\d*[%±]\b|\bn\s*=\s*\d+', text))
     # Base 5.0. Hits give strong boosts.

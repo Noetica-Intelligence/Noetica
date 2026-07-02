@@ -18,12 +18,18 @@ import datetime
 import argparse
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # ─── Local imports ──────────────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
 
 from source_registry  import fetch_all_intelligence         # ← NEW: plug-in registry
 from score_papers     import score_and_rank
-from ai_synthesis     import generate_personalized_synthesis
+from ai_synthesis     import generate_personalized_synthesis, format_abstract_pointwise
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
@@ -130,7 +136,7 @@ def main() -> int:
 
     print("=" * 60)
     print("🔬 Noetica Scientific Intelligence Engine")
-    print(f"   Date: {today}  |  UTC: {datetime.datetime.utcnow().strftime('%H:%M')}")
+    print(f"   Date: {today}  |  UTC: {datetime.datetime.now(datetime.UTC).strftime('%H:%M')}")
     print("=" * 60)
 
     # ── Test mode ─────────────────────────────────────────────────────────────
@@ -269,6 +275,17 @@ def main() -> int:
                     user_top_papers.append(p)
                     break
                     
+        # 1b. Guarantee at least 1 for each requested interest/sub-domain
+        for interest in parse_interests(sub.get("Interests", "")):
+            for p in user_papers:
+                d = p.get("domain", "").lower()
+                t_str = p.get("title", "").lower()
+                a_str = p.get("abstract", "").lower()
+                if interest.lower() in d or interest.lower() in t_str or interest.lower() in a_str:
+                    if p not in user_top_papers:
+                        user_top_papers.append(p)
+                        break
+                    
         # 2. Fill the rest with the highest scoring remaining discoveries
         for p in user_papers:
             if len(user_top_papers) >= limit:
@@ -284,6 +301,11 @@ def main() -> int:
             continue
 
         print(f"   🏆 Selected {len(user_top_papers)} personalized discoveries.")
+        
+        print(f"   ✍️  Formatting abstracts for clarity...")
+        for p in user_top_papers:
+            if "structured_abstract" not in p:
+                p["structured_abstract"] = format_abstract_pointwise(p.get("abstract", ""))
 
         # Generate Personalized AI Synthesis
         expertise_str = sub.get("Expertise Level", "Intermediate")

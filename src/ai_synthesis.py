@@ -66,8 +66,8 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
 
     try:
         genai.configure(api_key=api_key)
-        # 2.5 Flash for strategic synthesis to avoid Pro rate limits on free tier
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # 1.5 Flash for strategic synthesis to avoid Pro rate limits on free tier
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         # Build the context
         paper_context = ""

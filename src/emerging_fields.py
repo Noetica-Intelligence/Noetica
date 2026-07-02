@@ -172,7 +172,7 @@ def detect_convergence_fields(papers: list[dict]) -> list[dict]:
 
         # Check keyword presence across all papers
         all_text = " ".join(
-            (p.get("title", "") + " " + p.get("abstract", "")).lower()
+            ((p.get("title") or "") + " " + (p.get("abstract") or "")).lower()
             for p in papers
         )
         kw_hits = [kw for kw in signal["keywords"] if kw.lower() in all_text]

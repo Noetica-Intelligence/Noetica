@@ -6,6 +6,7 @@ Generates a premium dark/light mode HTML email digest with an Insight-First arch
 import re
 import datetime
 import html as html_lib
+import urllib.parse
 from feedback import build_feedback_url
 
 # ─────────────────────────────────────────────
@@ -53,39 +54,46 @@ DOMAIN_COLORS = {
 # ─────────────────────────────────────────────
 
 def latex_to_unicode(text: str) -> str:
-    """Safely convert common LaTeX symbols to Unicode for email rendering."""
+    """Safely convert common LaTeX symbols to Unicode, and complex math to SVG images."""
     if not text:
         return ""
-    
-    replacements = {
-        r"$_2$": "₂", r"$_3$": "₃", r"$_4$": "₄", r"$_5$": "₅",
-        r"$^2$": "²", r"$^3$": "³", r"$^4$": "⁴",
-        r"\alpha": "α", r"\beta": "β", r"\gamma": "γ", r"\delta": "δ",
-        r"\ell": "ℓ", r"\mu": "μ", r"\pi": "π", r"\sigma": "σ",
-        r"\theta": "θ", r"\infty": "∞",
-        r"\epsilon": "ε", r"\Omega": "Ω", r"\Delta": "Δ",
-        r"\to": "→", r"\nu": "ν",
-    }
-    
-    for old, new in replacements.items():
-        text = text.replace(old, new)
         
-    text = re.sub(r'\$([^\$]+)\$', r'\1', text)
+    # Handle block math: \[ ... \]
+    def block_math_replacer(match):
+        math_str = match.group(1).strip()
+        encoded = urllib.parse.quote(math_str)
+        return f'<br><div style="text-align:center; margin: 10px 0;"><img src="https://latex.codecogs.com/svg.image?\\bg_white\\color{{black}}{encoded}" style="max-width:100%; border-radius: 4px;" alt="math equation" /></div><br>'
+
+    text = re.sub(r'\\\[(.*?)\\\]', block_math_replacer, text, flags=re.DOTALL)
+    
+    # Handle inline math: $ ... $
+    def inline_math_replacer(match):
+        math_str = match.group(1).strip()
+        encoded = urllib.parse.quote(math_str)
+        return f'<img src="https://latex.codecogs.com/svg.image?\\bg_white\\color{{black}}{encoded}" style="vertical-align: middle; padding: 0 2px; border-radius: 2px; height: 1.2em;" alt="math" />'
+
+    text = re.sub(r'\$([^\$]+)\$', inline_math_replacer, text)
+    
     return text
 
 
 def domain_badge(domain: str) -> str:
     fg, bg = DOMAIN_COLORS.get(domain, DOMAIN_COLORS["default"])
     esc = html_lib.escape(domain)
-    return f'<span class="badge" style="background:{bg};color:{fg};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;border:1px solid {fg}40;">{esc}</span>'
+    return f'<span class="badge" style="display:inline-block;white-space:nowrap;margin-bottom:4px;background:{bg};color:{fg};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;border:1px solid {fg}40;">{esc}</span>'
 
 
 def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     """Generate a full discovery card HTML block with an Insight-First hierarchy."""
     did      = discovery.get("id", "unknown")
     title    = html_lib.escape(latex_to_unicode(discovery.get("title", "Untitled")))
-    raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
-    abstract = html_lib.escape(raw_abs[:300]) + ("..." if len(raw_abs) > 300 else "")
+    
+    if "structured_abstract" in discovery:
+        abstract = latex_to_unicode(discovery["structured_abstract"])
+    else:
+        raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
+        abstract = html_lib.escape(raw_abs[:300]) + ("..." if len(raw_abs) > 300 else "")
+        
     authors  = ", ".join(html_lib.escape(a) for a in (discovery.get("authors") or [])[:3])
     if len(discovery.get("authors") or []) > 3:
         authors += " et al."
@@ -143,14 +151,14 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     <div class="card" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
 
       <!-- Subtle Telemetry Row -->
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;" class="telemetry-row">
         <tr>
-          <td align="left" valign="middle">
-            <span class="net-score" style="background:#f8fafc;color:#475569;border:1px solid #e2e8f0;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:1px;margin-right:8px;">NET:{composite_score:.1f}</span>
+          <td align="left" valign="top">
+            <span class="net-score" style="display:inline-block;white-space:nowrap;margin-bottom:4px;background:#f8fafc;color:#475569;border:1px solid #e2e8f0;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:1px;margin-right:8px;">NET:{composite_score:.1f}</span>
             {domain_badge(domain)}
           </td>
-          <td align="right" valign="middle">
-            <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:1px;">{status}</span>
+          <td align="right" valign="top" style="padding-top:4px;">
+            <span style="font-size:10px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:1px;display:inline-block;white-space:nowrap;margin-bottom:4px;">{status}</span>
           </td>
         </tr>
       </table>
@@ -314,6 +322,17 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
     .btn-primary {{ background: #ffffff !important; color: #000000 !important; }}
     .btn-pdf {{ background: #0f172a !important; border-color: #334155 !important; color: #cbd5e1 !important; }}
   }}
+  
+  /* Mobile Responsiveness */
+  @media only screen and (max-width: 600px) {{
+    .header-box {{ padding: 32px 20px !important; }}
+    .card {{ padding: 20px !important; }}
+    .wildcard-card {{ padding: 20px !important; }}
+    .header-title {{ font-size: 26px !important; }}
+    h2 {{ font-size: 18px !important; }}
+    .telemetry-row td {{ display: block !important; width: 100% !important; text-align: left !important; }}
+    .telemetry-row td.status-col {{ margin-top: 8px; text-align: left !important; }}
+  }}
 </style>
 </head>
 <body class="main-wrapper">
@@ -366,7 +385,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           <!-- ══ FOOTER ══ -->
           <div style="text-align:center;padding:40px 24px;color:#64748b;font-size:13px;border-top:1px solid #e2e8f0;margin-top:40px;">
             <p style="margin:0 0 8px 0;font-weight:800;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;font-size:11px;">Noetica Intelligence Network</p>
-            <p style="margin:0;font-size:11px;color:#94a3b8;font-style:italic;">This is a classified intelligence briefing. Do not distribute without authorization.</p>
+            <p style="margin:0 0 24px 0;font-size:11px;color:#94a3b8;font-style:italic;">This is a classified intelligence briefing. Do not distribute without authorization.</p>
+            <a href="mailto:admin@noetica.com?subject=Unsubscribe%20me%20from%20Intelligence%20Briefing" style="display:inline-block; padding:10px 24px; background-color:#f8fafc; color:#64748b; text-decoration:none; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; border:1px solid #e2e8f0;">Unsubscribe</a>
           </div>
 
         </td></tr>

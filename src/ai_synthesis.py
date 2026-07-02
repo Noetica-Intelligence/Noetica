@@ -9,6 +9,49 @@ try:
 except ImportError:
     genai = None
 
+def format_abstract_pointwise(abstract: str) -> str:
+    """
+    Format a raw abstract into a structured, easily understandable 3-point format.
+    """
+    if not abstract:
+        return ""
+        
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key or not genai:
+        return abstract
+
+    try:
+        genai.configure(api_key=api_key)
+        # 2.5 Flash is faster and cheaper for simple restructuring
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        prompt = f"""You are an expert science communicator.
+Your task is to rewrite this scientific abstract into a highly accessible, easy-to-understand 3-point format.
+Do NOT just copy-paste the text. Use AI to synthesize and explain the concepts simply so anyone can understand them.
+
+FORMAT REQUIREMENT (Use exactly these bold headers, using HTML <b> tags):
+<b>1. Abstract Overview:</b> (Maximum 4 lines, simple summary of what this is about)<br><br>
+<b>2. Research Details:</b> (Topic, Workflow, Material, and Methods used)<br><br>
+<b>3. Key Findings & Future Directions:</b> (Maximum 3 lines, why this matters)
+
+Do not use Markdown formatting (like **, ##, etc). Use raw HTML tags (<b>, <i>, <br>) for formatting. 
+
+ORIGINAL ABSTRACT:
+{abstract}
+"""
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        
+        # Convert markdown bold to HTML bold just in case the AI ignored instructions
+        import re
+        text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+        
+        # We always return the generated text, as the AI likely structured it somehow.
+        return text.replace("\\n", " ")
+    except Exception as e:
+        print(f"   ⚠️  Gemini Abstract Formatting failed: {e}")
+        return abstract
+
 def generate_personalized_synthesis(papers: list[dict], expertise: str, interests: str) -> str:
     """
     Generate a personalized 2-paragraph synthesis of the top papers 
@@ -23,8 +66,8 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
 
     try:
         genai.configure(api_key=api_key)
-        # 1.5 Pro is explicitly designed for complex reasoning and deep scientific synthesis
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        # 2.5 Flash for strategic synthesis to avoid Pro rate limits on free tier
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Build the context
         paper_context = ""

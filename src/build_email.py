@@ -75,6 +75,23 @@ def latex_to_unicode(text: str) -> str:
 
     text = re.sub(r'\$([^\$]+)\$', inline_math_replacer, text)
     
+    text = re.sub(r'\^\{([^}]+)\}', r'<sup>\1</sup>', text)
+    text = re.sub(r'_\{([^}]+)\}', r'<sub>\1</sub>', text)
+    
+    return text
+
+def render_markdown_to_html(text: str) -> str:
+    """Convert basic markdown bold/italic/lists to HTML for email rendering."""
+    if not text:
+        return ""
+    # Bold
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong style="color:#0f172a;">\1</strong>', text)
+    # Newlines
+    text = text.replace('\n\n', '<br><br>')
+    text = text.replace('\n', '<br>')
+    # Simple list formatting
+    text = text.replace('<br>- ', '<br>&nbsp;&nbsp;&bull; ')
+    text = text.replace('<br>* ', '<br>&nbsp;&nbsp;&bull; ')
     return text
 
 
@@ -90,7 +107,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     title    = html_lib.escape(latex_to_unicode(discovery.get("title", "Untitled")))
     
     if "structured_abstract" in discovery:
-        abstract = latex_to_unicode(discovery["structured_abstract"])
+        abstract = render_markdown_to_html(latex_to_unicode(discovery["structured_abstract"]))
     else:
         raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
         abstract = html_lib.escape(textwrap.shorten(raw_abs, width=300, placeholder="..."))
@@ -234,7 +251,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         if len(wc_authors_list) > 3: wc_authors += " et al."
         
         if "structured_abstract" in wildcard:
-            wc_abstract = latex_to_unicode(wildcard["structured_abstract"])
+            wc_abstract = render_markdown_to_html(latex_to_unicode(wildcard["structured_abstract"]))
         else:
             raw_wc_abs = latex_to_unicode(wildcard.get("abstract", ""))
             wc_abstract = html_lib.escape(textwrap.shorten(raw_wc_abs, width=300, placeholder="..."))

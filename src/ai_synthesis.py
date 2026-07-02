@@ -10,9 +10,9 @@ except ImportError:
     genai = None
 
 try:
-    import openai
+    import groq
 except ImportError:
-    openai = None
+    groq = None
 
 def format_abstract_pointwise(abstract: str) -> str:
     """
@@ -67,13 +67,13 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
     if not papers:
         return ""
         
-    api_key_openai = os.environ.get("OPENAI_API_KEY")
-    if not api_key_openai or not openai:
-        # Fallback to Gemini if OpenAI is missing
+    api_key_groq = os.environ.get("GROQ_API_KEY")
+    if not api_key_groq or not groq:
+        # Fallback to Gemini if Groq is missing
         return _generate_personalized_synthesis_gemini(papers, expertise, interests)
 
     try:
-        client = openai.OpenAI(api_key=api_key_openai, max_retries=5)
+        client = groq.Groq(api_key=api_key_groq, max_retries=5)
         
         
         # Build the context
@@ -104,9 +104,9 @@ TOP DISCOVERIES TODAY:
 {paper_context}
 """
 
-        # Using gpt-4o-mini for fast, cheap, highly-obedient synthesis across 500+ users
+        # Using Llama 3.3 70B on Groq for lightning-fast, highly-intelligent synthesis
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": "You are the Noetica AI Intelligence Director."},
                 {"role": "user", "content": prompt}
@@ -122,12 +122,12 @@ TOP DISCOVERIES TODAY:
             
         return text
     except Exception as e:
-        print(f"   ⚠️  OpenAI AI Synthesis failed: {e}")
-        # Try falling back to Gemini if OpenAI hits a hard limit
+        print(f"   ⚠️  Groq (Llama 3) Synthesis failed: {e}")
+        # Try falling back to Gemini if Groq hits a hard limit
         return _generate_personalized_synthesis_gemini(papers, expertise, interests)
 
 def _generate_personalized_synthesis_gemini(papers: list[dict], expertise: str, interests: str) -> str:
-    """Fallback using Gemini if OpenAI fails or isn't configured."""
+    """Fallback using Gemini if Groq fails or isn't configured."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or not genai:
         return ""

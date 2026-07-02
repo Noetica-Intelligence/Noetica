@@ -22,8 +22,8 @@ def format_abstract_pointwise(abstract: str) -> str:
 
     try:
         genai.configure(api_key=api_key)
-        # 2.5 Flash is faster and cheaper for simple restructuring
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # 1.5 Flash is highly generous on the free tier
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         prompt = f"""You are an expert science communicator.
 Your task is to rewrite this scientific abstract into a highly accessible, easy-to-understand 3-point format.

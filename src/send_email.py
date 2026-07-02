@@ -187,7 +187,7 @@ def build_plain_text_summary(papers: list[dict]) -> str:
             f"#{i} [{score:.1f}/10] [{p.get('domain','?')}]",
             f"Title: {p.get('title','')}",
             f"Source: {p.get('source','')} | Date: {p.get('date','')[:10]}",
-            f"Authors: {', '.join((p.get('authors') or [])[:3])}",
+            f"Authors: {', '.join((a or 'Unknown') for a in (p.get('authors') or [])[:3])}",
             f"URL: {p.get('url','')}",
             f"Abstract: {(p.get('abstract',''))[:300]}...",
             "-" * 50,

@@ -52,9 +52,8 @@ def build_feedback_url(discovery_id: str, email: str, rating: str) -> str:
     Falls back to a simple mailto if FEEDBACK_FORM_BASE_URL is not set.
     """
     if not FEEDBACK_FORM_BASE:
-        # Graceful fallback: mailto-based (no form setup needed)
-        subject = urllib.parse.quote(f"Feedback:{rating}:{discovery_id}")
-        return f"mailto:{email}?subject={subject}"
+        # User requested to hardcode this exact Google Form URL if not configured
+        return "https://docs.google.com/forms/d/e/1FAIpQLSdXVKKAbLeZNQ73md-Jt3IMXR1tpg0NbU0MVqXFLJ2N1KqARQ/viewform?usp=header"
 
     url = FEEDBACK_FORM_BASE
     url = url.replace("{discovery_id}", urllib.parse.quote(discovery_id))

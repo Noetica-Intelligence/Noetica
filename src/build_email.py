@@ -410,7 +410,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           <div style="text-align:center;padding:40px 24px;color:#64748b;font-size:13px;border-top:1px solid #e2e8f0;margin-top:40px;">
             <p style="margin:0 0 8px 0;font-weight:800;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;font-size:11px;">Noetica Intelligence Network</p>
             <p style="margin:0 0 24px 0;font-size:11px;color:#94a3b8;font-style:italic;">Synthesized by Noetica Intelligence. Open-source scientific telemetry.</p>
-            <a href="mailto:admin@noetica.com?subject=Unsubscribe%20me%20from%20Intelligence%20Briefing" style="display:inline-block; padding:10px 24px; background-color:#f8fafc; color:#64748b; text-decoration:none; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; border:1px solid #e2e8f0;">Unsubscribe</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXVKKAbLeZNQ73md-Jt3IMXR1tpg0NbU0MVqXFLJ2N1KqARQ/viewform?usp=header" style="display:inline-block; padding:10px 24px; background-color:#f8fafc; color:#64748b; text-decoration:none; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; border:1px solid #e2e8f0;">Unsubscribe</a>
           </div>
 
         </td></tr>

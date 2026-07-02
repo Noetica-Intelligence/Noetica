@@ -922,386 +922,17 @@
     ]
   },
   {
-    "source": "PubMed",
-    "id": "pmid:42364920",
-    "title": "Artificial intelligence empowers the innovation of traditional Chinese medicine.",
-    "abstract": "Artificial intelligence (AI) technology is advancing rapidly with algorithms and models for diverse applications, such as virtual disease biologist agents, target and drug discovery, and multimodal diagnosis and treatment, emerging at an increasingly rapid pace. The development and application of AI can effectively address long-standing challenges in the research and application of traditional Chinese medicine (TCM), including the difficulty of mining classic texts, insufficient standardization of diagnosis and treatment, and lengthy drug development cycles. This creates new opportunities for the development of TCM and further propels its transition from empirical medicine to precision medicine. To seize the opportunities presented by AI development, it is necessary to build a tripartite i",
+    "id": "gh_1098900707",
+    "title": "[REPO] paiml/aprender",
+    "abstract": "Next Generation Machine Learning, Statistics and Deep Learning in PURE Rust",
     "authors": [
-      "Chen KX"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42364920/",
-    "pdf_url": "https://doi.org/10.1016/j.joim.2026.05.004",
-    "domain": "AI in Medicine",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42364920/",
-        "id": "pmid:42364920"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:41962624",
-    "title": "Artificial intelligence in clinical oncology: Multimodal integration and translational development.",
-    "abstract": "Artificial intelligence (AI) is rapidly reshaping clinical oncology, as cancer care increasingly relies on integrating heterogeneous data streams spanning radiology, digital pathology, genomics, and longitudinal electronic health records. However, the sheer complexity and fragmentation of these multimodal inputs remain a major bottleneck for achieving truly personalized cancer management. Recent advances in AI, including foundation models, synthetic data generation, large language models, and agents, are enabling more robust representation learning, cross-modal reasoning, and clinically actionable decision support beyond what traditional single-modality systems can provide. AI-powered platforms are now accelerating molecular subtyping, refining risk stratification, and supporting individua",
-    "authors": [
-      "Lin R",
-      "Zhao Z",
-      "Liu Z",
-      "Kang J"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/41962624/",
-    "pdf_url": "https://doi.org/10.1016/j.canlet.2026.218493",
-    "domain": "AI in Medicine",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/41962624/",
-        "id": "pmid:41962624"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42107050",
-    "title": "A review on artificial intelligence in pharmaceutical sciences: opportunities and challenges.",
-    "abstract": "The review aims to systematically explore the transformative impact of artificial intelligence (AI) on pharmaceutical sciences. It addresses key research questions regarding how AI accelerates drug development, enhances clinical trial design, optimizes manufacturing, and drives advances in personalized and precision medicine. A comprehensive literature review was conducted. It synthesized recent studies, industry reports, and regulatory guidelines on AI adoption. Covered drug discovery, clinical trials, pharmacovigilance, manufacturing, supply chain management, and pharmacy education. It also critically examined barriers such as data quality, privacy, explainability, and the evolving regulatory landscape. AI accelerates pharmaceutical R&D, identification, lead optimization, ADMET (absorpti",
-    "authors": [
-      "Kumar V",
-      "Kumar S",
-      "Kumar R",
-      "Tiwari N"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42107050/",
-    "pdf_url": "https://doi.org/10.1080/03639045.2026.2670435",
-    "domain": "AI in Medicine",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42107050/",
-        "id": "pmid:42107050"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:41855081",
-    "title": "Antibody-drug conjugate design and mechanisms of action for cancer treatment: state of the art and beyond.",
-    "abstract": "Antibody-drug conjugates (ADCs) are a leading area of targeted cancer therapeutics, typically combining a tumor-associated antigen-specific antibody conjugated to a toxic payload that targets key cellular mechanisms, such as mitosis and survival. The global ADC clinical trial landscape has been expanding significantly, with over 430 ADCs reaching early to late clinical studies in the past two decades, up from just 90 between 2004 and 2014. The US Food and Drug Administration (FDA) has so far approved 14 ADCs for use in clinical oncology. This growth is likely driven by significant advances in antibody technology and conjugation methods enabling more effective and precise delivery to cancer cells and more effective payloads that target vital cancer biology. Here, we review the ADCs that hav",
-    "authors": [
-      "Cheung A",
-      "Liu Y",
-      "Chenoweth AM",
-      "Montaseri H"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/41855081/",
-    "pdf_url": "https://doi.org/10.1152/physrev.00039.2025",
-    "domain": "AI in Medicine",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/41855081/",
-        "id": "pmid:41855081"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42309629",
-    "title": "The Role of Machine Learning and Artificial Intelligence in Drug Discovery and Clinical Care of Pulmonary Hypertension.",
-    "abstract": "Pulmonary hypertension (PH) is a severe and oftentimes fatal disease with a high degree of clinical variability. Its complexity necessitates a multifaceted approach, with clinical and prognostic results significantly improved with earlier identification and initiation of treatment. Developments in artificial intelligence (AI) and machine learning (ML) allow earlier diagnosis, individualized treatments, and new therapeutic options, which have already shown real potential to improve patient outcomes; such an intricate approach was not feasible before the AI innovations of the last decade. This article outlines the current applications of AI and ML for diagnostics, treatment optimization, surveillance, and drug discovery for PH.",
-    "authors": [
-      "Bischof E",
-      "Haber C",
-      "Lidströmer N"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42309629/",
-    "pdf_url": "https://doi.org/10.1016/j.hfc.2026.02.009",
-    "domain": "AI in Medicine",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42309629/",
-        "id": "pmid:42309629"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42322289",
-    "title": "The Impact of Second-Shell Residues on Substrate Binding at the Active Site of Thymidylate Synthase from",
-    "abstract": "Employing classical alchemical free-energy simulations, we quantitatively evaluated how mutations in second-shell residues (Y44, Q106, Y108, and T181) affect the energetics of substrate (dUMP) binding to the active site of MtbThyX, an important drug target for",
-    "authors": [
-      "Sengupta P",
-      "Satpati P"
-    ],
-    "date": "2026-Jul-02",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42322289/",
-    "pdf_url": "https://doi.org/10.1021/acs.jpcb.6c01496",
-    "domain": "Molecular Dynamics",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42322289/",
-        "id": "pmid:42322289"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42371046",
-    "title": "Challenging cases for AlphaFold: two multidomain proteins with zinc-binding-, phosphorylation- or dimerization-driven conformational changes.",
-    "abstract": "Advances in artificial intelligence, particularly in deep learning, are transforming the field of protein structure prediction. AlphaFold has emerged as a benchmark tool due to its remarkable ability to model protein folding based solely on amino acid sequences. Nevertheless, despite these impressive achievements, several prediction failures still occur. In this study, we focus on two multidomain proteins, LicT from Bacillus subtilis and P1 from the Rice Yellow Mottle Virus, that have long resisted structural characterization. Both proteins exhibit inter-domain flexibility, dimerization, and dynamic behavior in response to phosphorylation (for LicT) or zinc binding (for P1). Here, we screen the performances of AlphaFold versions against these two proteins endowed with a complex conformatio",
-    "authors": [
-      "Yang Y",
-      "Déméné H"
-    ],
-    "date": "2026-Jun-29",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42371046/",
-    "pdf_url": "https://doi.org/10.1007/s00249-026-01854-3",
-    "domain": "Structural Biology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42371046/",
-        "id": "pmid:42371046"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:41999908",
-    "title": "Exploring quantum frontiers in protein structure prediction: techniques, challenges, and opportunities.",
-    "abstract": "Protein folding is governed by the principle of free energy minimization, where a protein's native tertiary structure corresponds to the global minimum on an energy landscape shaped by quantum mechanical interactions such as hydrogen bonding, van der Waals forces, and electron delocalization. Despite significant advances in template-based modeling (TBM), ab-initio simulations, and deep learning approaches, classical methods continue to face challenges due to the exponential complexity of the conformational search space and the approximations involved in modeling molecular interactions. Although AlphaFold, a deep learning-based protein modeling tool, has achieved a remarkable score of 92.4 in the critical assessment of protein structure prediction (CASP), classical protein structure predict",
-    "authors": [
-      "Selvaraj AA",
-      "Jayawant M",
-      "Kayalvizhi N",
-      "Krishnan M"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/41999908/",
-    "pdf_url": "https://doi.org/10.1016/j.ymeth.2026.04.006",
-    "domain": "Structural Biology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/41999908/",
-        "id": "pmid:41999908"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42300078",
-    "title": "When can AlphaFold predict the oligomeric states of proteins?",
-    "abstract": "Homooligomerisation is a prevalent and important process that many proteins undergo to form the quaternary structures required for biological function. However, determining oligomeric states and structures experimentally remains technically challenging and time-consuming for many proteins. Here, we show that the protein structure prediction tools AlphaFold2-Multimer and AlphaFold3 can be used to quickly and accurately predict oligomeric states and structures for a range of soluble and membrane proteins. Across over 4700 proteins, AlphaFold2-Multimer provides reliable oligomeric state predictions in the majority of cases, however accuracy is more limited for proteins lacking close structural representatives in the AlphaFold training set, highlighting the dependence of these methods on robus",
-    "authors": [
-      "Lin Y",
-      "Wallis C",
-      "Corry B"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42300078/",
-    "pdf_url": "https://doi.org/10.1002/pro.70686",
-    "domain": "Structural Biology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42300078/",
-        "id": "pmid:42300078"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42118587",
-    "title": "IL-6 receptor blockade impedes proinflammatory atypical Treg subset associated with immune checkpoint inhibitor-induced inflammatory arthritis.",
-    "abstract": "BACKGROUNDImmune checkpoint inhibitor-induced inflammatory arthritis (ICI-IA) significantly impairs cancer therapy and patient quality of life, yet its pathogenic mechanisms remain unclear.METHODSThrough integrated single-cell multi-omics analysis of paired peripheral blood, synovial fluid, and tumor samples from longitudinal ICI-IA cohorts and matched controls, we identified a unique regulatory T-cell (Treg) population coexpressing CD137 and IL-6R (AtpTreg).RESULTSThese cells exhibited reduced immunosuppressive capacity while aberrantly producing high levels of IL-17 and promoting proinflammatory responses of synoviocytes. AtpTreg exhibits shared clonotypes and phenotypes across tissue compartments. Notably, AtpTreg frequency correlates with increased arthritis severity yet paradoxically ",
-    "authors": [
-      "Ma Y",
-      "Liu N",
-      "Li Y",
-      "Zhang D"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42118587/",
-    "pdf_url": "https://doi.org/10.1172/JCI200135",
-    "domain": "Immunology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42118587/",
-        "id": "pmid:42118587"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:41543026",
-    "title": "Concomitant use of H1 antihistamines improves survival outcomes in cancer patients on immune checkpoint inhibitor therapy: a systematic review and meta-analysis.",
-    "abstract": "The rapid progress of immuno-oncology has transformed cancer pharmacotherapy through immune checkpoint inhibitors (ICIs); however, only a minority of patients experience durable benefits. Recent evidence suggests that concomitant administration of H1 antihistamines may synergistically enhance ICI efficacy by modulating the tumor immune microenvironment. This meta-analysis evaluated the association between H1 antihistamine use and outcomes in cancer patients undergoing ICI therapy. Comprehensive searches were conducted in PubMed, Embase, and Web of Science to identify studies comparing overall survival (OS) and progression-free survival (PFS) between ICI users with and without H1 antihistamines. Pooled hazard ratios (HRs) were calculated using a random-effects model (REML) in R software (v4",
-    "authors": [
-      "de Moraes FCA",
-      "de Souza Wagner PH",
-      "Hirata RDC",
-      "Burbano RMR"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/41543026/",
-    "pdf_url": "https://doi.org/10.1080/14737140.2026.2617952",
-    "domain": "Immunology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/41543026/",
-        "id": "pmid:41543026"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42150483",
-    "title": "Docetaxel plus ramucirumab immediately after immunotherapy in advanced NSCLC: A phase II study (DRUN).",
-    "abstract": "Docetaxel plus ramucirumab is a standard second-line treatment for advanced non-small cell lung cancer (NSCLC). Prior immunotherapy has been suggested to potentially affect the efficacy of subsequent docetaxel plus ramucirumab, but prospective evidence is limited. This multicenter, single-arm, phase II study enrolled patients with advanced NSCLC. Eligible patients had experienced disease progression following a prior immune checkpoint inhibitor (ICI)-containing regimen. Patients received docetaxel 60 mg/m Between January 8, 2020, and January 7, 2024,We evaluated 33 patients for efficacy and safety. The median age was 69 years, and 26 patients (79%) had an Eastern Cooperative Oncology Group performance status of 1. The ORR was 33.3% (90% confidence interval [CI], 19.9-49.1), and the DCR was",
-    "authors": [
-      "Harutani Y",
-      "Akamatsu H",
-      "Sugimoto T",
-      "Takakura T"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42150483/",
-    "pdf_url": "https://doi.org/10.1016/j.lungcan.2026.109454",
-    "domain": "Immunology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42150483/",
-        "id": "pmid:42150483"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:41933852",
-    "title": "Immunotherapy advancements in high-grade serous ovarian cancer: From promise to practice.",
-    "abstract": "High-grade serous ovarian carcinoma (HGSC) is the most common epithelial ovarian cancer subtype, with high recurrence rates and poor overall survival. Despite progress with cytoreductive surgery, platinum-based chemotherapy, and poly(ADP-ribose) polymerase (PARP) inhibitors, treatment outcomes remain poor, underscoring the need for novel approaches. Immunotherapy is currently the standard of care for the management of several solid tumors, but its role in HGSC is still emerging. This review synthesizes current evidence on the immune landscape of HGSC, predictive biomarkers, resistance mechanisms, and therapeutic strategies including immune checkpoint inhibitors, vaccines, adoptive cell therapies, oncolytic viruses, and antibody-drug conjugates (ADCs) which interact with the immune system. ",
-    "authors": [
-      "Heidinger M",
-      "Caruso G",
-      "Coelho R",
-      "Stiegeler N"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/41933852/",
-    "pdf_url": "https://doi.org/10.1016/j.critrevonc.2026.105312",
-    "domain": "Immunology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/41933852/",
-        "id": "pmid:41933852"
-      }
-    ]
-  },
-  {
-    "source": "PubMed",
-    "id": "pmid:42349466",
-    "title": "Updates on intratumoral therapies in melanoma.",
-    "abstract": "Intratumoral therapies provide an opportunity for novel strategies in the management of advanced melanoma. These approaches deliver concentrated doses of therapeutic immune agents directly into individual tumor(s), achieving local tumor control and induction of systemic antitumor immune responses while minimizing the risk of immune-related adverse events. Talimogene laherparepvec, a genetically modified herpes simplex virus type 1-encoding granulocyte-macrophage colony-stimulating factor, was the first oncolytic viral therapy approved in a solid tumor indication. In pivotal trials of patients with melanoma, talimogene laherparepvec demonstrated durable responses. Building on this paradigm, next-generation oncolytic agents incorporate additional genetic modifications, such as fusogenic prot",
-    "authors": [
-      "Ma VT",
-      "Steimle AK",
-      "Patel JD",
-      "Burkey C"
-    ],
-    "date": "2026-Jul-01",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/42349466/",
-    "pdf_url": "https://doi.org/10.1002/cncr.70400",
-    "domain": "Immunology",
-    "source_types": [
-      "paper"
-    ],
-    "sources": [
-      {
-        "type": "paper",
-        "name": "PubMed",
-        "url": "https://pubmed.ncbi.nlm.nih.gov/42349466/",
-        "id": "pmid:42349466"
-      }
-    ]
-  },
-  {
-    "id": "gh_157810638",
-    "title": "[REPO] espressif/esp-dl",
-    "abstract": "Espressif deep-learning library for AIoT applications",
-    "authors": [
-      "espressif"
+      "paiml"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T11:10:33Z",
-    "url": "https://github.com/espressif/esp-dl",
-    "stars": 1067,
+    "date": "2026-07-02T12:03:14Z",
+    "url": "https://github.com/paiml/aprender",
+    "stars": 103,
     "source_types": [
       "repo"
     ],
@@ -1309,23 +940,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/espressif/esp-dl",
-        "id": "gh_157810638"
+        "url": "https://github.com/paiml/aprender",
+        "id": "gh_1098900707"
       }
     ]
   },
   {
-    "id": "gh_154843614",
-    "title": "[REPO] open-edge-platform/geti",
-    "abstract": "Build computer vision models in a fraction of the time and with less data.",
+    "id": "gh_45717250",
+    "title": "[REPO] tensorflow/tensorflow",
+    "abstract": "An Open Source Machine Learning Framework for Everyone",
     "authors": [
-      "open-edge-platform"
+      "tensorflow"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T11:09:43Z",
-    "url": "https://github.com/open-edge-platform/geti",
-    "stars": 1254,
+    "date": "2026-07-02T11:59:20Z",
+    "url": "https://github.com/tensorflow/tensorflow",
+    "stars": 195902,
     "source_types": [
       "repo"
     ],
@@ -1333,8 +964,32 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/open-edge-platform/geti",
-        "id": "gh_154843614"
+        "url": "https://github.com/tensorflow/tensorflow",
+        "id": "gh_45717250"
+      }
+    ]
+  },
+  {
+    "id": "gh_42372094",
+    "title": "[REPO] bioconda/bioconda-recipes",
+    "abstract": "Conda recipes for the bioconda channel.",
+    "authors": [
+      "bioconda"
+    ],
+    "source": "GitHub",
+    "domain": "Open Source Software",
+    "date": "2026-07-02T11:39:21Z",
+    "url": "https://github.com/bioconda/bioconda-recipes",
+    "stars": 1846,
+    "source_types": [
+      "repo"
+    ],
+    "sources": [
+      {
+        "type": "repo",
+        "name": "GitHub",
+        "url": "https://github.com/bioconda/bioconda-recipes",
+        "id": "gh_42372094"
       }
     ]
   },
@@ -1347,7 +1002,7 @@
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T10:37:27Z",
+    "date": "2026-07-02T11:33:09Z",
     "url": "https://github.com/scverse/anndata",
     "stars": 755,
     "source_types": [
@@ -1363,17 +1018,17 @@
     ]
   },
   {
-    "id": "gh_208198667",
-    "title": "[REPO] cogent3/cogent3",
-    "abstract": "Comparative Genomics Toolkit 3",
+    "id": "gh_1032777916",
+    "title": "[REPO] qiskit-community/qrmi",
+    "abstract": "Thin and vendor agnostic layer to access, control and monitor underlying on-prem or cloud quantum computers",
     "authors": [
-      "cogent3"
+      "qiskit-community"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T10:30:02Z",
-    "url": "https://github.com/cogent3/cogent3",
-    "stars": 136,
+    "date": "2026-07-02T11:42:28Z",
+    "url": "https://github.com/qiskit-community/qrmi",
+    "stars": 52,
     "source_types": [
       "repo"
     ],
@@ -1381,23 +1036,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/cogent3/cogent3",
-        "id": "gh_208198667"
+        "url": "https://github.com/qiskit-community/qrmi",
+        "id": "gh_1032777916"
       }
     ]
   },
   {
-    "id": "gh_537159688",
-    "title": "[REPO] Qiskit/qiskit-serverless",
-    "abstract": "A programming model for leveraging quantum and classical resources",
+    "id": "gh_37536320",
+    "title": "[REPO] epam/Indigo",
+    "abstract": "Universal cheminformatics toolkit, utilities and database search tools",
     "authors": [
-      "Qiskit"
+      "epam"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T11:01:35Z",
-    "url": "https://github.com/Qiskit/qiskit-serverless",
-    "stars": 113,
+    "date": "2026-07-02T11:16:01Z",
+    "url": "https://github.com/epam/Indigo",
+    "stars": 398,
     "source_types": [
       "repo"
     ],
@@ -1405,23 +1060,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/Qiskit/qiskit-serverless",
-        "id": "gh_537159688"
+        "url": "https://github.com/epam/Indigo",
+        "id": "gh_37536320"
       }
     ]
   },
   {
-    "id": "gh_631900192",
-    "title": "[REPO] Quantinuum/guppylang",
-    "abstract": "Pythonic quantum-classical programming language",
+    "id": "gh_1109206705",
+    "title": "[REPO] varun29ankuS/shodh-memory",
+    "abstract": "Local, LLM-free memory for AI agents. A single offline Rust binary — deterministic and auditable — that learns from use, forgets the irrelevant, and strengthens what matters. No cloud, no API keys.",
     "authors": [
-      "Quantinuum"
+      "varun29ankuS"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T10:56:47Z",
-    "url": "https://github.com/Quantinuum/guppylang",
-    "stars": 136,
+    "date": "2026-07-02T12:04:06Z",
+    "url": "https://github.com/varun29ankuS/shodh-memory",
+    "stars": 225,
     "source_types": [
       "repo"
     ],
@@ -1429,23 +1084,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/Quantinuum/guppylang",
-        "id": "gh_631900192"
+        "url": "https://github.com/varun29ankuS/shodh-memory",
+        "id": "gh_1109206705"
       }
     ]
   },
   {
-    "id": "gh_705428944",
-    "title": "[REPO] NVIDIA-BioNeMo/bionemo-recipes",
-    "abstract": "BioNeMo Recipes: For building and adapting AI models in drug discovery at scale",
+    "id": "gh_667901221",
+    "title": "[REPO] gereon-t/trajectopy",
+    "abstract": "Trajectopy - Trajectory Evaluation in Python",
     "authors": [
-      "NVIDIA-BioNeMo"
+      "gereon-t"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T07:07:56Z",
-    "url": "https://github.com/NVIDIA-BioNeMo/bionemo-recipes",
-    "stars": 812,
+    "date": "2026-07-02T12:04:00Z",
+    "url": "https://github.com/gereon-t/trajectopy",
+    "stars": 103,
     "source_types": [
       "repo"
     ],
@@ -1453,23 +1108,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/NVIDIA-BioNeMo/bionemo-recipes",
-        "id": "gh_705428944"
+        "url": "https://github.com/gereon-t/trajectopy",
+        "id": "gh_667901221"
       }
     ]
   },
   {
-    "id": "gh_39567107",
-    "title": "[REPO] JdeRobot/RoboticsAcademy",
-    "abstract": "Learn Robotics with JdeRobot",
+    "id": "gh_644461337",
+    "title": "[REPO] vercel/ai",
+    "abstract": "The AI Toolkit for TypeScript. From the creators of Next.js, the AI SDK is a free open-source library for building AI-powered applications and agents ",
     "authors": [
-      "JdeRobot"
+      "vercel"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T11:04:38Z",
-    "url": "https://github.com/JdeRobot/RoboticsAcademy",
-    "stars": 476,
+    "date": "2026-07-02T11:52:10Z",
+    "url": "https://github.com/vercel/ai",
+    "stars": 25302,
     "source_types": [
       "repo"
     ],
@@ -1477,23 +1132,23 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/JdeRobot/RoboticsAcademy",
-        "id": "gh_39567107"
+        "url": "https://github.com/vercel/ai",
+        "id": "gh_644461337"
       }
     ]
   },
   {
-    "id": "gh_970467647",
-    "title": "[REPO] newton-physics/newton",
-    "abstract": "An open-source, GPU-accelerated physics simulation engine built upon NVIDIA Warp, specifically targeting roboticists and simulation researchers.",
+    "id": "gh_704324955",
+    "title": "[REPO] jupyter-naas/abi",
+    "abstract": "AI Operating System - Build your own AI using ontologies as the unifying field connecting data, models, workflows, and systems.",
     "authors": [
-      "newton-physics"
+      "jupyter-naas"
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T11:04:16Z",
-    "url": "https://github.com/newton-physics/newton",
-    "stars": 5156,
+    "date": "2026-07-02T11:47:35Z",
+    "url": "https://github.com/jupyter-naas/abi",
+    "stars": 132,
     "source_types": [
       "repo"
     ],
@@ -1501,56 +1156,8 @@
       {
         "type": "repo",
         "name": "GitHub",
-        "url": "https://github.com/newton-physics/newton",
-        "id": "gh_970467647"
-      }
-    ]
-  },
-  {
-    "id": "gh_759418356",
-    "title": "[REPO] willyfh/visualtorch",
-    "abstract": "VisualTorch aims to help visualize Torch-based neural network architectures.",
-    "authors": [
-      "willyfh"
-    ],
-    "source": "GitHub",
-    "domain": "Open Source Software",
-    "date": "2026-07-02T11:06:21Z",
-    "url": "https://github.com/willyfh/visualtorch",
-    "stars": 149,
-    "source_types": [
-      "repo"
-    ],
-    "sources": [
-      {
-        "type": "repo",
-        "name": "GitHub",
-        "url": "https://github.com/willyfh/visualtorch",
-        "id": "gh_759418356"
-      }
-    ]
-  },
-  {
-    "id": "gh_1008304614",
-    "title": "[REPO] semantica-agi/semantica",
-    "abstract": "Semantica 🧠 • Build AI systems that can explain, trace, and justify every decision. Knowledge graphs, context graphs, reasoning engines, provenance, and governance for production AI.",
-    "authors": [
-      "semantica-agi"
-    ],
-    "source": "GitHub",
-    "domain": "Open Source Software",
-    "date": "2026-07-02T10:55:00Z",
-    "url": "https://github.com/semantica-agi/semantica",
-    "stars": 1356,
-    "source_types": [
-      "repo"
-    ],
-    "sources": [
-      {
-        "type": "repo",
-        "name": "GitHub",
-        "url": "https://github.com/semantica-agi/semantica",
-        "id": "gh_1008304614"
+        "url": "https://github.com/jupyter-naas/abi",
+        "id": "gh_704324955"
       }
     ]
   },
@@ -1587,9 +1194,9 @@
     ],
     "source": "GitHub",
     "domain": "Open Source Software",
-    "date": "2026-07-02T10:50:08Z",
+    "date": "2026-07-02T12:02:15Z",
     "url": "https://github.com/K-Dense-AI/scientific-agent-skills",
-    "stars": 29900,
+    "stars": 29906,
     "source_types": [
       "repo"
     ],
@@ -1599,6 +1206,30 @@
         "name": "GitHub",
         "url": "https://github.com/K-Dense-AI/scientific-agent-skills",
         "id": "gh_1079456184"
+      }
+    ]
+  },
+  {
+    "id": "gh_350510397",
+    "title": "[REPO] derb12/pybaselines",
+    "abstract": "A Python library of algorithms for the baseline correction of experimental data.",
+    "authors": [
+      "derb12"
+    ],
+    "source": "GitHub",
+    "domain": "Open Source Software",
+    "date": "2026-07-02T11:43:48Z",
+    "url": "https://github.com/derb12/pybaselines",
+    "stars": 189,
+    "source_types": [
+      "repo"
+    ],
+    "sources": [
+      {
+        "type": "repo",
+        "name": "GitHub",
+        "url": "https://github.com/derb12/pybaselines",
+        "id": "gh_350510397"
       }
     ]
   },
@@ -1623,30 +1254,6 @@
         "name": "GitHub",
         "url": "https://github.com/deepmodeling/deepmd-kit",
         "id": "gh_114006193"
-      }
-    ]
-  },
-  {
-    "id": "gh_338164950",
-    "title": "[REPO] datalab-org/datalab",
-    "abstract": "datalab is a place to store experimental data and the connections between them.",
-    "authors": [
-      "datalab-org"
-    ],
-    "source": "GitHub",
-    "domain": "Open Source Software",
-    "date": "2026-07-02T09:51:10Z",
-    "url": "https://github.com/datalab-org/datalab",
-    "stars": 88,
-    "source_types": [
-      "repo"
-    ],
-    "sources": [
-      {
-        "type": "repo",
-        "name": "GitHub",
-        "url": "https://github.com/datalab-org/datalab",
-        "id": "gh_338164950"
       }
     ]
   },
@@ -1927,6 +1534,29 @@
     ]
   },
   {
+    "id": "rss_cdcb2fae35",
+    "title": "[STARTUP FUNDING] Moadna Raises $50,000 Other - The SaaS News",
+    "abstract": "Moadna Raises $50,000 Other&nbsp;&nbsp;The SaaS News",
+    "authors": [
+      "Venture News"
+    ],
+    "source": "Aggregated VC Feeds",
+    "domain": "Venture Capital",
+    "date": "Mon, 22 Jun 2026 05:50:45 GMT",
+    "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5IU0lLU1ZVY3BNRUxxZzZDZHA3eDNzUDcxX2hhbGRtU285VUswWXFfN3d0WnR5bk51S0xBRV80VE9raU0wQS1aZFFuV0E0N0RjRXplb2swd1ZabVNyX1poVWQ1dTYxaEVEZk53?oc=5",
+    "source_types": [
+      "funding"
+    ],
+    "sources": [
+      {
+        "type": "funding",
+        "name": "Aggregated VC Feeds",
+        "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5IU0lLU1ZVY3BNRUxxZzZDZHA3eDNzUDcxX2hhbGRtU285VUswWXFfN3d0WnR5bk51S0xBRV80VE9raU0wQS1aZFFuV0E0N0RjRXplb2swd1ZabVNyX1poVWQ1dTYxaEVEZk53?oc=5",
+        "id": "rss_cdcb2fae35"
+      }
+    ]
+  },
+  {
     "id": "rss_4f43cbbc36",
     "title": "[STARTUP FUNDING] Digital Health Startups Raised $4B in Q1: How Cash Is Flowing Amid Uncertainty - MedCity News",
     "abstract": "Digital Health Startups Raised $4B in Q1: How Cash Is Flowing Amid Uncertainty&nbsp;&nbsp;MedCity News",
@@ -1950,25 +1580,372 @@
     ]
   },
   {
-    "id": "rss_8583ba4078",
-    "title": "[STARTUP FUNDING] Buzzy AI doctor startup raises funds, will meet FDA - STAT",
-    "abstract": "Buzzy AI doctor startup raises funds, will meet FDA&nbsp;&nbsp;STAT",
+    "source": "PubMed",
+    "id": "pmid:42364920",
+    "title": "Artificial intelligence empowers the innovation of traditional Chinese medicine.",
+    "abstract": "Artificial intelligence (AI) technology is advancing rapidly with algorithms and models for diverse applications, such as virtual disease biologist agents, target and drug discovery, and multimodal diagnosis and treatment, emerging at an increasingly rapid pace. The development and application of AI can effectively address long-standing challenges in the research and application of traditional Chinese medicine (TCM), including the difficulty of mining classic texts, insufficient standardization of diagnosis and treatment, and lengthy drug development cycles. This creates new opportunities for the development of TCM and further propels its transition from empirical medicine to precision medicine. To seize the opportunities presented by AI development, it is necessary to build a tripartite i",
     "authors": [
-      "Venture News"
+      "Chen KX"
     ],
-    "source": "Aggregated VC Feeds",
-    "domain": "Venture Capital",
-    "date": "Tue, 24 Mar 2026 07:00:00 GMT",
-    "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPNlZkQ2hXSG1yX2thbmktUGtpQmNJcHhFV2JadmVHaUE0UmRtd3hXdjFHajkxR2JNR0t5VV9rZXg0X0ZsdzNFakdSNU8xZ2VHVm1peEIzZlhUNUNUWGszbUNha2NWN2YwVHBMdU1YRG9QM00yVlFjY1V4eUpzekJwZG5UT3FoZw?oc=5",
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42364920/",
+    "pdf_url": "https://doi.org/10.1016/j.joim.2026.05.004",
+    "domain": "AI in Medicine",
     "source_types": [
-      "funding"
+      "paper"
     ],
     "sources": [
       {
-        "type": "funding",
-        "name": "Aggregated VC Feeds",
-        "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPNlZkQ2hXSG1yX2thbmktUGtpQmNJcHhFV2JadmVHaUE0UmRtd3hXdjFHajkxR2JNR0t5VV9rZXg0X0ZsdzNFakdSNU8xZ2VHVm1peEIzZlhUNUNUWGszbUNha2NWN2YwVHBMdU1YRG9QM00yVlFjY1V4eUpzekJwZG5UT3FoZw?oc=5",
-        "id": "rss_8583ba4078"
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42364920/",
+        "id": "pmid:42364920"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41962624",
+    "title": "Artificial intelligence in clinical oncology: Multimodal integration and translational development.",
+    "abstract": "Artificial intelligence (AI) is rapidly reshaping clinical oncology, as cancer care increasingly relies on integrating heterogeneous data streams spanning radiology, digital pathology, genomics, and longitudinal electronic health records. However, the sheer complexity and fragmentation of these multimodal inputs remain a major bottleneck for achieving truly personalized cancer management. Recent advances in AI, including foundation models, synthetic data generation, large language models, and agents, are enabling more robust representation learning, cross-modal reasoning, and clinically actionable decision support beyond what traditional single-modality systems can provide. AI-powered platforms are now accelerating molecular subtyping, refining risk stratification, and supporting individua",
+    "authors": [
+      "Lin R",
+      "Zhao Z",
+      "Liu Z",
+      "Kang J"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41962624/",
+    "pdf_url": "https://doi.org/10.1016/j.canlet.2026.218493",
+    "domain": "AI in Medicine",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41962624/",
+        "id": "pmid:41962624"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42107050",
+    "title": "A review on artificial intelligence in pharmaceutical sciences: opportunities and challenges.",
+    "abstract": "The review aims to systematically explore the transformative impact of artificial intelligence (AI) on pharmaceutical sciences. It addresses key research questions regarding how AI accelerates drug development, enhances clinical trial design, optimizes manufacturing, and drives advances in personalized and precision medicine. A comprehensive literature review was conducted. It synthesized recent studies, industry reports, and regulatory guidelines on AI adoption. Covered drug discovery, clinical trials, pharmacovigilance, manufacturing, supply chain management, and pharmacy education. It also critically examined barriers such as data quality, privacy, explainability, and the evolving regulatory landscape. AI accelerates pharmaceutical R&D, identification, lead optimization, ADMET (absorpti",
+    "authors": [
+      "Kumar V",
+      "Kumar S",
+      "Kumar R",
+      "Tiwari N"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42107050/",
+    "pdf_url": "https://doi.org/10.1080/03639045.2026.2670435",
+    "domain": "AI in Medicine",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42107050/",
+        "id": "pmid:42107050"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41855081",
+    "title": "Antibody-drug conjugate design and mechanisms of action for cancer treatment: state of the art and beyond.",
+    "abstract": "Antibody-drug conjugates (ADCs) are a leading area of targeted cancer therapeutics, typically combining a tumor-associated antigen-specific antibody conjugated to a toxic payload that targets key cellular mechanisms, such as mitosis and survival. The global ADC clinical trial landscape has been expanding significantly, with over 430 ADCs reaching early to late clinical studies in the past two decades, up from just 90 between 2004 and 2014. The US Food and Drug Administration (FDA) has so far approved 14 ADCs for use in clinical oncology. This growth is likely driven by significant advances in antibody technology and conjugation methods enabling more effective and precise delivery to cancer cells and more effective payloads that target vital cancer biology. Here, we review the ADCs that hav",
+    "authors": [
+      "Cheung A",
+      "Liu Y",
+      "Chenoweth AM",
+      "Montaseri H"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41855081/",
+    "pdf_url": "https://doi.org/10.1152/physrev.00039.2025",
+    "domain": "AI in Medicine",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41855081/",
+        "id": "pmid:41855081"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42380674",
+    "title": "Integrating evolutionary and compositional features with ML and DL for robust and interpretable druggable protein prediction.",
+    "abstract": "Druggable proteins are essential targets in contemporary therapeutic discovery, and their precise identification is necessary for the progression of rational drug design. Traditional biochemical screening techniques are costly, laborious, and protracted, whereas current computational models typically attain only moderate efficacy and seldom offer robust statistical validation or biological interpretability. To mitigate these limitations, we offer a hybrid computational approach that integrates evolutionary and compositional information by merging Average Block-based Position-Specific Scoring Matrix (AB-PSSM) characteristics with Dipeptide Composition (DPC) into a 600-dimensional representation. The hybrid feature space was assessed utilizing three machine learning algorithms (support vecto",
+    "authors": [
+      "Rehman M",
+      "Liu Q",
+      "Javed M",
+      "Ghulam A"
+    ],
+    "date": "2026-Jun-30",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42380674/",
+    "pdf_url": "https://doi.org/10.1007/s10822-026-00818-1",
+    "domain": "AI in Medicine",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42380674/",
+        "id": "pmid:42380674"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42322289",
+    "title": "The Impact of Second-Shell Residues on Substrate Binding at the Active Site of Thymidylate Synthase from",
+    "abstract": "Employing classical alchemical free-energy simulations, we quantitatively evaluated how mutations in second-shell residues (Y44, Q106, Y108, and T181) affect the energetics of substrate (dUMP) binding to the active site of MtbThyX, an important drug target for",
+    "authors": [
+      "Sengupta P",
+      "Satpati P"
+    ],
+    "date": "2026-Jul-02",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42322289/",
+    "pdf_url": "https://doi.org/10.1021/acs.jpcb.6c01496",
+    "domain": "Molecular Dynamics",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42322289/",
+        "id": "pmid:42322289"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42371046",
+    "title": "Challenging cases for AlphaFold: two multidomain proteins with zinc-binding-, phosphorylation- or dimerization-driven conformational changes.",
+    "abstract": "Advances in artificial intelligence, particularly in deep learning, are transforming the field of protein structure prediction. AlphaFold has emerged as a benchmark tool due to its remarkable ability to model protein folding based solely on amino acid sequences. Nevertheless, despite these impressive achievements, several prediction failures still occur. In this study, we focus on two multidomain proteins, LicT from Bacillus subtilis and P1 from the Rice Yellow Mottle Virus, that have long resisted structural characterization. Both proteins exhibit inter-domain flexibility, dimerization, and dynamic behavior in response to phosphorylation (for LicT) or zinc binding (for P1). Here, we screen the performances of AlphaFold versions against these two proteins endowed with a complex conformatio",
+    "authors": [
+      "Yang Y",
+      "Déméné H"
+    ],
+    "date": "2026-Jun-29",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42371046/",
+    "pdf_url": "https://doi.org/10.1007/s00249-026-01854-3",
+    "domain": "Structural Biology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42371046/",
+        "id": "pmid:42371046"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41999908",
+    "title": "Exploring quantum frontiers in protein structure prediction: techniques, challenges, and opportunities.",
+    "abstract": "Protein folding is governed by the principle of free energy minimization, where a protein's native tertiary structure corresponds to the global minimum on an energy landscape shaped by quantum mechanical interactions such as hydrogen bonding, van der Waals forces, and electron delocalization. Despite significant advances in template-based modeling (TBM), ab-initio simulations, and deep learning approaches, classical methods continue to face challenges due to the exponential complexity of the conformational search space and the approximations involved in modeling molecular interactions. Although AlphaFold, a deep learning-based protein modeling tool, has achieved a remarkable score of 92.4 in the critical assessment of protein structure prediction (CASP), classical protein structure predict",
+    "authors": [
+      "Selvaraj AA",
+      "Jayawant M",
+      "Kayalvizhi N",
+      "Krishnan M"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41999908/",
+    "pdf_url": "https://doi.org/10.1016/j.ymeth.2026.04.006",
+    "domain": "Structural Biology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41999908/",
+        "id": "pmid:41999908"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42300078",
+    "title": "When can AlphaFold predict the oligomeric states of proteins?",
+    "abstract": "Homooligomerisation is a prevalent and important process that many proteins undergo to form the quaternary structures required for biological function. However, determining oligomeric states and structures experimentally remains technically challenging and time-consuming for many proteins. Here, we show that the protein structure prediction tools AlphaFold2-Multimer and AlphaFold3 can be used to quickly and accurately predict oligomeric states and structures for a range of soluble and membrane proteins. Across over 4700 proteins, AlphaFold2-Multimer provides reliable oligomeric state predictions in the majority of cases, however accuracy is more limited for proteins lacking close structural representatives in the AlphaFold training set, highlighting the dependence of these methods on robus",
+    "authors": [
+      "Lin Y",
+      "Wallis C",
+      "Corry B"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42300078/",
+    "pdf_url": "https://doi.org/10.1002/pro.70686",
+    "domain": "Structural Biology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42300078/",
+        "id": "pmid:42300078"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42118587",
+    "title": "IL-6 receptor blockade impedes proinflammatory atypical Treg subset associated with immune checkpoint inhibitor-induced inflammatory arthritis.",
+    "abstract": "BACKGROUNDImmune checkpoint inhibitor-induced inflammatory arthritis (ICI-IA) significantly impairs cancer therapy and patient quality of life, yet its pathogenic mechanisms remain unclear.METHODSThrough integrated single-cell multi-omics analysis of paired peripheral blood, synovial fluid, and tumor samples from longitudinal ICI-IA cohorts and matched controls, we identified a unique regulatory T-cell (Treg) population coexpressing CD137 and IL-6R (AtpTreg).RESULTSThese cells exhibited reduced immunosuppressive capacity while aberrantly producing high levels of IL-17 and promoting proinflammatory responses of synoviocytes. AtpTreg exhibits shared clonotypes and phenotypes across tissue compartments. Notably, AtpTreg frequency correlates with increased arthritis severity yet paradoxically ",
+    "authors": [
+      "Ma Y",
+      "Liu N",
+      "Li Y",
+      "Zhang D"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42118587/",
+    "pdf_url": "https://doi.org/10.1172/JCI200135",
+    "domain": "Immunology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42118587/",
+        "id": "pmid:42118587"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41627877",
+    "title": "Body composition and physical activity as predictors of immune-related adverse events in patients undergoing cancer immunotherapy: a systematic review.",
+    "abstract": "Host factors may affect immune-related adverse events (irAE) during immune checkpoint inhibitor (ICI) therapy. We systematically reviewed studies on body composition (BMI, CT/DXA-defined sarcopenia, sarcopenic obesity) and physical activity (PA) in relation to irAE incidence and severity in ICI-treated adults. PubMed, Embase, Scopus, and Web of Science were searched from inception to 15 December 2024. Eligible studies assessed baseline body composition and/or PA in relation to irAE. Risk of bias was evaluated using the NIH tool and QUIPS. Findings were synthesized using structured narrative methods. Seven studies (2,590 patients) were included. Two large cohorts found overweight/obese patients had higher odds of any-grade irAE (OR = 1.4-1.5); one disease-specific cohort found no associatio",
+    "authors": [
+      "De Nys L",
+      "Güney G",
+      "Grootjans FIJ",
+      "Maes YKM"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41627877/",
+    "pdf_url": "https://doi.org/10.1080/14737140.2026.2625780",
+    "domain": "Immunology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41627877/",
+        "id": "pmid:41627877"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41543026",
+    "title": "Concomitant use of H1 antihistamines improves survival outcomes in cancer patients on immune checkpoint inhibitor therapy: a systematic review and meta-analysis.",
+    "abstract": "The rapid progress of immuno-oncology has transformed cancer pharmacotherapy through immune checkpoint inhibitors (ICIs); however, only a minority of patients experience durable benefits. Recent evidence suggests that concomitant administration of H1 antihistamines may synergistically enhance ICI efficacy by modulating the tumor immune microenvironment. This meta-analysis evaluated the association between H1 antihistamine use and outcomes in cancer patients undergoing ICI therapy. Comprehensive searches were conducted in PubMed, Embase, and Web of Science to identify studies comparing overall survival (OS) and progression-free survival (PFS) between ICI users with and without H1 antihistamines. Pooled hazard ratios (HRs) were calculated using a random-effects model (REML) in R software (v4",
+    "authors": [
+      "de Moraes FCA",
+      "de Souza Wagner PH",
+      "Hirata RDC",
+      "Burbano RMR"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41543026/",
+    "pdf_url": "https://doi.org/10.1080/14737140.2026.2617952",
+    "domain": "Immunology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41543026/",
+        "id": "pmid:41543026"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:42150483",
+    "title": "Docetaxel plus ramucirumab immediately after immunotherapy in advanced NSCLC: A phase II study (DRUN).",
+    "abstract": "Docetaxel plus ramucirumab is a standard second-line treatment for advanced non-small cell lung cancer (NSCLC). Prior immunotherapy has been suggested to potentially affect the efficacy of subsequent docetaxel plus ramucirumab, but prospective evidence is limited. This multicenter, single-arm, phase II study enrolled patients with advanced NSCLC. Eligible patients had experienced disease progression following a prior immune checkpoint inhibitor (ICI)-containing regimen. Patients received docetaxel 60 mg/m Between January 8, 2020, and January 7, 2024,We evaluated 33 patients for efficacy and safety. The median age was 69 years, and 26 patients (79%) had an Eastern Cooperative Oncology Group performance status of 1. The ORR was 33.3% (90% confidence interval [CI], 19.9-49.1), and the DCR was",
+    "authors": [
+      "Harutani Y",
+      "Akamatsu H",
+      "Sugimoto T",
+      "Takakura T"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42150483/",
+    "pdf_url": "https://doi.org/10.1016/j.lungcan.2026.109454",
+    "domain": "Immunology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/42150483/",
+        "id": "pmid:42150483"
+      }
+    ]
+  },
+  {
+    "source": "PubMed",
+    "id": "pmid:41933852",
+    "title": "Immunotherapy advancements in high-grade serous ovarian cancer: From promise to practice.",
+    "abstract": "High-grade serous ovarian carcinoma (HGSC) is the most common epithelial ovarian cancer subtype, with high recurrence rates and poor overall survival. Despite progress with cytoreductive surgery, platinum-based chemotherapy, and poly(ADP-ribose) polymerase (PARP) inhibitors, treatment outcomes remain poor, underscoring the need for novel approaches. Immunotherapy is currently the standard of care for the management of several solid tumors, but its role in HGSC is still emerging. This review synthesizes current evidence on the immune landscape of HGSC, predictive biomarkers, resistance mechanisms, and therapeutic strategies including immune checkpoint inhibitors, vaccines, adoptive cell therapies, oncolytic viruses, and antibody-drug conjugates (ADCs) which interact with the immune system. ",
+    "authors": [
+      "Heidinger M",
+      "Caruso G",
+      "Coelho R",
+      "Stiegeler N"
+    ],
+    "date": "2026-Jul-01",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41933852/",
+    "pdf_url": "https://doi.org/10.1016/j.critrevonc.2026.105312",
+    "domain": "Immunology",
+    "source_types": [
+      "paper"
+    ],
+    "sources": [
+      {
+        "type": "paper",
+        "name": "PubMed",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/41933852/",
+        "id": "pmid:41933852"
       }
     ]
   },
@@ -3536,19 +3513,17 @@
   },
   {
     "source": "SemanticScholar",
-    "id": "c7a412aff307a616ee2b97efb35b153478d57cd4",
-    "title": "Nanocarrier-Based Gene Delivery Systems: Mechanisms, Clinical Translation, and Future Perspectives.",
-    "abstract": "",
+    "id": "a8e7d578563d323a6cc707a7cfbfa2b58d9ed01e",
+    "title": "Improving economic impact assessment of climate change with machine learning",
+    "abstract": "Hybrid modelling using machine learning can help improve the robustness and comprehensiveness of economic impact assessments of climate change by combining data with theory, bridging silos across social, economic, and financial systems, and linking micro- and macroeconomic scales.",
     "authors": [
-      "Rahat Fatima Naqvi",
-      "Muhammad Ali",
-      "Sadia Ahmed Zuberi",
-      "Nimra Aamir"
+      "A. Orlov",
+      "Jana Sillmann"
     ],
-    "date": "2026-06-28",
-    "url": "https://www.semanticscholar.org/paper/c7a412aff307a616ee2b97efb35b153478d57cd4",
-    "pdf_url": "https://doi.org/10.1002/bit.70289",
-    "domain": "CRISPR gene therapy clinical",
+    "date": "2026-06-25",
+    "url": "https://www.semanticscholar.org/paper/a8e7d578563d323a6cc707a7cfbfa2b58d9ed01e",
+    "pdf_url": "https://www.nature.com/articles/s41467-026-73956-7.pdf",
+    "domain": "climate change machine learning",
     "cited_by": 0,
     "source_types": [
       "paper"
@@ -3557,26 +3532,23 @@
       {
         "type": "paper",
         "name": "SemanticScholar",
-        "url": "https://www.semanticscholar.org/paper/c7a412aff307a616ee2b97efb35b153478d57cd4",
-        "id": "c7a412aff307a616ee2b97efb35b153478d57cd4"
+        "url": "https://www.semanticscholar.org/paper/a8e7d578563d323a6cc707a7cfbfa2b58d9ed01e",
+        "id": "a8e7d578563d323a6cc707a7cfbfa2b58d9ed01e"
       }
     ]
   },
   {
     "source": "SemanticScholar",
-    "id": "8a510508bc6e84f6838466735c224873c524d39e",
-    "title": "Precision gene editing: From proof-of-concept to curative therapies.",
+    "id": "3caa0dbd21d684126ff0022eb8e6de96039b72d1",
+    "title": "Scenario-based machine learning prediction of trait performance and stability in crested wheatgrass under climate change",
     "abstract": "",
     "authors": [
-      "Tongtong Cui",
-      "Bojin Li",
-      "Bingyu Cai",
-      "Hui Wang"
+      "Nur Koç Koyun"
     ],
-    "date": "2026-06-30",
-    "url": "https://www.semanticscholar.org/paper/8a510508bc6e84f6838466735c224873c524d39e",
-    "pdf_url": "https://doi.org/10.1016/j.molmed.2026.06.004",
-    "domain": "CRISPR gene therapy clinical",
+    "date": "2026-09-01",
+    "url": "https://www.semanticscholar.org/paper/3caa0dbd21d684126ff0022eb8e6de96039b72d1",
+    "pdf_url": "https://doi.org/10.1016/j.eja.2026.128216",
+    "domain": "climate change machine learning",
     "cited_by": 0,
     "source_types": [
       "paper"
@@ -3585,23 +3557,26 @@
       {
         "type": "paper",
         "name": "SemanticScholar",
-        "url": "https://www.semanticscholar.org/paper/8a510508bc6e84f6838466735c224873c524d39e",
-        "id": "8a510508bc6e84f6838466735c224873c524d39e"
+        "url": "https://www.semanticscholar.org/paper/3caa0dbd21d684126ff0022eb8e6de96039b72d1",
+        "id": "3caa0dbd21d684126ff0022eb8e6de96039b72d1"
       }
     ]
   },
   {
     "source": "SemanticScholar",
-    "id": "be6363b8b8df9db3e11e87c83813951dfd12982e",
-    "title": "An Overview of Gene Therapy in Cardiomyopathies",
-    "abstract": "Cardiomyopathies can be treated with gene therapy by correcting disease-causing mutations or reducing harmful gene products. To evaluate therapeutic progress and feasibility, this study compares current evidence between hypertrophic cardiomyopathy (HCM), dilated cardiomyopathy (DCM), and transthyretin amyloid cardiomyopathy (ATTR-CM). In my hypothesis, gene-editing platforms such as CRISPR, base editing, prime editing, RNA interference, gene replacement therapy, and epigenome editing can provide mutation-specific benefits that improve cardiac function regardless of the subtype of cardiomyopathy. Most cases of HCM are caused by mutations in sarcomeres, including MYH7 and MYBPC3. Recent base editing studies have demonstrated successful correction of MYH7 mutations in human cardiomyocytes and",
+    "id": "353d0879a0e974c879fe8bb16edd5cd18fc376c6",
+    "title": "Forecasting Groundwater Storage Dynamics in an Arid Region Using Hybrid Machine Learning Under Climate and Land-Use Change: Al-Arish Basin, Sinai",
+    "abstract": "",
     "authors": [
-      "Krisha Patel"
+      "Ahmed M.Raslan",
+      "Mona A.Hagras",
+      "Mahmoud I. Khalil",
+      "Samia A. Saad"
     ],
-    "date": "2026-06-30",
-    "url": "https://www.semanticscholar.org/paper/be6363b8b8df9db3e11e87c83813951dfd12982e",
-    "pdf_url": "https://doi.org/10.70121/001c.163674",
-    "domain": "CRISPR gene therapy clinical",
+    "date": "2026-07-01",
+    "url": "https://www.semanticscholar.org/paper/353d0879a0e974c879fe8bb16edd5cd18fc376c6",
+    "pdf_url": "https://doi.org/10.1016/j.asej.2026.104249",
+    "domain": "climate change machine learning",
     "cited_by": 0,
     "source_types": [
       "paper"
@@ -3610,8 +3585,8 @@
       {
         "type": "paper",
         "name": "SemanticScholar",
-        "url": "https://www.semanticscholar.org/paper/be6363b8b8df9db3e11e87c83813951dfd12982e",
-        "id": "be6363b8b8df9db3e11e87c83813951dfd12982e"
+        "url": "https://www.semanticscholar.org/paper/353d0879a0e974c879fe8bb16edd5cd18fc376c6",
+        "id": "353d0879a0e974c879fe8bb16edd5cd18fc376c6"
       }
     ]
   }

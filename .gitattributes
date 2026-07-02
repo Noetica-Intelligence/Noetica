@@ -1,1 +1,8 @@
 *.db filter=lfs diff=lfs merge=lfs -text
+
+# Force GitHub Linguist to recognize these files instead of ignoring them as vendored/documentation
+docs/*.css linguist-vendored=false
+docs/*.js linguist-vendored=false
+docs/*.html linguist-vendored=false
+src/*.py linguist-vendored=false
+zig_engine/**/*.zig linguist-vendored=false

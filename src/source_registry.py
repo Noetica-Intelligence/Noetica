@@ -274,16 +274,29 @@ def fetch_all_intelligence() -> list[dict]:
     print(f"\n📡 Running {len(enabled)} enabled source(s) concurrently...\n")
 
     import concurrent.futures
+    import langdetect
     
+    def is_english(text):
+        if not text or len(text.strip()) < 20: return True
+        try:
+            return langdetect.detect(text) == 'en'
+        except:
+            return True
+
     def fetch_source(source):
         print(f"  [{source['type'].upper()}] {source['name']} — {source['description']}")
         try:
             items = source["fetcher"]()
+            valid_items = []
             for item in items:
+                # Discard non-English discoveries
+                if not is_english(item.get("abstract", "")):
+                    continue
                 if not item.get("source"):
                     item["source"] = source["name"]
-            print(f"    → {len(items)} items fetched from {source['name']}")
-            return items
+                valid_items.append(item)
+            print(f"    → {len(valid_items)} items fetched from {source['name']}")
+            return valid_items
         except Exception as e:
             print(f"    ⚠️  {source['name']} failed: {e}")
             return []

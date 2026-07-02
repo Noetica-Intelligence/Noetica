@@ -223,7 +223,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         wc_title  = html_lib.escape(latex_to_unicode(wildcard.get("title","")))
         wc_url    = wildcard.get("url","#")
         wc_domain = wildcard.get("domain","")
-        wc_strat  = html_lib.escape(wildcard.get("strategic_implication", "Detected anomaly with cross-domain potential."))
+        base_strat = wildcard.get("strategic_implication", "")
+        wc_strat  = html_lib.escape(f"Highly disruptive anomaly detected. {base_strat}")
         wc_kg     = html_lib.escape(wildcard.get("knowledge_graph_edge", "Convergence vector unclear."))
         
         wildcard_html = f"""

@@ -108,9 +108,9 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
             filtered.append(p)
             continue
 
-        domain   = p.get("domain", "").lower()
-        title    = p.get("title", "").lower()
-        abstract = p.get("abstract", "").lower()
+        domain   = (p.get("domain") or "").lower()
+        title    = (p.get("title") or "").lower()
+        abstract = (p.get("abstract") or "").lower()
         
         # Match if the interest keyword is in the domain, title, or the abstract!
         matched = any(i.lower() in domain or i.lower() in title or i.lower() in abstract for i in interests)
@@ -280,9 +280,9 @@ def main() -> int:
         # 1b. Guarantee at least 1 for each requested interest/sub-domain
         for interest in parse_interests(sub.get("Interests", "")):
             for p in user_papers:
-                d = p.get("domain", "").lower()
-                t_str = p.get("title", "").lower()
-                a_str = p.get("abstract", "").lower()
+                d = (p.get("domain") or "").lower()
+                t_str = (p.get("title") or "").lower()
+                a_str = (p.get("abstract") or "").lower()
                 if interest.lower() in d or interest.lower() in t_str or interest.lower() in a_str:
                     if p not in user_top_papers:
                         user_top_papers.append(p)

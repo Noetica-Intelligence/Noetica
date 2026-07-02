@@ -47,7 +47,7 @@ ALERT_RULES: list[dict] = [
         "name":        "🧬 FGFR4 / HCC Signal",
         "description": "FGFR4 or hepatocellular carcinoma discovery detected",
         "condition":   lambda d: any(
-            kw in (d.get("title", "") + " " + d.get("abstract", "")).lower()
+            kw in ((d.get("title") or "") + " " + (d.get("abstract") or "")).lower()
             for kw in ["fgfr4", "hepatocellular carcinoma", "hcc inhibitor", "fibroblast growth factor receptor 4"]
         ),
         "min_score":   5.0,
@@ -58,7 +58,7 @@ ALERT_RULES: list[dict] = [
         "name":        "⏰ Circadian / ChronoBase Signal",
         "description": "Chronotherapy or circadian biology breakthrough detected",
         "condition":   lambda d: any(
-            kw in (d.get("title", "") + " " + d.get("abstract", "")).lower()
+            kw in ((d.get("title") or "") + " " + (d.get("abstract") or "")).lower()
             for kw in ["chronotherapy", "circadian rhythm", "clock gene", "bmal1", "per protein", "cry protein",
                        "chrono-oncology", "time-dependent drug", "chronopharmacology"]
         ),
@@ -81,7 +81,7 @@ ALERT_RULES: list[dict] = [
         "name":        "🤖 AlphaFold-Class Discovery",
         "description": "AI applied to major biological problem at scale",
         "condition":   lambda d: any(
-            kw in (d.get("title", "") + " " + d.get("abstract", "")).lower()
+            kw in ((d.get("title") or "") + " " + (d.get("abstract") or "")).lower()
             for kw in ["protein structure prediction", "de novo protein", "molecular dynamics AI",
                        "foundation model biology", "protein language model"]
         ) and float(d.get("scores", {}).get("composite", 0)) >= 7.5,

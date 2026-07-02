@@ -126,7 +126,7 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
             for interest in interests:
                 int_emb = semantic_model.encode(interest, convert_to_tensor=True)
                 score = util.cos_sim(int_emb, doc_emb).item()
-                if score > 0.35:  # High semantic similarity threshold
+                if score > 0.45:  # High semantic similarity threshold
                     matched = True
                     break
         else:
@@ -142,7 +142,7 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
             p for p in all_papers 
             if p not in filtered and any(t in allowed_types for t in p.get("source_types", ["paper"]))
         ]
-        exploration_count = max(1, int(len(filtered) * 0.25))
+        exploration_count = min(2, max(1, int(len(filtered) * 0.25))) if len(filtered) > 0 else 2
         filtered.extend(non_matching[:exploration_count])
 
     return filtered

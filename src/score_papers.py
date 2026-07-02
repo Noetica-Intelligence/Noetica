@@ -210,8 +210,12 @@ def compute_composite_score(paper: dict) -> dict:
     # Calculate 0-10 base
     base_10 = min(raw_composite * domain_mult * source_mult + title_bonus * 0.2, 10.0)
     
+    # Add a deterministic jitter to break exact score ties based on string lengths
+    jitter = ((len(title) + len(abstract)) % 9) * 0.01
+    
     # Map to 0-10 scale (final_score)
-    final_score = round(base_10, 1)
+    final_score = round(base_10 + jitter, 2)
+    if final_score > 10.0: final_score = 10.0
 
     cross_domains = get_cross_disciplinary_connections(domain)
 
@@ -219,10 +223,12 @@ def compute_composite_score(paper: dict) -> dict:
     # NEW: STRATEGIC IMPLICATION SYNTHESIS
     # ─────────────────────────────────────────────
     import random
+    is_preprint = "arxiv" in source.lower() or "biorxiv" in source.lower() or "medrxiv" in source.lower()
+
     implications = []
-    if novelty >= 8.0:
+    if novelty >= 8.0 and not is_preprint:
         implications.append(f"Challenges foundational assumptions within {domain}. High probability of paradigm shift.")
-    elif novelty >= 6.0:
+    elif novelty >= 6.0 and not is_preprint:
         implications.append(f"Introduces novel methodology to {domain}, expanding theoretical boundaries.")
     else:
         # Dynamic templates to avoid robotic repetition
@@ -235,10 +241,16 @@ def compute_composite_score(paper: dict) -> dict:
         ]
         implications.append(random.choice(templates))
         
-    if evidence >= 8.0:
+    if evidence >= 8.0 and not is_preprint:
         implications.append("Supported by rigorous mathematical/empirical architecture. Validation confidence is extremely high.")
-    elif evidence >= 6.0:
-        implications.append("Demonstrates moderate theoretical confidence; early-stage validation.")
+    elif evidence >= 6.0 or is_preprint:
+        early_stage_templates = [
+            "Demonstrates moderate theoretical confidence; early-stage validation.",
+            "Initial validation phases complete; awaiting broader peer review.",
+            "Preliminary modeling robust; empirical replication pending.",
+            "Awaiting consensus, but initial metrics show significant promise."
+        ]
+        implications.append(random.choice(early_stage_templates))
 
     if source_mult > 1.1:
         implications.append("Signal amplified by premium source tier.")

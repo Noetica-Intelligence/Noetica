@@ -95,14 +95,17 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
         abstract = html_lib.escape(textwrap.shorten(raw_abs, width=300, placeholder="..."))
         
-    authors  = ", ".join(html_lib.escape(a or "Unknown") for a in (discovery.get("authors") or [])[:3])
-    if len(discovery.get("authors") or []) > 3:
+    authors_list = [a for a in (discovery.get("authors") or []) if a and a.lower() != "unknown"]
+    authors = ", ".join(html_lib.escape(a) for a in authors_list[:3]) if authors_list else "Authors not listed"
+    if len(authors_list) > 3:
         authors += " et al."
     date     = discovery.get("date", "")[:10]
     source   = html_lib.escape(discovery.get("source", ""))
     url      = discovery.get("url", "#")
     pdf_url  = discovery.get("pdf_url", "")
-    domain   = discovery.get("domain", "Other")
+    domain   = discovery.get("domain", "Other").title()
+    if domain.lower() == "drug discovery":
+        domain = "Drug Discovery & Therapeutics"
     scores   = discovery.get("scores", {})
     status   = discovery.get("status", "Emerging Signal")
     
@@ -118,7 +121,6 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
 
     # Compute Source Aggregation String
     st_data = discovery.get("source_types")
-    source_agg_str = "1 paper"
     if isinstance(st_data, dict):
         parts = []
         for st_name, count in st_data.items():
@@ -132,6 +134,8 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         for st_name in st_data:
             parts.append(f"1 {st_name}")
         source_agg_str = ", ".join(parts)
+    else:
+        source_agg_str = source
 
     pdf_btn = ""
     if pdf_url:
@@ -174,7 +178,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
       
       <!-- Source Aggregation -->
       <div style="font-size:11px;color:#94a3b8;margin-bottom:24px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;">
-        ↳ Aggregated from: {source_agg_str}
+        ↳ Source: {source_agg_str}
       </div>
 
       <!-- Abstract Summary -->
@@ -222,7 +226,19 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
     if wildcard:
         wc_title  = html_lib.escape(latex_to_unicode(wildcard.get("title","")))
         wc_url    = wildcard.get("url","#")
-        wc_domain = wildcard.get("domain","")
+        wc_domain = wildcard.get("domain","").title()
+        wc_source = html_lib.escape(wildcard.get("source", ""))
+        
+        wc_authors_list = [a for a in (wildcard.get("authors") or []) if a and a.lower() != "unknown"]
+        wc_authors = ", ".join(html_lib.escape(a) for a in wc_authors_list[:3]) if wc_authors_list else "Authors not listed"
+        if len(wc_authors_list) > 3: wc_authors += " et al."
+        
+        if "structured_abstract" in wildcard:
+            wc_abstract = latex_to_unicode(wildcard["structured_abstract"])
+        else:
+            raw_wc_abs = latex_to_unicode(wildcard.get("abstract", ""))
+            wc_abstract = html_lib.escape(textwrap.shorten(raw_wc_abs, width=300, placeholder="..."))
+            
         base_strat = wildcard.get("strategic_implication", "")
         wc_strat  = html_lib.escape(f"Highly disruptive anomaly detected. {base_strat}")
         wc_kg     = html_lib.escape(wildcard.get("knowledge_graph_edge", "Convergence vector unclear."))
@@ -242,9 +258,15 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
              </tr>
           </table>
 
-          <h3 style="color:#f8fafc;font-size:22px;margin:0 0 16px 0;font-weight:800;line-height:1.4;">
+          <h3 style="color:#f8fafc;font-size:22px;margin:0 0 8px 0;font-weight:800;line-height:1.4;">
             <a href="{wc_url}" style="color:#f8fafc;text-decoration:none;">{wc_title}</a>
           </h3>
+          <div class="meta-text" style="color:#94a3b8;font-size:13px;margin-bottom:16px;font-weight:500;">
+            {wc_authors} &nbsp;·&nbsp; <span style="color:#38bdf8;font-weight:600;">{wc_source}</span>
+          </div>
+          <div style="font-size:14px;color:#cbd5e1;line-height:1.6;margin-bottom:20px;">
+            {wc_abstract}
+          </div>
           
           <div style="background:#020617;border:1px solid #1e293b;border-radius:8px;padding:16px;margin-bottom:16px;">
              <div style="color:#f87171;font-size:10px;font-weight:800;text-transform:uppercase;margin-bottom:8px;letter-spacing:1px;">Convergence Potential</div>
@@ -387,7 +409,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
           <!-- ══ FOOTER ══ -->
           <div style="text-align:center;padding:40px 24px;color:#64748b;font-size:13px;border-top:1px solid #e2e8f0;margin-top:40px;">
             <p style="margin:0 0 8px 0;font-weight:800;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;font-size:11px;">Noetica Intelligence Network</p>
-            <p style="margin:0 0 24px 0;font-size:11px;color:#94a3b8;font-style:italic;">This is a classified intelligence briefing. Do not distribute without authorization.</p>
+            <p style="margin:0 0 24px 0;font-size:11px;color:#94a3b8;font-style:italic;">Synthesized by Noetica Intelligence. Open-source scientific telemetry.</p>
             <a href="mailto:admin@noetica.com?subject=Unsubscribe%20me%20from%20Intelligence%20Briefing" style="display:inline-block; padding:10px 24px; background-color:#f8fafc; color:#64748b; text-decoration:none; border-radius:99px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; border:1px solid #e2e8f0;">Unsubscribe</a>
           </div>
 

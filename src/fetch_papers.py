@@ -232,7 +232,19 @@ def fetch_openalex(concept_id: str, max_results: int = 3) -> list[dict]:
     try:
         data = json.loads(raw)
         for w in data.get("results", []):
-            title    = w.get("title", "").strip()
+            title    = w.get("title", "")
+            if title is None:
+                continue
+            title = title.strip()
+            
+            # Junk Filter
+            t_lower = title.lower()
+            if "journal of" in t_lower or "verification intelligence" in t_lower or "about the author" in t_lower:
+                continue
+            item_type = w.get("type", "").lower()
+            if item_type not in ["article", "preprint", "journal-article"]:
+                continue
+
             abstract_inv = w.get("abstract_inverted_index")
             abstract = ""
             if abstract_inv:

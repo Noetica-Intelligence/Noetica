@@ -9,6 +9,11 @@ try:
 except ImportError:
     genai = None
 
+try:
+    import openai
+except ImportError:
+    openai = None
+
 def format_abstract_pointwise(abstract: str) -> str:
     """
     Format a raw abstract into a structured, easily understandable 3-point format.
@@ -62,13 +67,14 @@ def generate_personalized_synthesis(papers: list[dict], expertise: str, interest
     if not papers:
         return ""
         
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key or not genai:
-        return ""
+    api_key_openai = os.environ.get("OPENAI_API_KEY")
+    if not api_key_openai or not openai:
+        # Fallback to Gemini if OpenAI is missing
+        return _generate_personalized_synthesis_gemini(papers, expertise, interests)
 
     try:
-        client = genai.Client(api_key=api_key)
-        # 1.5 Flash for strategic synthesis to avoid Pro rate limits on free tier
+        client = openai.OpenAI(api_key=api_key_openai, max_retries=5)
+        
         
         # Build the context
         paper_context = ""
@@ -98,11 +104,17 @@ TOP DISCOVERIES TODAY:
 {paper_context}
 """
 
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
+        # Using gpt-4o-mini for fast, cheap, highly-obedient synthesis across 500+ users
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are the Noetica AI Intelligence Director."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=350,
+            temperature=0.3
         )
-        text = response.text.strip()
+        text = response.choices[0].message.content.strip()
         
         # Convert newlines to HTML breaks if they didn't use HTML
         if "<br>" not in text and "<p>" not in text:
@@ -110,5 +122,51 @@ TOP DISCOVERIES TODAY:
             
         return text
     except Exception as e:
-        print(f"   ⚠️  Gemini AI Synthesis failed: {e}")
+        print(f"   ⚠️  OpenAI AI Synthesis failed: {e}")
+        # Try falling back to Gemini if OpenAI hits a hard limit
+        return _generate_personalized_synthesis_gemini(papers, expertise, interests)
+
+def _generate_personalized_synthesis_gemini(papers: list[dict], expertise: str, interests: str) -> str:
+    """Fallback using Gemini if OpenAI fails or isn't configured."""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key or not genai:
+        return ""
+    try:
+        client = genai.Client(api_key=api_key)
+        paper_context = ""
+        for i, p in enumerate(papers[:5]):
+            title = p.get("title", "Untitled")
+            domain = p.get("domain", "Unknown")
+            abstract = p.get("abstract", "")[:500]
+            paper_context += f"[{i+1}] {title}\nDomain: {domain}\nAbstract excerpt: {abstract}...\n\n"
+            
+        prompt = f"""You are the Noetica AI Intelligence Director.
+Your task is to write a highly personalized, 2-paragraph Executive Synthesis of the day's top scientific discoveries for a specific subscriber.
+
+SUBSCRIBER PROFILE:
+- Expertise Level: "{expertise}" 
+- Core Interests: "{interests}"
+
+INSTRUCTIONS FOR EXPERTISE LEVEL:
+- If Beginner: Use simple analogies, plain language, and explain *why* it matters to humanity. No jargon.
+- If Intermediate: You can use some technical terms, but provide brief context.
+- If Advanced/Researcher/Industry: Use highly precise, technical, and academic language. Focus on methodology, theoretical implications, and paradigm shifts.
+
+Write exactly 2 paragraphs. The first paragraph should synthesize the most important overarching theme or convergence among these top discoveries. The second paragraph should directly explain why this matters to someone with their specific interests.
+Do not use Markdown (no **, no ##). Use raw HTML tags (<b>, <i>, <br>) if you need formatting, but keep it minimal.
+Do not include greetings. Just the synthesis.
+
+TOP DISCOVERIES TODAY:
+{paper_context}
+"""
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=prompt
+        )
+        text = response.text.strip()
+        if "<br>" not in text and "<p>" not in text:
+            text = text.replace("\n\n", "<br><br>").replace("\n", " ")
+        return text
+    except Exception as e:
+        print(f"   ⚠️  Gemini Fallback Synthesis failed: {e}")
         return ""

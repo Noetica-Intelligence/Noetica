@@ -91,7 +91,7 @@ def get_subscribers() -> list[dict]:
                     row["Reading Time"] = val
                 elif "frequency" in k_lower or "often" in k_lower:
                     row["Report Frequency"] = val
-                elif "fields" in k_lower or ("interest" in k_lower and "outside" not in k_lower) or "sub-domain" in k_lower or "division" in k_lower:
+                elif "paradigms" in k_lower or "sub-fields" in k_lower or "sub-domain" in k_lower or ("interest" in k_lower and "outside" not in k_lower):
                     if "Interests" in row and val:
                         row["Interests"] += "," + val
                     elif val:

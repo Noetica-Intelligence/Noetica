@@ -125,39 +125,6 @@ graph TD
 
 <br>
 
-## 💻 Local Development Setup
-
-Noetica is designed to run completely serverless, but if you want to contribute to the engine, you can run the full stack locally.
-
-### 1. Prerequisites
-- **Python 3.11+**
-- **Zig 0.16.0** (Required to compile the graph engine)
-- **Docker Compose** (For Postgres)
-
-### 2. Install Dependencies
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 3. Start Database
-```bash
-cd backend
-docker-compose up -d
-```
-
-### 4. Configure Environment
-Copy `.env.example` to `.env` and fill in your API keys (especially `GEMINI_API_KEY`) and your local Postgres password.
-
-### 5. Run the API
-```bash
-uvicorn backend.app.main:app --reload
-```
-The FastAPI backend will be available at `http://127.0.0.1:8000`.
-
-<br>
-
 ## 🌍 The Three Timelines of Knowledge
 
 Noetica tracks discoveries across three parallel scopes. Every node in the Knowledge Graph is tracked across a historical lifecycle: `Speculative` ➔ `Emerging` ➔ `Growing` ➔ `Breakthrough` ➔ `Established` ➔ `Foundational` ➔ `Civilizational` ➔ `Historical`.

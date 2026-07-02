@@ -28,7 +28,12 @@ except ImportError:
 sys.path.insert(0, str(Path(__file__).parent))
 
 from source_registry  import fetch_all_intelligence         # ← NEW: plug-in registry
-from score_papers     import score_and_rank
+from score_papers import score_and_rank
+try:
+    from sentence_transformers import SentenceTransformer, util
+    semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+except ImportError:
+    semantic_model = None
 from ai_synthesis     import generate_personalized_synthesis, format_abstract_pointwise
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
@@ -112,8 +117,21 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
         title    = (p.get("title") or "").lower()
         abstract = (p.get("abstract") or "").lower()
         
-        # Match if the interest keyword is in the domain, title, or the abstract!
-        matched = any(i.lower() in domain or i.lower() in title or i.lower() in abstract for i in interests)
+        # True Semantic Vector Matching ($0 Open-Source AI)
+        matched = False
+        if semantic_model and interests:
+            # Create a single document string
+            doc_str = f"{title} {abstract}"
+            doc_emb = semantic_model.encode(doc_str, convert_to_tensor=True)
+            for interest in interests:
+                int_emb = semantic_model.encode(interest, convert_to_tensor=True)
+                score = util.cos_sim(int_emb, doc_emb).item()
+                if score > 0.35:  # High semantic similarity threshold
+                    matched = True
+                    break
+        else:
+            # Fallback to dumb keyword matching
+            matched = any(i.lower() in domain or i.lower() in title or i.lower() in abstract for i in interests)
 
         if matched:
             filtered.append(p)
@@ -330,6 +348,8 @@ def main() -> int:
             print(f"   📧 Sending to {email}...")
             if send_digest(subject, html_body, plain, recipient_email=email):
                 success_count += 1
+                import time
+                time.sleep(1.5) # Stagger to evade Gmail spam filter
 
     print("\n" + "=" * 60)
     print(f"✅ Run complete. {success_count}/{len(subscribers)} digests sent. {alerts_fired} alerts fired.")

@@ -116,10 +116,10 @@ TOP DISCOVERIES TODAY:
         response = client.chat.completions.create(
             model=target_model,
             messages=[
-                {"role": "system", "content": "You are the Noetica AI Intelligence Director."},
+                {"role": "system", "content": "You are the Noetica AI Intelligence Director. You MUST format your response using standard HTML <p> tags for every paragraph to ensure readability. Never output a single massive wall of text. Write exactly 2 distinct paragraphs."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=350,
+            max_tokens=600,
             temperature=0.3
         )
         text = response.choices[0].message.content.strip()

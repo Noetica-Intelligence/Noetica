@@ -7,6 +7,7 @@ import re
 import datetime
 import html as html_lib
 import urllib.parse
+import textwrap
 from feedback import build_feedback_url
 
 # ─────────────────────────────────────────────
@@ -92,7 +93,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         abstract = latex_to_unicode(discovery["structured_abstract"])
     else:
         raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
-        abstract = html_lib.escape(raw_abs[:300]) + ("..." if len(raw_abs) > 300 else "")
+        abstract = html_lib.escape(textwrap.shorten(raw_abs, width=300, placeholder="..."))
         
     authors  = ", ".join(html_lib.escape(a or "Unknown") for a in (discovery.get("authors") or [])[:3])
     if len(discovery.get("authors") or []) > 3:

@@ -218,13 +218,22 @@ def compute_composite_score(paper: dict) -> dict:
     # ─────────────────────────────────────────────
     # NEW: STRATEGIC IMPLICATION SYNTHESIS
     # ─────────────────────────────────────────────
+    import random
     implications = []
     if novelty >= 8.0:
         implications.append(f"Challenges foundational assumptions within {domain}. High probability of paradigm shift.")
     elif novelty >= 6.0:
         implications.append(f"Introduces novel methodology to {domain}, expanding theoretical boundaries.")
     else:
-        implications.append(f"Incremental advancement in {domain} literature.")
+        # Dynamic templates to avoid robotic repetition
+        templates = [
+            f"Consolidates existing empirical frameworks within {domain}.",
+            f"Provides rigorous validation for ongoing {domain} research vectors.",
+            f"Offers methodical advancement of established {domain} paradigms.",
+            f"Demonstrates practical utility in applied {domain} contexts.",
+            f"Strengthens the computational foundation of {domain} models."
+        ]
+        implications.append(random.choice(templates))
         
     if evidence >= 8.0:
         implications.append("Supported by rigorous mathematical/empirical architecture. Validation confidence is extremely high.")

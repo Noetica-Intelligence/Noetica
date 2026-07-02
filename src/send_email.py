@@ -6,6 +6,9 @@ All credentials must be provided via environment variables or GitHub Secrets.
 
 import os
 import json
+import logging
+import textwrap
+from build_email import build_email_html
 import smtplib
 import datetime
 import urllib.request
@@ -189,7 +192,7 @@ def build_plain_text_summary(papers: list[dict]) -> str:
             f"Source: {p.get('source','')} | Date: {p.get('date','')[:10]}",
             f"Authors: {', '.join((a or 'Unknown') for a in (p.get('authors') or [])[:3])}",
             f"URL: {p.get('url','')}",
-            f"Abstract: {(p.get('abstract',''))[:300]}...",
+            f"Abstract: {textwrap.shorten(p.get('abstract',''), width=300, placeholder='...')}",
             "-" * 50,
             "",
         ]

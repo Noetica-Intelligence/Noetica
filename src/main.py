@@ -222,6 +222,8 @@ def main() -> int:
                 print(f"   ⚠️  Zig Engine failed (code {res.returncode}): {res.stderr}")
         else:
             print("   ⚠️  Zig Engine binary not found. Skipping network analysis.")
+    except json.JSONDecodeError:
+        print("   ⚠️  Zig Engine returned invalid JSON. Skipping network analysis.")
     except Exception as e:
         print(f"   ⚠️  Failed to run Zig Engine: {e}")
 

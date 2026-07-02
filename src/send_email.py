@@ -101,7 +101,7 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipien
     target_email = recipient_email if recipient_email else RECIPIENT_EMAIL
     
     if not SENDER_EMAIL or not target_email:
-        print("❌ Missing environment variables or target email.")
+        print("   ⚠️  Email sending skipped locally (missing NOETICA_EMAIL_USER or target email).")
         return False
 
     # 1. Try Resend
@@ -118,7 +118,7 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipien
 
     # 3. Fallback to Gmail SMTP
     if not SENDER_PASSWORD:
-        print("❌ SMTP fallback failed: SENDER_PASSWORD is not set.")
+        print("   ⚠️  Email sending skipped locally (missing NOETICA_EMAIL_PASSWORD).")
         return False
 
     msg = MIMEMultipart("related")

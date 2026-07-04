@@ -128,7 +128,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     
     # Generate Feedback URLs
     useful_url = build_feedback_url(did, subscriber_email, "Useful")
-    noise_url  = build_feedback_url(did, subscriber_email, "Not Useful")
+    noise_url  = build_feedback_url(did, subscriber_email, "Noise")
     
     # New Architectural Fields
     strat_imp = html_lib.escape(discovery.get("strategic_implication", "Incremental advancement detected."))

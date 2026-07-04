@@ -36,13 +36,13 @@ FEEDBACK_FORM_BASE = os.environ.get("FEEDBACK_FORM_BASE_URL", "")
 FEEDBACK_SHEET_ID  = os.environ.get("FEEDBACK_SHEET_ID", "")
 
 # Rating labels and their URL-safe values
-RATINGS = ["Very Useful", "Useful", "Neutral", "Not Useful"]
+RATINGS = ["Very Useful", "Useful", "Neutral", "Noise"]
 
 RATING_COLORS = {
     "Very Useful": "#059669",  # green
     "Useful":      "#2563eb",  # blue
     "Neutral":     "#64748b",  # gray
-    "Not Useful":  "#dc2626",  # red
+    "Noise":       "#dc2626",  # red
 }
 
 

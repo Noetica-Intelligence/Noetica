@@ -38,7 +38,7 @@ from ai_synthesis     import generate_personalized_synthesis, format_abstract_po
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
-from database         import save_discoveries
+from database         import save_discoveries, get_feedback_boosted_ids
 from alerts           import check_and_fire_alerts           # ← NEW: alert system
 from emerging_fields  import get_emerging_trends             # ← NEW: real trend detection
 from feedback         import ingest_feedback_from_sheet      # ← NEW: feedback loop
@@ -196,7 +196,13 @@ def main() -> int:
 
     # ── Step 3: Score and rank globally ───────────────────────────────────────
     print(f"\n⚖️  [3/6] Scoring and ranking {len(papers)} discoveries...")
-    scored_papers = score_and_rank(papers, top_n=len(papers))
+    
+    # NEW: Fetch Active Learning memory
+    feedback_boosts = get_feedback_boosted_ids(days=30)
+    if feedback_boosts:
+        print(f"   📈 Active Learning: Applying community feedback boosts from {len(feedback_boosts)} past discoveries.")
+        
+    scored_papers = score_and_rank(papers, top_n=len(papers), feedback_boosts=feedback_boosts)
 
     # ── Step 3b: Zig Engine Graph & BioSignal Analysis ───────────────────────
     print(f"\n⚡ [3b/6] Running Zig Engine graph analysis...")

@@ -175,13 +175,17 @@ def score_source_reliability(source_name: str) -> float:
 # COMPOSITE SCORING
 # ─────────────────────────────────────────────
 
-def compute_composite_score(paper: dict) -> dict:
+def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = None) -> dict:
+    if feedback_boosts is None:
+        feedback_boosts = {}
+        
     title    = paper.get("title", "")
     abstract = paper.get("abstract", "")
     domain   = paper.get("domain", "")
     date_str = paper.get("date", "")
     source   = paper.get("source", "Unknown")
     cited_by = int(paper.get("cited_by", 0) or 0)
+    p_id     = paper.get("id", "")
 
     try:
         clean = date_str[:10]
@@ -213,8 +217,12 @@ def compute_composite_score(paper: dict) -> dict:
     # Add a deterministic jitter to break exact score ties based on string lengths
     jitter = ((len(title or "") + len(abstract or "")) % 9) * 0.01
     
+    # NEW: Active Learning Community Feedback Boost
+    # If this specific paper was boosted previously, add the boost directly to the base score
+    community_boost = feedback_boosts.get(p_id, 0.0)
+    
     # Map to 0-10 scale (final_score)
-    final_score = round(base_10 + jitter, 2)
+    final_score = round(base_10 + jitter + community_boost, 2)
     if final_score > 10.0: final_score = 10.0
 
     cross_domains = get_cross_disciplinary_connections(domain)
@@ -289,8 +297,8 @@ def compute_composite_score(paper: dict) -> dict:
     return paper
 
 
-def score_and_rank(papers: list[dict], top_n: int = 15) -> list[dict]:
-    scored = [compute_composite_score(p) for p in papers]
+def score_and_rank(papers: list[dict], top_n: int = 15, feedback_boosts: dict[str, float] = None) -> list[dict]:
+    scored = [compute_composite_score(p, feedback_boosts) for p in papers]
     scored.sort(key=lambda p: p["scores"]["composite"], reverse=True)
 
     domain_counts: dict[str, int] = {}

@@ -53,9 +53,9 @@ def build_feedback_url(discovery_id: str, email: str, rating: str) -> str:
     """
     if not FEEDBACK_FORM_BASE:
         # User requested to hardcode this exact Google Form URL if not configured
-        # Pre-fill IDs: Discovery_ID (264714182), Email (55145288), Rating (1700330847)
+        # Pre-fill IDs: Discovery_ID (264714182), Rating (1700330847). Email field left blank for user input.
         base = "https://docs.google.com/forms/d/e/1FAIpQLSdXVKKAbLeZNQ73md-Jt3IMXR1tpg0NbU0MVqXFLJ2N1KqARQ/viewform?usp=pp_url"
-        url = f"{base}&entry.264714182={urllib.parse.quote(discovery_id)}&entry.55145288={urllib.parse.quote(email)}&entry.1700330847={urllib.parse.quote(rating)}"
+        url = f"{base}&entry.264714182={urllib.parse.quote(discovery_id)}&entry.1700330847={urllib.parse.quote(rating)}"
         return url
 
     url = FEEDBACK_FORM_BASE

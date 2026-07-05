@@ -1,5 +1,5 @@
 """
-Scientific Intelligence Engine — Main Orchestrator
+Scientific Intelligence Engine  Main Orchestrator
 Run this daily to fetch, score, filter, and email personalized digests.
 
 Usage:
@@ -24,10 +24,10 @@ try:
 except ImportError:
     pass
 
-# ─── Local imports ──────────────────────────────────────────────────────────
+# Local imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from source_registry  import fetch_all_intelligence         # ← NEW: plug-in registry
+from source_registry  import fetch_all_intelligence
 from score_papers import score_and_rank
 try:
     from sentence_transformers import SentenceTransformer, util
@@ -39,9 +39,9 @@ from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
 from database         import save_discoveries, get_feedback_boosted_ids
-from alerts           import check_and_fire_alerts           # ← NEW: alert system
-from emerging_fields  import get_emerging_trends             # ← NEW: real trend detection
-from feedback         import ingest_feedback_from_sheet      # ← NEW: feedback loop
+from alerts           import check_and_fire_alerts
+from emerging_fields  import get_emerging_trends
+from feedback         import ingest_feedback_from_sheet
 
 
 def parse_args():
@@ -62,7 +62,7 @@ def save_cache(papers: list[dict]) -> None:
     cache_path.parent.mkdir(exist_ok=True)
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(papers, f, indent=2, ensure_ascii=False)
-    print(f"💾 Cached {len(papers)} discoveries → {cache_path}")
+    print(f" Cached {len(papers)} discoveries  {cache_path}")
 
 
 def load_cache() -> list[dict] | None:
@@ -70,7 +70,7 @@ def load_cache() -> list[dict] | None:
     if cache_path.exists():
         with open(cache_path, "r", encoding="utf-8") as f:
             papers = json.load(f)
-        print(f"📂 Loaded {len(papers)} discoveries from cache: {cache_path}")
+        print(f" Loaded {len(papers)} discoveries from cache: {cache_path}")
         return papers
     return None
 
@@ -84,7 +84,7 @@ def save_html_preview(html: str, email_addr: str) -> Path:
     out_path = out_dir / f"digest_{today}_{safe_email}.html"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"🖥️  HTML preview saved → {out_path}")
+    print(f"  HTML preview saved  {out_path}")
     return out_path
 
 
@@ -136,7 +136,7 @@ def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict
         if matched:
             filtered.append(p)
 
-    # 20% forced exploration — inject top non-matching discoveries (must still match allowed_types!)
+    # 20% forced exploration  inject top non-matching discoveries (must still match allowed_types!)
     if exploration and len(filtered) < len(all_papers):
         non_matching = [
             p for p in all_papers 
@@ -153,34 +153,42 @@ def main() -> int:
     today = datetime.date.today().isoformat()
 
     print("=" * 60)
-    print("🔬 Noetica Scientific Intelligence Engine")
+    print(" Noetica Scientific Intelligence Engine")
     print(f"   Date: {today}  |  UTC: {datetime.datetime.now(datetime.UTC).strftime('%H:%M')}")
     print("=" * 60)
 
-    # ── Test mode ─────────────────────────────────────────────────────────────
+    # -------------------------------------------------------------------------
+    # Test mode
+    # -------------------------------------------------------------------------
     if args.send_test:
-        print("\n📧 Sending test email...")
+        print("\n[INFO] Sending test email...")
         ok = send_digest(
-            "🔬 TEST — Noetica Scientific Intelligence System",
+            " TEST  Noetica Scientific Intelligence System",
             "<html><body><h1>System is working!</h1></body></html>",
             "System is working!"
         )
         return 0 if ok else 1
 
-    # ── Step 0: Ingest pending feedback from Google Sheet ─────────────────────
-    print("\n📊 [0/6] Ingesting subscriber feedback...")
+    # -------------------------------------------------------------------------
+    # Step 0: Ingest pending feedback from Google Sheet
+    # -------------------------------------------------------------------------
+    print("\n[INFO] [0/6] Ingesting subscriber feedback...")
     ingest_feedback_from_sheet()
 
-    # ── Step 1: Fetch subscribers ─────────────────────────────────────────────
-    print("\n👥 [1/6] Loading subscribers...")
+    # -------------------------------------------------------------------------
+    # Step 1: Fetch subscribers
+    # -------------------------------------------------------------------------
+    print("\n[INFO] [1/6] Loading subscribers...")
     subscribers = get_subscribers()
     if not subscribers:
-        print("❌ No active subscribers found. Aborting.")
+        print("[ERROR] No active subscribers found. Aborting.")
         return 1
-    print(f"   ✅ {len(subscribers)} active subscriber(s) loaded.")
+    print(f"       [SUCCESS] {len(subscribers)} active subscriber(s) loaded.")
 
-    # ── Step 2: Fetch all intelligence from source registry ───────────────────
-    print("\n📡 [2/6] Fetching intelligence from all sources...")
+    # -------------------------------------------------------------------------
+    # Step 2: Fetch all intelligence from source registry
+    # -------------------------------------------------------------------------
+    print("\n[INFO] [2/6] Fetching intelligence from all sources...")
     if args.load_cache:
         papers = load_cache()
         if papers is None:
@@ -191,21 +199,25 @@ def main() -> int:
         save_cache(papers)
 
     if not papers:
-        print("❌ No discoveries fetched. Aborting.")
+        print("[ERROR] No discoveries fetched. Aborting.")
         return 1
 
-    # ── Step 3: Score and rank globally ───────────────────────────────────────
-    print(f"\n⚖️  [3/6] Scoring and ranking {len(papers)} discoveries...")
+    # -------------------------------------------------------------------------
+    # Step 3: Score and rank globally
+    # -------------------------------------------------------------------------
+    print(f"\n[INFO] [3/6] Scoring and ranking {len(papers)} discoveries...")
     
-    # NEW: Fetch Active Learning memory
+    # Active Learning memory
     feedback_boosts = get_feedback_boosted_ids(days=30)
     if feedback_boosts:
-        print(f"   📈 Active Learning: Applying community feedback boosts from {len(feedback_boosts)} past discoveries.")
+        print(f"       [INFO] Active Learning: Applying community feedback boosts from {len(feedback_boosts)} past discoveries.")
         
     scored_papers = score_and_rank(papers, top_n=len(papers), feedback_boosts=feedback_boosts)
 
-    # ── Step 3b: Zig Engine Graph & BioSignal Analysis ───────────────────────
-    print(f"\n⚡ [3b/6] Running Zig Engine graph analysis...")
+    # -------------------------------------------------------------------------
+    # Step 3b: Zig Engine Graph & BioSignal Analysis
+    # -------------------------------------------------------------------------
+    print(f"\n[INFO] [3b/6] Running Zig Engine graph analysis...")
     import subprocess
     from pathlib import Path
     
@@ -241,32 +253,40 @@ def main() -> int:
                 
                 # Sort again by updated score
                 scored_papers = sorted(scored_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
-                print("   ✅ Zig Engine enrichment complete.")
+                print("       [SUCCESS] Zig Engine enrichment complete.")
             else:
-                print(f"   ⚠️  Zig Engine failed (code {res.returncode}): {res.stderr}")
+                print(f"       [ERROR] Zig Engine failed (code {res.returncode}): {res.stderr}")
         else:
-            print("   ⚠️  Zig Engine binary not found. Skipping network analysis.")
+            print("       [WARNING] Zig Engine binary not found. Skipping network analysis.")
     except json.JSONDecodeError:
-        print("   ⚠️  Zig Engine returned invalid JSON. Skipping network analysis.")
+        print("       [WARNING] Zig Engine returned invalid JSON. Skipping network analysis.")
     except Exception as e:
-        print(f"   ⚠️  Failed to run Zig Engine: {e}")
+        print(f"       [ERROR] Failed to run Zig Engine: {e}")
 
-    # ── Step 4: Save to Knowledge Base (with trend score + lifecycle) ─────────
-    print(f"\n💾 [4/6] Saving to Knowledge Base...")
+    # -------------------------------------------------------------------------
+    # Step 4: Save to Knowledge Base (with trend score + lifecycle)
+    # -------------------------------------------------------------------------
+    print(f"\n[INFO] [4/6] Saving to Knowledge Base...")
     save_discoveries(scored_papers)
 
-    # ── Step 4b: Check and fire alerts ────────────────────────────────────────
+    # -------------------------------------------------------------------------
+    # Step 4b: Check and fire alerts
+    # -------------------------------------------------------------------------
     alerts_fired = check_and_fire_alerts(scored_papers, subscribers)
     if alerts_fired:
-        print(f"   🚨 {alerts_fired} priority alert(s) sent.")
+        print(f"       [ALERT] {alerts_fired} priority alert(s) sent.")
 
-    # ── Step 5: Detect real emerging trends ───────────────────────────────────
-    print(f"\n📈 [5/6] Detecting emerging fields...")
+    # -------------------------------------------------------------------------
+    # Step 5: Detect real emerging trends
+    # -------------------------------------------------------------------------
+    print(f"\n[INFO] [5/6] Detecting emerging fields...")
     emerging_trends = get_emerging_trends(scored_papers)
-    print(f"   ✅ {len(emerging_trends)} emerging trend(s) detected.")
+    print(f"       [SUCCESS] {len(emerging_trends)} emerging trend(s) detected.")
 
-    # ── Step 6: Build and send personalized digests ───────────────────────────
-    print(f"\n📧 [6/6] Generating personalized digests...")
+    # -------------------------------------------------------------------------
+    # Step 6: Build and send personalized digests
+    # -------------------------------------------------------------------------
+    print(f"\n[INFO] [6/6] Generating personalized digests...")
     success_count = 0
     for i, sub in enumerate(subscribers, 1):
         email    = sub.get("Email")
@@ -275,21 +295,21 @@ def main() -> int:
         limit    = get_paper_limit_for_time(time_str)
         freq_str = sub.get("Report Frequency", "Daily").lower()
 
-        print(f"\n   👤 [{i}/{len(subscribers)}] {name} ({email}) — {time_str} → {limit} discoveries")
+        print(f"\n       [{i}/{len(subscribers)}] {name} ({email}) - {time_str} -> {limit} discoveries")
 
         # Enforce Report Frequency
         if "weekly" in freq_str:
             if datetime.date.today().weekday() != 6: # 6 is Sunday
-                print(f"   ⏭️  Skipping (Weekly subscriber; delivers on Sundays)")
+                print(f"       [SKIP] Weekly subscriber; delivers on Sundays")
                 continue
         elif "monthly" in freq_str:
             if datetime.date.today().day != 1:
-                print(f"   ⏭️  Skipping (Monthly subscriber; delivers on the 1st)")
+                print(f"       [SKIP] Monthly subscriber; delivers on the 1st")
                 continue
 
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
         
-        # --- Enforce Discovery Type Quota (V2 Feature) ---
+        # Enforce Discovery Type Quota
         discovery_prefs_str = sub.get("Discovery Preferences", "")
         allowed_types = parse_discovery_preferences(discovery_prefs_str)
         user_top_papers = []
@@ -323,12 +343,11 @@ def main() -> int:
         user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         if not user_top_papers:
-            print(f"   ⚠️  No matching discoveries for this subscriber's interests.")
+            print(f"       [WARNING] No matching discoveries for this subscriber's interests.")
             continue
 
-        print(f"   🏆 Selected {len(user_top_papers)} personalized discoveries.")
-        
-        print(f"   ✍️  Formatting abstracts for clarity...")
+        print(f"       [INFO] Selected {len(user_top_papers)} personalized discoveries.")
+        print(f"       [INFO] Formatting abstracts for clarity...")
         for p in user_top_papers:
             if "structured_abstract" not in p:
                 p["structured_abstract"] = format_abstract_pointwise(p.get("abstract", ""))
@@ -336,7 +355,7 @@ def main() -> int:
         # Generate Personalized AI Synthesis
         expertise_str = sub.get("Expertise Level", "Intermediate")
         interests_str = sub.get("Interests", "All")
-        print(f"   🧠 Generating AI synthesis for expertise: {expertise_str}...")
+        print(f"       [INFO] Generating AI synthesis for expertise: {expertise_str}...")
         ai_synthesis_html = generate_personalized_synthesis(user_top_papers, expertise_str, interests_str)
 
         # Build email with real emerging trends and AI synthesis
@@ -348,17 +367,17 @@ def main() -> int:
         os.environ["RECIPIENT_EMAIL"] = email
 
         if args.dry_run:
-            print(f"   🌵 DRY RUN — Email NOT sent to {email}.")
+            print(f"       [DRY RUN] Email NOT sent to {email}.")
             success_count += 1
         else:
-            print(f"   📧 Sending to {email}...")
+            print(f"       [INFO] Sending to {email}...")
             if send_digest(subject, html_body, plain, recipient_email=email):
                 success_count += 1
                 import time
                 time.sleep(1.5) # Stagger to evade Gmail spam filter
 
     print("\n" + "=" * 60)
-    print(f"✅ Run complete. {success_count}/{len(subscribers)} digests sent. {alerts_fired} alerts fired.")
+    print(f"[SUCCESS] Run complete. {success_count}/{len(subscribers)} digests sent. {alerts_fired} alerts fired.")
     print("=" * 60)
 
     return 0 if (args.dry_run or success_count > 0) else 1

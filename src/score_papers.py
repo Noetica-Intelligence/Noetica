@@ -1,5 +1,5 @@
 """
-Scientific Intelligence Engine — Scoring Engine
+Scientific Intelligence Engine  Scoring Engine
 Ranks papers by novelty, impact, recency, and cross-disciplinary potential.
 Outputs a 0-100 score and narrative AI rationale.
 """
@@ -9,9 +9,9 @@ import math
 import datetime
 
 
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 # BREAKTHROUGH SIGNAL KEYWORDS
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 
 BREAKTHROUGH_SIGNALS = [
     # Methods
@@ -80,12 +80,12 @@ CROSS_DOMAIN_PAIRS = {
 }
 
 
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 # SCORING FUNCTIONS
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 
 def score_novelty(title: str, abstract: str) -> float:
-    """Score 0–10 based on breakthrough keywords minus hype."""
+    """Score 010 based on breakthrough keywords minus hype."""
     text = ((title or "") + " " + (abstract or "")).lower()
     signal_hits = sum(1 for kw in BREAKTHROUGH_SIGNALS if kw in text)
     hype_hits   = sum(1 for kw in HYPE_PENALTIES if kw in text)
@@ -95,17 +95,17 @@ def score_novelty(title: str, abstract: str) -> float:
 
 
 def score_evidence(abstract: str) -> float:
-    """Score 0–10 based on experimental/theoretical methodology."""
+    """Score 010 based on experimental/theoretical methodology."""
     text = (abstract or "").lower()
     method_hits = sum(1 for kw in METHODOLOGY_QUALITY if kw in text)
-    numbers = len(re.findall(r'\b\d+\.?\d*[%±]\b|\bn\s*=\s*\d+', text))
+    numbers = len(re.findall(r'\b\d+\.?\d*[%]\b|\bn\s*=\s*\d+', text))
     # Base 5.0. Hits give strong boosts.
     raw = min(5.0 + method_hits * 2.5 + numbers * 0.5, 10.0)
     return max(0.0, min(10.0, raw))
 
 
 def score_recency(date_str: str) -> float:
-    """Score 0–10: Logarithmic decay."""
+    """Score 010: Logarithmic decay."""
     if not date_str:
         return 8.0
     try:
@@ -124,7 +124,7 @@ def score_recency(date_str: str) -> float:
 
 
 def score_citation_momentum(cited_by: int, days_old: int) -> float:
-    """Score 0–10: Citation velocity. No penalty for very new papers."""
+    """Score 010: Citation velocity. No penalty for very new papers."""
     if days_old <= 7:
         return 10.0  # Grace period: brand new papers have maximum momentum potential
     if cited_by <= 0:
@@ -171,9 +171,9 @@ def score_source_reliability(source_name: str) -> float:
     return 1.0
 
 
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 # COMPOSITE SCORING
-# ─────────────────────────────────────────────
+# -------------------------------------------------------------------------
 
 def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = None) -> dict:
     if feedback_boosts is None:
@@ -227,9 +227,9 @@ def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = Non
 
     cross_domains = get_cross_disciplinary_connections(domain)
 
-    # ─────────────────────────────────────────────
-    # NEW: STRATEGIC IMPLICATION SYNTHESIS
-    # ─────────────────────────────────────────────
+    # -------------------------------------------------------------------------
+    # STRATEGIC IMPLICATION SYNTHESIS
+    # -------------------------------------------------------------------------
     import random
     is_preprint = "arxiv" in source.lower() or "biorxiv" in source.lower() or "medrxiv" in source.lower()
 
@@ -263,9 +263,9 @@ def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = Non
     if source_mult > 1.1:
         implications.append("Signal amplified by premium source tier.")
 
-    # ─────────────────────────────────────────────
-    # NEW: KNOWLEDGE GRAPH EDGE SYNTHESIS
-    # ─────────────────────────────────────────────
+    # -------------------------------------------------------------------------
+    # KNOWLEDGE GRAPH EDGE SYNTHESIS
+    # -------------------------------------------------------------------------
     kg_edge = ""
     if len(cross_domains) >= 1:
         # e.g. "Primary vector bridging Theoretical Physics with Quantum Computing methodologies."

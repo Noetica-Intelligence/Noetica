@@ -21,11 +21,39 @@
 
 Noetica is an autonomous scientific intelligence engine that tracks, scores, and synthesizes global discoveries. 
 
-By scanning thousands of open-source datasets (PubMed, arXiv, patents, global clinical trials, and open-source GitHub repositories) daily, Noetica bypasses hype cycles to identify true empirical breakthroughs. It utilizes a custom Triple-Engine Framework to score papers based on network centrality and evidence, and then deploys a localized LLM to write highly personalized executive intelligence briefings delivered directly to your inbox.
+Imagine having an incredibly smart assistant who constantly reads thousands of newly published scientific papers, global patents, venture funding rounds, and clinical trials from all over the world, and then emails you a perfectly summarized, highly-personalized briefing. It is your personal, autonomous AI research director.
 
 ---
 
-## 1. The Triple-Engine Architecture
+## 1. How It Works
+
+Noetica runs completely autonomously in the background. Here is the operational flow:
+
+1. **You Set Your Boundaries:** You fill out a simple Google Form to outline exactly what you care about. You choose your fields (e.g., Biotech, AI), your expertise level (Beginner vs. Senior Researcher), how much time you have to read, and your specific discovery preferences.
+2. **Global Scanning:** On a scheduled cycle, Noetica scours massive open-source databases (like Google News, GitHub, PubMed, and Europe PMC) to capture the pulse of global scientific advancement. 
+3. **The Brain Engine:** It uses a high-speed custom engine to score every single discovery. It calculates which papers and patents are the most important based on how connected they are to other fields.
+4. **AI Personalization:** Noetica uses an advanced LLM to read the top discoveries and write a custom "Executive Summary" just for you. If you are a beginner, it explains things simply. If you are a PhD researcher, it gives you the deep technical details.
+5. **Inbox Delivery:** A highly-personalized intelligence briefing is delivered directly into your inbox.
+
+---
+
+## 2. Why Noetica is Different
+
+**Zero Paid APIs (Built for Scale)** 
+We explicitly engineered Noetica to avoid expensive enterprise APIs. By leveraging incredibly smart, unified RSS aggregators, public GitHub REST APIs, and government databases (like NIH RePORTER and Europe PMC), the entire global scanning architecture can be run for $0 in compute and data costs.
+
+**Strict Inbox Protection** 
+Noetica heavily filters global data to ensure your inbox is strictly protected. If a subscriber configures their profile to receive "Startup Funding" and "Clinical Trials" but explicitly unchecks "Research Papers", the orchestrator creates a hard boundary. Even if the Zig Engine identifies a globally significant Biotech Paper, it will be discarded from that specific user's digest to respect their consent.
+
+**80/20 Forced Exploration**
+Algorithms naturally trap humans in echo chambers, showing only what is already known. Noetica mathematically combats this phenomenon by intentionally dedicating 20% of your personalized digest to massive breakthroughs explicitly outside of your selected fields. By injecting high-impact signals from orthogonal domains, it sparks cross-disciplinary creativity and lateral innovation.
+
+**Respects Your Time limits** 
+You don't always have time to read a 50-page digest. When you select that you only have "5 minutes to read", Noetica's algorithm mathematically cuts the final email down to just the top 3 absolute highest-scoring discoveries of the day.
+
+---
+
+## 3. The Triple-Engine Architecture
 
 Noetica operates on an enterprise-grade hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N^2) Knowledge Graph calculations, and an autonomous LLM Agent for scientific synthesis.
 
@@ -43,7 +71,7 @@ The AI Synthesizer connects to elite foundation models (e.g., Gemini 1.5 Pro or 
 
 ---
 
-## 2. Active Learning Loop (Community Consensus)
+## 4. Active Learning Loop (Community Consensus)
 
 Noetica does not rely on static algorithms. It features a closed-loop Active Learning system driven by its expert beta testers. 
 
@@ -57,17 +85,19 @@ This ensures the intelligence engine continuously aligns its mathematical scorin
 
 ---
 
-## 3. Strict Inbox Protection & Forced Exploration
+## 5. The Three Timelines of Knowledge
 
-**Domain Enclosures**
-Noetica heavily filters global data to ensure your inbox is strictly protected. If a subscriber configures their profile to receive "Startup Funding" and "Clinical Trials" but explicitly unchecks "Research Papers", the orchestrator creates a hard boundary. Even if the Zig Engine identifies a globally significant Biotech Paper, it will be discarded from that specific user's digest to respect their consent.
+Noetica tracks discoveries across three parallel scopes. Every node in the Knowledge Graph is tracked across a historical lifecycle: `Speculative` -> `Emerging` -> `Growing` -> `Breakthrough` -> `Established` -> `Foundational` -> `Civilizational` -> `Historical`.
 
-**80/20 Forced Exploration**
-Algorithms naturally trap humans in echo chambers, showing only what is already known. Noetica mathematically combats this phenomenon by intentionally dedicating 20% of your personalized digest to massive breakthroughs explicitly outside of your selected fields. By injecting high-impact signals from orthogonal domains, it sparks cross-disciplinary creativity and lateral innovation.
+| Timeline | Scope | Core Question | Real-World Example |
+|:---------|:------|:--------------|:-------------------|
+| **Foundational** | 5,000+ years | *What changed civilization?* | Calculus, Germ Theory, Transistors |
+| **Modern** | Last 50 years | *What changed science?* | CRISPR-Cas9, AlphaFold, mRNA |
+| **Emerging** | Last 5 years | *What might change the future?* | Quantum Error Correction, LLMs |
 
 ---
 
-## 4. 10 Non-Negotiable Principles
+## 6. 10 Non-Negotiable Principles
 
 These principles serve as the constitution of the Noetica Engine. They override all feature decisions:
 
@@ -84,7 +114,19 @@ These principles serve as the constitution of the Noetica Engine. They override 
 
 ---
 
-## 5. Deployment & Configuration
+## 7. How to Get Noetica (Early Access)
+
+Noetica is currently in an exclusive Early Access Beta. If you want to experience the future of personalized scientific intelligence, here is how you can join:
+
+1. **Request Access:** Fill out our official Noetica Onboarding Form (link provided by your beta administrator). This is where you will define your intellectual boundaries, reading time limits, and expertise level.
+2. **The AI Maps Your Profile:** Once submitted, Noetica's backend immediately maps your unique parameters. It calculates your domain intersections and programs the Scoring Engine to hunt specifically for you.
+3. **Receive Your Intelligence:** There are no apps to download and no dashboards to log into. On the very next scheduled cycle, your first beautifully formatted, highly-personalized AI Intelligence Briefing will drop directly into your email inbox. 
+
+*Prepare to stop searching for science, and let the science find you.*
+
+---
+
+## 8. Deployment & Configuration
 
 Noetica is designed to be fully serverless via GitHub Actions. 
 

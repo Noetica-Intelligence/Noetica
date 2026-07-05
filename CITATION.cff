@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+authors:
+- family-names: "Noetica"
+  given-names: "Intelligence"
+title: "Noetica: An Autonomous Scientific Intelligence Engine"
+version: 1.0.0
+date-released: 2026-06-25
+url: "https://github.com/Noetica-Intelligence/Noetica"
+repository-code: "https://github.com/Noetica-Intelligence/Noetica"
+abstract: >-
+  Noetica is an autonomous intelligence engine that tracks, scores, and synthesizes 
+  global scientific discoveries using a hybrid Python/Zig Triple-Engine Architecture.

@@ -1,34 +1,38 @@
 <div align="center">
 
-<img src="assets/logo/logo.png" width="280" alt="Noetica logo" />
-
-# Noetica
-**Mapping the Evolution of Human Knowledge.**
+<img src="assets/hero-banner.svg" width="100%" alt="Noetica -- Mapping the Evolution of Human Knowledge" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Status](https://img.shields.io/badge/Status-Early%20Access-F7A41D.svg?style=for-the-badge)](#7-how-to-get-noetica-early-access)
+[![Status](https://img.shields.io/badge/Status-Early%20Access-F7A41D.svg?style=for-the-badge)](#get-early-access)
 [![Zig](https://img.shields.io/badge/Zig-0.16.0-F7A41D.svg?style=for-the-badge&logo=zig&logoColor=white)](https://ziglang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 
-[How It Works](#1-how-it-works) · [Architecture](#3-the-triple-engine-architecture) · [Principles](#6-10-non-negotiable-principles) · [Get Access](#7-how-to-get-noetica-early-access)
+[How It Works](#how-it-works) · [Architecture](#the-triple-engine-architecture) · [Principles](#design-principles) · [Get Access](#get-early-access)
 
 </div>
 
 ---
 
-Noetica scans new papers, patents, funding rounds, and clinical trials as they are published, scores each one for genuine scientific significance, and emails you a briefing written at your level (beginner or specialist) covering only the fields you requested.
+Noetica scans new papers, patents, funding rounds, and clinical trials as they are published, scores each one for genuine scientific significance, and emails you a briefing written at your level — beginner or specialist — covering only the fields you chose.
 
-It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring, and an **LLM** for synthesis — entirely on free-tier infrastructure, costing $0 to run at any scale.
+It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring, and an **LLM** for synthesis — entirely on free-tier infrastructure, so it costs $0 to run at any scale.
 
 <div align="center">
-  <br>
-  <i><!-- PLACEHOLDER: Insert high-res screenshot of the actual email digest here --></i>
-  <br>
+<br>
+<img src="assets/digest-preview.svg" width="420" alt="Sample Noetica daily briefing preview" />
+<br>
+<sub><i>Illustrative mockup of a Noetica Intelligence Briefing. Swap in a real digest screenshot once available.</i></sub>
+<br><br>
 </div>
 
 ---
 
-## 1. How It Works
+## How It Works
+
+<img src="assets/pipeline-diagram.svg" width="100%" alt="Noetica pipeline: your profile, global scan, scoring engine, LLM synthesis, your inbox" />
+
+<details>
+<summary>Prefer plain text? Expand for the Mermaid source.</summary>
 
 ```mermaid
 flowchart LR
@@ -38,57 +42,59 @@ flowchart LR
     D --> E["Your Inbox<br/>sized to your time budget"]
 ```
 
-1. **Set your boundaries:** A short form captures your fields of interest, your expertise level, and how much time you have to read.
-2. **Noetica scans continuously:** On a scheduled cycle, it pulls from open sources — PubMed, Europe PMC, GitHub, NIH RePORTER, and public patent databases.
-3. **The Scoring Engine ranks everything:** Every discovery is scored across three dimensions — see the [NET framework](#3-the-triple-engine-architecture) below.
-4. **An LLM writes your summary:** Top-ranked items are synthesized into one briefing, written at the technical depth you requested.
-5. **It lands in your inbox:** No dashboard to check, no app to install — just a precision email, on schedule.
+</details>
+
+1. **Set your boundaries.** A short form captures your fields of interest, your expertise level, and how much time you have to read.
+2. **Noetica scans continuously.** On a scheduled cycle, it pulls from open sources — PubMed, Europe PMC, GitHub, NIH RePORTER, and public patent and funding databases.
+3. **The Scoring Engine ranks everything.** Every discovery is scored across three dimensions — see the [NET framework](#the-triple-engine-architecture) below.
+4. **An LLM writes your summary.** Top-ranked items are synthesized into one briefing, written at the technical depth you asked for.
+5. **It lands in your inbox.** No dashboard, no app — just an email, on schedule.
 
 ---
 
-## 2. Why Noetica Is Different
+## Why Noetica Is Different
 
-- **$0 Compute:** By explicitly leveraging RSS aggregators, public REST APIs, and government databases (NIH RePORTER, Europe PMC), Noetica completely bypasses expensive enterprise data contracts.
-- **Consent is a Hard Boundary:** Uncheck "Research Papers" and nothing tagged as a paper reaches your inbox, even a discovery the Scoring Engine ranks as globally significant.
-- **A Deliberate Serendipity Budget (80/20):** Roughly 20% of every digest is mathematically reserved for high-impact discoveries *outside* your selected fields, specifically to combat algorithmic echo-chambers and spark cross-disciplinary innovation.
-- **Sized to Your Actual Time:** Tell it you have 5 minutes, and the digest is aggressively trimmed to the top 3 absolute highest-scoring discoveries, rather than presenting 20 links with a suggestion to skim.
+- **$0 compute.** No paid APIs — RSS aggregators, public REST APIs, and government databases (NIH RePORTER, Europe PMC) replace enterprise data contracts entirely.
+- **Consent is a hard boundary.** Uncheck "Research Papers" and nothing tagged as a paper reaches your inbox — even a discovery the Scoring Engine ranks as globally significant.
+- **A deliberate serendipity budget.** Roughly 20% of every digest is reserved for high-impact discoveries *outside* your selected fields, specifically to counter echo-chamber effects.
+- **Sized to your actual time.** Tell it you have 5 minutes, and the digest is mathematically trimmed to the top 3 discoveries — not the top 20 with a suggestion to skim.
 
 ---
 
-## 3. The Triple-Engine Architecture
+## The Triple-Engine Architecture
 
-| Engine | Role | Rationale |
+| Engine | Role | Why this choice |
 |:---|:---|:---|
-| **Python** (`main.py`) | Orchestration, fetchers, and subscriber routing | Leverages the massive ecosystem depth for async I/O and data wrangling |
-| **Zig** (`zig_engine/`) | Compiles to a standalone binary for graph scoring | Provides compiled C-level speed for O(N²) graph mathematics, avoiding the Python GIL |
-| **LLM** (Gemini/Groq) | Synthesizes ranked discoveries into an HTML summary | Unlocks the reasoning depth required to dynamically write at variable expertise levels |
+| **Python** (`main.py`) | Orchestration, fetchers, subscriber routing | Ecosystem depth for async I/O and data wrangling |
+| **Zig** (`zig_engine/`) | Compiles to a standalone binary for graph scoring | Compiled speed for O(N^2) graph math, without the Python GIL in the way |
+| **LLM** (Gemini / Groq) | Synthesizes ranked discoveries into a personalized summary | Reasoning depth needed to write at variable expertise levels |
 
 Every discovery is scored against the **NET framework**:
 
-- **Novelty:** Breakthrough methodology versus established paradigms.
-- **Evidence:** Methodological rigor, sample sizes, and empirical strength.
-- **Trend:** Citation momentum and cross-disciplinary graph centrality.
+- **Novelty** — breakthrough methodology vs. established paradigm
+- **Evidence** — methodological rigor: sample size, empirical strength
+- **Trend** — citation momentum and cross-disciplinary graph centrality
 
 ---
 
-## 4. Active Learning Loop (Community Consensus)
+## Active Learning Loop
 
-Every discovery in the daily digest ships with a two-button minimalist control: **Useful** or **Noise**. On the next scoring cycle (08:00 IST daily), the Python Orchestrator (`feedback.py`) cross-references this feedback securely via Google Sheets against the knowledge graph:
+Every discovery in the daily digest ships with a two-button control: **Useful** or **Noise**. On the next scoring cycle (08:00 IST daily), `feedback.py` cross-references this feedback against the knowledge graph:
 
-- **Useful:** Mathematically boosts adjacent nodes sharing the same domain or methodology.
-- **Noise:** Down-weights that specific structural node path, forcing the Zig Engine to filter similar noise more aggressively in future cycles.
+- **Useful** — boosts adjacent nodes sharing the same domain or methodology.
+- **Noise** — down-weights that node path, so similar signal is filtered more aggressively going forward.
 
-This ensures the intelligence engine continuously aligns its mathematical ranking with what expert readers actually find valuable in the real world.
+This keeps ranking aligned with what expert readers actually find valuable — not just what the graph predicts.
 
 ---
 
-## 5. Knowledge Lifecycle & Timelines
+## Knowledge Lifecycle & Timelines
 
-Every node in the graph moves through a lifecycle as empirical evidence accumulates:
+Every node in the graph moves through a lifecycle as evidence accumulates:
 
-`Speculative → Emerging → Growing → Breakthrough → Established → Foundational → Civilizational → Historical`
+<img src="assets/lifecycle.svg" width="100%" alt="Knowledge lifecycle: speculative through historical" />
 
-Digests intentionally group discoveries by their era of impact:
+Digests also group discoveries by era of impact:
 
 | Timeline | Scope | Core Question | Example |
 |:---|:---|:---|:---|
@@ -98,38 +104,34 @@ Digests intentionally group discoveries by their era of impact:
 
 ---
 
-## 6. 10 Non-Negotiable Principles
+## Design Principles
 
-These principles serve as the constitution of the Noetica Engine. They override all feature decisions:
+Principles that guide feature decisions, in order of priority:
 
-1. Optimize for scientific significance, not popularity.
-2. Social signals inform ranking; they do not drive it.
-3. Discoveries are the primary entities, not papers.
-4. Knowledge graph over flat category trees.
-5. Taxonomy evolves autonomously; it is not hardcoded.
-6. Evidence outranks attention, always.
-7. Cross-disciplinary work is weighted exponentially higher.
-8. Open-source data sources first.
+1. Scientific significance over popularity.
+2. Social signals inform ranking; they don't drive it.
+3. Discoveries are the primary entity — not the papers describing them.
+4. A knowledge graph, not a flat category tree.
+5. Taxonomy evolves; it isn't hardcoded.
+6. Evidence outranks attention.
+7. Cross-disciplinary work is weighted higher.
+8. Open data sources first.
 9. Personalized, without becoming an echo chamber.
 10. Long-term impact over short-term hype.
 
 ---
 
-## 7. How to Get Noetica (Early Access)
+## Get Early Access
 
-Noetica is currently in a closed beta.
+Noetica is in closed beta.
 
-1. **Request Access:** Fill out our official Noetica Onboarding Form (link provided by your beta administrator). Set your intellectual boundaries, reading time limits, and expertise level.
-2. **The AI Maps Your Profile:** Once submitted, Noetica's backend immediately maps your unique parameters. It calculates your domain intersections and programs the Scoring Engine to hunt specifically for you.
-3. **Receive Your Intelligence:** On the very next scheduled cycle, your first beautifully formatted, highly-personalized AI Intelligence Briefing will drop directly into your email inbox. 
-
-*Prepare to stop searching for science, and let the science find you.*
+1. Request access via the onboarding form (link provided by your beta administrator) — you'll set your fields, expertise level, and reading-time budget.
+2. Noetica maps your profile and configures the Scoring Engine to your domain intersections.
+3. Your first briefing arrives on the next scheduled cycle — no login required.
 
 ---
 
-## 8. Quick Start (for contributors)
-
-> The commands below follow the pipeline described in [Deployment](#9-deployment--configuration). 
+## Quick Start
 
 ```bash
 # Clone
@@ -142,61 +144,89 @@ make install
 # Build the Zig scoring engine
 make build-engine
 
-# Ensure your .env variables are set, then run the pipeline
+# Set your .env variables (see below), then run:
 make run
+```
+
+<details>
+<summary>Environment variables</summary>
+
+| Variable | Purpose |
+|:---|:---|
+| `GEMINI_API_KEY` / `GROQ_API_KEY` | LLM synthesis |
+| `GOOGLE_SHEET_ID` | Subscriber profiles |
+| `FEEDBACK_SHEET_ID` | Active learning database |
+| `SENDER_EMAIL` / `SENDER_PASSWORD` | SMTP delivery (app password) |
+
+Copy `.env.example` to `.env` and fill in your values.
+
+</details>
+
+---
+
+## Deployment
+
+Noetica runs serverless on GitHub Actions:
+
+1. A cron-scheduled workflow spins up an Ubuntu runner.
+2. It installs Python dependencies and compiles the Zig engine from source.
+3. It runs the pipeline — fetch, score, synthesize.
+4. Digests are generated and sent via SMTP.
+5. The runner shuts down — $0 ongoing compute cost.
+
+---
+
+## Repository Structure
+
+```text
+Noetica/
+|
+|-- README.md              
+|-- LICENSE                 
+|-- CONTRIBUTING.md         
+|-- CODE_OF_CONDUCT.md      
+|-- SECURITY.md             
+|-- CHANGELOG.md            
+|-- ROADMAP.md              
+|-- CITATION.cff            
+|-- Makefile                
+|
+|-- src/                    # Python orchestrator
+|-- zig_engine/             # Zig scoring engine
+|-- assets/                 # SVGs, logos, visual assets
+|-- docs/                   # Architecture and design docs
+|-- examples/               # Example payloads and digest templates
+|-- benchmarks/             # Zig engine performance metrics
+|-- notebooks/              # Data analysis and algorithmic testing
+|-- tests/                  # Unit and integration tests
+|-- scripts/                # Deployment and utility scripts
+`-- .github/                # Actions workflows and issue templates
 ```
 
 ---
 
-## 9. Deployment & Configuration
+## Citation
 
-Noetica is designed to be fully serverless via GitHub Actions. 
+If you use Noetica in your research, please cite:
 
-1. A YAML workflow in `.github/workflows` spins up an Ubuntu cloud runner on a cron schedule.
-2. It installs the Python dependencies and compiles the Zig engine from source.
-3. It executes the Python pipeline, fetching global data and scoring the graph.
-4. The HTML digests are generated and dispatched concurrently via SMTP.
-5. The runner spins down, costing $0 in perpetual compute.
-
-### Environment Requirements
-- `GEMINI_API_KEY` or `GROQ_API_KEY`
-- `GOOGLE_SHEET_ID` (Subscriber profiles)
-- `FEEDBACK_SHEET_ID` (Active Learning database)
-- `SENDER_EMAIL` & `SENDER_PASSWORD` (App Password for SMTP)
-
----
-
-## 10. Repository Structure
-
-```text
-Noetica/
-│
-├── README.md
-├── LICENSE
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-├── CHANGELOG.md
-├── ROADMAP.md
-├── CITATION.cff
-│
-├── docs/               # Architecture diagrams and design docs
-├── examples/           # Example JSON payloads and digest templates
-├── assets/             # Logos, screenshots, and visual assets
-├── benchmarks/         # Performance metrics for the Zig engine
-├── notebooks/          # Data analysis and algorithmic testing
-├── src/                # Core Python Orchestrator
-├── tests/              # Unit and integration tests
-├── scripts/            # Deployment and utility scripts
-├── zig_engine/         # High-speed graph traversal binary
-└── .github/            # GitHub Actions & Issue templates
+```bibtex
+@software{noetica2026,
+  title   = {Noetica: An Autonomous Scientific Intelligence Engine},
+  author  = {Noetica Intelligence},
+  year    = {2026},
+  url     = {https://github.com/Noetica-Intelligence/Noetica}
+}
 ```
 
 ---
 
 ## Contributing
 
-Noetica is in active development. Issues and PRs are welcome, especially around new data connectors and scoring refinements. Please see [CONTRIBUTING.md](CONTRIBUTING.md) before opening a large pull request to ensure alignment with the architectural vision.
+Issues and PRs are welcome, especially around new data connectors and scoring refinements. Please see [CONTRIBUTING.md](CONTRIBUTING.md) before opening a large PR so direction stays aligned.
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for upcoming features and long-term vision.
 
 ## License
 

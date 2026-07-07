@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" width="420" height="520">
+  <defs>
+    <linearGradient id="dbg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1d32"/>
+      <stop offset="100%" style="stop-color:#0a1628"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#141f34"/>
+      <stop offset="100%" style="stop-color:#111a2e"/>
+    </linearGradient>
+    <linearGradient id="score" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f5c842"/>
+      <stop offset="100%" style="stop-color:#d4a030"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="420" height="520" rx="12" fill="url(#dbg)"/>
+  
+  <!-- Header -->
+  <text x="210" y="40" text-anchor="middle" font-family="'Georgia', serif" font-size="14" letter-spacing="4" fill="#8a9bb5" opacity="0.7">NOETICA INTELLIGENCE BRIEFING</text>
+  <line x1="40" y1="55" x2="380" y2="55" stroke="#1e2d45" stroke-width="0.5"/>
+  
+  <!-- Date line -->
+  <text x="40" y="78" font-family="'Helvetica Neue', sans-serif" font-size="11" fill="#5a6a85">July 7, 2026 . Computational Oncology . Senior Researcher</text>
+  
+  <!-- Discovery Card 1 -->
+  <rect x="30" y="95" width="360" height="110" rx="8" fill="url(#card)" stroke="#1e2d45" stroke-width="0.5"/>
+  <rect x="30" y="95" width="4" height="110" rx="2" fill="url(#score)"/>
+  <text x="50" y="120" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">Novel FGFR4-selective inhibitor shows 92%</text>
+  <text x="50" y="138" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">tumor regression in HCC xenograft models</text>
+  <text x="50" y="160" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="#5a6a85">Nature Medicine . Evidence: 9.2 . Novelty: 8.7 . Trend: 7.4</text>
+  <rect x="50" y="175" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="75" y="187" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#4ade80">Useful</text>
+  <rect x="110" y="175" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="135" y="187" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#f87171">Noise</text>
+  
+  <!-- Discovery Card 2 -->
+  <rect x="30" y="220" width="360" height="110" rx="8" fill="url(#card)" stroke="#1e2d45" stroke-width="0.5"/>
+  <rect x="30" y="220" width="4" height="110" rx="2" fill="#a78bdb"/>
+  <text x="50" y="245" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">Circadian clock gene BMAL1 modulates</text>
+  <text x="50" y="263" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">checkpoint immunotherapy response timing</text>
+  <text x="50" y="285" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="#5a6a85">Cell Reports . Evidence: 8.5 . Novelty: 9.1 . Trend: 6.8</text>
+  <rect x="50" y="300" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="75" y="312" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#4ade80">Useful</text>
+  <rect x="110" y="300" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="135" y="312" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#f87171">Noise</text>
+  
+  <!-- Discovery Card 3 (Serendipity - 20%) -->
+  <rect x="30" y="345" width="360" height="110" rx="8" fill="url(#card)" stroke="#1e2d45" stroke-width="0.5"/>
+  <rect x="30" y="345" width="4" height="110" rx="2" fill="#6b8fb8"/>
+  <rect x="320" y="352" width="60" height="16" rx="3" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="350" y="363" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="8" fill="#6b8fb8" letter-spacing="1">EXPLORE</text>
+  <text x="50" y="370" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">Quantum error correction achieves below-</text>
+  <text x="50" y="388" font-family="'Georgia', serif" font-size="13" fill="#c8d0de" font-weight="600">threshold logical qubit fidelity at scale</text>
+  <text x="50" y="410" font-family="'Helvetica Neue', sans-serif" font-size="10" fill="#5a6a85">Science . Evidence: 9.5 . Novelty: 9.8 . Trend: 9.2</text>
+  <rect x="50" y="425" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="75" y="437" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#4ade80">Useful</text>
+  <rect x="110" y="425" width="50" height="18" rx="4" fill="#1a2840" stroke="#2a3a55" stroke-width="0.5"/>
+  <text x="135" y="437" text-anchor="middle" font-family="'Helvetica Neue', sans-serif" font-size="9" fill="#f87171">Noise</text>
+  
+  <!-- Footer -->
+  <line x1="40" y1="475" x2="380" y2="475" stroke="#1e2d45" stroke-width="0.5"/>
+  <text x="210" y="498" text-anchor="middle" font-family="'Georgia', serif" font-size="10" letter-spacing="2" fill="#4a5a75" opacity="0.6">GENERATED BY NOETICA . TRIPLE-ENGINE ARCHITECTURE</text>
+</svg>

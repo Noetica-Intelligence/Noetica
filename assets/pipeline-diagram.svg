@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220" width="1200" height="220">
+  <defs>
+    <linearGradient id="pbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a1628"/>
+      <stop offset="100%" style="stop-color:#0f1d32"/>
+    </linearGradient>
+    <radialGradient id="nodeGlow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#6b7fa0;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#6b7fa0;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="nodeGlow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#f5c842;stop-opacity:0.7"/>
+      <stop offset="100%" style="stop-color:#f5c842;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="nodeGlow3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#a78bdb;stop-opacity:0.7"/>
+      <stop offset="100%" style="stop-color:#a78bdb;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="nodeGlow4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#e0e0e0;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="220" rx="8" fill="url(#pbg)"/>
+  
+  <!-- Connecting line -->
+  <line x1="150" y1="80" x2="1050" y2="80" stroke="#2a3a55" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- Arrow heads on line -->
+  <polygon points="355,78 365,80 355,82" fill="#3a4a65" opacity="0.7"/>
+  <polygon points="575,78 585,80 575,82" fill="#3a4a65" opacity="0.7"/>
+  <polygon points="795,78 805,80 795,82" fill="#3a4a65" opacity="0.7"/>
+  
+  <!-- Node 1: Your Profile -->
+  <circle cx="150" cy="80" r="20" fill="url(#nodeGlow1)" opacity="0.4"/>
+  <circle cx="150" cy="80" r="6" fill="#6b7fa0" opacity="0.9"/>
+  <circle cx="150" cy="80" r="3.5" fill="#8a9bb5"/>
+  <text x="150" y="120" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="14" letter-spacing="3" fill="#c8d0de" font-weight="400">YOUR PROFILE</text>
+  <text x="150" y="138" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#5a6a85" opacity="0.8">fields . level . time</text>
+  
+  <!-- Node 2: Global Scan -->
+  <circle cx="390" cy="80" r="22" fill="url(#nodeGlow1)" opacity="0.4"/>
+  <circle cx="390" cy="80" r="7" fill="#6b8fba" opacity="0.9"/>
+  <circle cx="390" cy="80" r="4" fill="#8ab0d8"/>
+  <text x="390" y="120" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="14" letter-spacing="3" fill="#c8d0de" font-weight="400">GLOBAL SCAN</text>
+  <text x="390" y="138" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#5a6a85" opacity="0.8">PubMed . Europe PMC . GitHub</text>
+  
+  <!-- Node 3: Scoring Engine (central, glowing amber) -->
+  <circle cx="600" cy="80" r="28" fill="url(#nodeGlow2)" opacity="0.5"/>
+  <circle cx="600" cy="80" r="12" fill="#f5c842" opacity="0.85"/>
+  <circle cx="600" cy="80" r="7" fill="#fde68a" opacity="0.95"/>
+  <text x="600" y="125" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="14" letter-spacing="3" fill="#c8d0de" font-weight="400">SCORING ENGINE</text>
+  <text x="600" y="143" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#5a6a85" opacity="0.8">Zig . Novelty . Evidence . Trend</text>
+  
+  <!-- Node 4: LLM Synthesis -->
+  <circle cx="810" cy="80" r="22" fill="url(#nodeGlow3)" opacity="0.4"/>
+  <circle cx="810" cy="80" r="7" fill="#a78bdb" opacity="0.85"/>
+  <circle cx="810" cy="80" r="4" fill="#c4aef0"/>
+  <text x="810" y="120" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="14" letter-spacing="3" fill="#c8d0de" font-weight="400">LLM SYNTHESIS</text>
+  <text x="810" y="138" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#5a6a85" opacity="0.8">written at your level</text>
+  
+  <!-- Node 5: Your Inbox -->
+  <circle cx="1050" cy="80" r="24" fill="url(#nodeGlow4)" opacity="0.4"/>
+  <circle cx="1050" cy="80" r="8" fill="#d4d4d4" opacity="0.9"/>
+  <circle cx="1050" cy="80" r="5" fill="#f0f0f0"/>
+  <text x="1050" y="120" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="14" letter-spacing="3" fill="#c8d0de" font-weight="400">YOUR INBOX</text>
+  <text x="1050" y="138" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#5a6a85" opacity="0.8">one email, on schedule</text>
+  
+  <!-- Footer -->
+  <text x="600" y="185" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="11" letter-spacing="4" fill="#4a5a75" opacity="0.6">ORCHESTRATED BY PYTHON</text>
+</svg>

@@ -9,9 +9,10 @@ Noetica is an actively developed intelligence engine. This roadmap outlines the 
 - [x] Active Learning Loop (Community Feedback Injection)
 
 ## Upcoming (V2)
-- **Local LLM Execution (Llama 3/Mistral)**: Removing the dependency on external APIs for highly-classified intelligence parsing.
-- **Bi-directional Knowledge Graph Expansion**: Implementing a Neo4j or ArangoDB instance for persistent structural memory rather than in-memory matrix recalculations.
-- **Customizable Signal Thresholds**: Allowing users to adjust the Noise-to-Signal ratio limits via a web interface.
+- `[x]` **Generalized 31x5 Web Dashboard**: A public-facing matrix tracking the absolute highest-signal discovery across all paradigms.
+- `[ ]` **Local LLM Execution (Llama 3/Mistral)**: Removing the dependency on external APIs for highly-classified intelligence parsing.
+- `[ ]` **Bi-directional Knowledge Graph Expansion**: Implementing a Neo4j or ArangoDB instance for persistent structural memory rather than in-memory matrix recalculations.
+- `[ ]` **Customizable Signal Thresholds**: Allowing users to adjust the Noise-to-Signal ratio limits via a web interface.
 
 ## Future Vision (V3): Polyglot Architecture
 - **Rust (The Fetcher):** Replacing the Python fetching module with a highly concurrent Rust (`tokio`) service for blazing-fast, safe network I/O across thousands of APIs.

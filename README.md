@@ -156,7 +156,8 @@ make run
 | `GEMINI_API_KEY` / `GROQ_API_KEY` | LLM synthesis |
 | `GOOGLE_SHEET_ID` | Subscriber profiles |
 | `FEEDBACK_SHEET_ID` | Active learning database |
-| `SENDER_EMAIL` / `SENDER_PASSWORD` | SMTP delivery (app password) |
+| `SENDER_EMAIL` | SMTP delivery (email) |
+| `SENDER_PASSWORD` | SMTP delivery (app password) |
 
 Copy `.env.example` to `.env` and fill in your values.
 

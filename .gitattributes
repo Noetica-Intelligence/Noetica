@@ -6,3 +6,8 @@ docs/*.js linguist-vendored=false
 docs/*.html linguist-vendored=false
 src/*.py linguist-vendored=false
 zig_engine/**/*.zig linguist-vendored=false
+
+# Ignore large frontend assets in GitHub language statistics
+assets/*.html linguist-vendored=true
+data/**/*.html linguist-vendored=true
+data/**/*.json linguist-vendored=true

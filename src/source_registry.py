@@ -28,6 +28,18 @@ from v2_fetchers import (
     fetch_conferences, fetch_startup_funding_rss
 )
 from fetch_clinical_trials import fetch_recent_oncology_trials
+from dashboard_config import PARADIGMS
+import hashlib
+
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+def assign_domain_from_chunk(item, chunk):
+    text = (item.get("title", "") + " " + item.get("abstract", "")).lower()
+    for c in chunk:
+        if c.lower() in text:
+            return c
+    return chunk[0]
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SOURCE REGISTRY
@@ -102,42 +114,34 @@ def _fetch_all_semantic_scholar():
 
 def _fetch_all_nih():
     results = []
-    queries = [
-        "CRISPR gene editing", "machine learning medicine", "quantum biology",
-        "neuroscience", "oncology", "synthetic biology", "nanomedicine"
-    ]
-    for q in queries:
-        batch = fetch_nih_grants(q, max_results=2)
+    for chunk in chunker(PARADIGMS, 4):
+        query = " OR ".join(f'"{c}"' for c in chunk)
+        batch = fetch_nih_grants(query, max_results=3)
         for p in batch:
             p["source_types"] = ["grant"]
+            p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
-        time.sleep(1)
     return results
 
 def _fetch_all_github():
     results = []
-    queries = [
-        "deep-learning", "bioinformatics", "quantum-computing", "drug-discovery",
-        "robotics", "artificial-intelligence", "computational-biology", "materials-science"
-    ]
-    for q in queries:
-        batch = fetch_github_repos(q, max_results=2)
+    for chunk in chunker(PARADIGMS, 4):
+        query = " OR ".join(f'"{c}"' for c in chunk)
+        batch = fetch_github_repos(query, max_results=3)
         for p in batch:
             p["source_types"] = ["repo"]
+            p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
-        time.sleep(1)
     return results
 
 def _fetch_all_patents():
     results = []
-    queries = [
-        "CRISPR therapeutics", "AI drug discovery", "quantum error correction",
-        "autonomous vehicles", "nanomaterials", "neural interface", "gene therapy"
-    ]
-    for q in queries:
-        batch = fetch_patents(q, max_results=2)
+    for chunk in chunker(PARADIGMS, 4):
+        query = " OR ".join(f'"{c}"' for c in chunk)
+        batch = fetch_patents(query, max_results=2)
         for p in batch:
             p["source_types"] = ["patent"]
+            p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
     return results
 
@@ -153,16 +157,13 @@ def _fetch_all_conferences():
 
 def _fetch_all_funding():
     results = []
-    queries = [
-        "biotech", "artificial intelligence", "quantum computing",
-        "robotics", "cleantech", "space tech", "healthtech"
-    ]
-    for q in queries:
-        batch = fetch_startup_funding_rss(q, max_results=2)
+    for chunk in chunker(PARADIGMS, 4):
+        query = " OR ".join(f'"{c}"' for c in chunk)
+        batch = fetch_startup_funding_rss(query, max_results=2)
         for p in batch:
             p["source_types"] = ["funding"]
+            p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
-        time.sleep(1)
     return results
 
 def _fetch_clinical_trials():
@@ -310,8 +311,19 @@ def fetch_all_intelligence() -> list[dict]:
     # Filter: must have title
     all_items = [i for i in all_items if i.get("title")]
 
+    # SHA-256 Deduplication Failsafe (Cross-Paradigm)
+    seen_hashes = set()
+    deduped_items = []
+    for item in all_items:
+        text = (item.get("title", "") + item.get("abstract", "")).lower().strip()
+        h = hashlib.sha256(text.encode('utf-8', 'replace')).hexdigest()
+        if h not in seen_hashes:
+            seen_hashes.add(h)
+            deduped_items.append(item)
+    all_items = deduped_items
+
     # Cluster duplicates (by title similarity)
     all_items = cluster_discoveries(all_items)
 
-    print(f"\n✅ Total unique discoveries after clustering: {len(all_items)}")
+    print(f"\n✅ Total unique discoveries after deduplication & clustering: {len(all_items)}")
     return all_items

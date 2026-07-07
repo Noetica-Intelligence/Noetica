@@ -18,20 +18,36 @@ def generate_dashboard():
     # Sort existing papers by score
     papers = sorted(papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
+    def map_source_to_dtype(source_types):
+        if not source_types:
+            return "Research Papers / Preprints"
+        
+        stype = source_types[0]
+        if stype in ("patent", "trial"):
+            return "Patents / Clinical Trials"
+        elif stype in ("grant", "funding"):
+            return "Research Grants / Startup Funding"
+        elif stype == "repo":
+            return "Open Source Projects / Software"
+        elif stype in ("dataset", "report"):
+            return "Scientific Datasets / Technical Reports"
+        else:
+            return "Research Papers / Preprints"
+
     # Map existing papers into the matrix
     # Format: matrix[paradigm][discovery_type] = best_item
     matrix = {p: {dt: None for dt in DISCOVERY_TYPES} for p in PARADIGMS}
 
-    # Assign existing papers to "Research Papers / Preprints" for their domain
+    # Populate the dashboard matrix using real data
     for p in papers:
         domain = p.get("domain", "Other")
         if domain not in PARADIGMS:
             domain = "Other"
         
-        # We assume existing knowledge base items are all research papers for now
-        dtype = "Research Papers / Preprints"
+        # Map the intelligence node to the correct dashboard column
+        dtype = map_source_to_dtype(p.get("source_types", ["paper"]))
         
-        # If the slot is empty, put it there (since we sorted by score, the first one encountered is the best)
+        # Since we sorted by score, the first item placed is the highest-scoring for that cell
         if matrix[domain][dtype] is None:
             matrix[domain][dtype] = {
                 "title": p.get("title", ""),

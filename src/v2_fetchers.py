@@ -1,4 +1,5 @@
 import urllib.request
+import urllib.error
 import urllib.parse
 import json
 import time
@@ -6,6 +7,75 @@ import os
 import datetime
 from typing import List, Dict, Any
 import xml.etree.ElementTree as ET
+
+# ─────────────────────────────────────────────
+# ROBUST NETWORK & SANITIZATION UTILS
+# ─────────────────────────────────────────────
+
+def _sanitize_string(s: Any) -> str:
+    """UTF-8 sanitization and schema enforcement (ensures output is a clean string)."""
+    if not isinstance(s, str):
+        try:
+            s = str(s)
+        except Exception:
+            return ""
+    # Strip null bytes and non-printable control chars that break strict JSON parsers (Zig)
+    return "".join(c for c in s if c.isprintable() or c in '\n\r\t')
+
+def _sanitize_list(lst: Any) -> List[str]:
+    """Schema enforcement for lists of strings (e.g. authors)."""
+    if not isinstance(lst, list):
+        if isinstance(lst, str):
+            return [_sanitize_string(lst)]
+        return ["Unknown"]
+    return [_sanitize_string(i) for i in lst if i]
+
+def robust_fetch_json(req: urllib.request.Request, timeout: int = 10, max_retries: int = 3) -> dict:
+    """Executes an HTTP request with exponential backoff, retries on 429/5xx, and strict timeouts."""
+    import socket
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                # Use errors='replace' to sanitize invalid UTF-8 byte sequences at the transport layer
+                raw_data = response.read().decode('utf-8', errors='replace')
+                if not raw_data:
+                    return {}
+                return json.loads(raw_data)
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504):
+                time.sleep((2 ** attempt) + 1.5)  # Exponential backoff
+                continue
+            else:
+                raise
+        except (urllib.error.URLError, socket.timeout, ConnectionResetError) as e:
+            if attempt == max_retries - 1:
+                print(f"    [!] Max retries reached or fatal error: {e}")
+                return {}
+            time.sleep((2 ** attempt) + 1.5)
+        except json.JSONDecodeError:
+            print("    [!] Corrupted JSON payload received.")
+            return {}
+    return {}
+
+def robust_fetch_xml(req: urllib.request.Request, timeout: int = 10, max_retries: int = 3) -> str:
+    """Fetches raw XML data with the same robust backoff."""
+    import socket
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                return response.read().decode('utf-8', errors='replace')
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504):
+                time.sleep((2 ** attempt) + 1.5)
+                continue
+            else:
+                return ""
+        except (urllib.error.URLError, socket.timeout, ConnectionResetError):
+            if attempt == max_retries - 1:
+                return ""
+            time.sleep((2 ** attempt) + 1.5)
+    return ""
+
 
 # ─────────────────────────────────────────────
 # NIH REPORTER API (GRANT TRACKING)
@@ -32,26 +102,28 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
     
     results = []
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            for item in data.get("results", []):
-                title = item.get("project_title", "")
-                abstract = item.get("abstract_text", "")
-                org = item.get("organization", {}).get("org_name", "Unknown Org")
-                pi = item.get("principal_investigators", [{"pi_name": "Unknown"}])[0].get("pi_name")
-                cost = item.get("award_amount", 0)
-                
-                results.append({
-                    "id": f"nih_{item.get('appl_id')}",
-                    "title": f"[GRANT] {title}",
-                    "abstract": abstract if abstract else f"Grant awarded to {org} for {cost}",
-                    "authors": [pi],
-                    "source": "NIH RePORTER",
-                    "domain": "Biomedical Funding",
-                    "date": item.get("project_start_date", datetime.date.today().isoformat()),
-                    "url": f"https://reporter.nih.gov/project-details/{item.get('appl_id')}",
-                    "funding_amount": cost
-                })
+        data = robust_fetch_json(req)
+        for item in data.get("results", []):
+            title = _sanitize_string(item.get("project_title", ""))
+            abstract = _sanitize_string(item.get("abstract_text", ""))
+            org = _sanitize_string(item.get("organization", {}).get("org_name", "Unknown Org"))
+            
+            pi_list = item.get("principal_investigators", [])
+            pi = _sanitize_string(pi_list[0].get("pi_name") if pi_list else "Unknown")
+            
+            cost = item.get("award_amount", 0)
+            
+            results.append({
+                "id": f"nih_{item.get('appl_id')}",
+                "title": f"[GRANT] {title}",
+                "abstract": abstract if abstract else f"Grant awarded to {org} for ${cost}",
+                "authors": [pi],
+                "source": "NIH RePORTER",
+                "domain": "Biomedical Funding",
+                "date": item.get("project_start_date", datetime.date.today().isoformat()),
+                "url": f"https://reporter.nih.gov/project-details/{item.get('appl_id')}",
+                "funding_amount": cost
+            })
     except Exception as e:
         print(f"⚠️ NIH Fetch Error for '{query}': {e}")
         
@@ -62,29 +134,38 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
 # ─────────────────────────────────────────────
 
 def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]:
-    """Fetch trending repositories from GitHub API."""
-    # Search for repos created/updated recently sorted by stars
+    """Fetch trending repositories from GitHub API with token-aware throttling."""
     safe_topic = urllib.parse.quote(topic)
     url = f"https://api.github.com/search/repositories?q={safe_topic}+stars:>50&sort=updated&order=desc&per_page={max_results}"
     
-    req = urllib.request.Request(url, headers={"User-Agent": "Scientific-Intelligence-V2"})
+    req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+    
+    # Token-Aware Rate Limiting
+    github_token = os.environ.get("GITHUB_TOKEN")
+    if github_token:
+        req.add_header("Authorization", f"Bearer {github_token}")
+    else:
+        time.sleep(6.1) # Throttle to < 10 req/min globally to be safe
     
     results = []
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            for item in data.get("items", []):
-                results.append({
-                    "id": f"gh_{item.get('id')}",
-                    "title": f"[REPO] {item.get('full_name')}",
-                    "abstract": item.get("description", "No description provided."),
-                    "authors": [item.get("owner", {}).get("login", "Unknown")],
-                    "source": "GitHub",
-                    "domain": "Open Source Software",
-                    "date": item.get("updated_at", datetime.date.today().isoformat()),
-                    "url": item.get("html_url", ""),
-                    "stars": item.get("stargazers_count", 0)
-                })
+        data = robust_fetch_json(req)
+        for item in data.get("items", []):
+            title = _sanitize_string(item.get("full_name", ""))
+            desc = _sanitize_string(item.get("description", "No description provided."))
+            author = _sanitize_string(item.get("owner", {}).get("login", "Unknown"))
+            
+            results.append({
+                "id": f"gh_{item.get('id')}",
+                "title": f"[REPO] {title}",
+                "abstract": desc,
+                "authors": [author],
+                "source": "GitHub",
+                "domain": "Open Source Software",
+                "date": item.get("updated_at", datetime.date.today().isoformat()),
+                "url": item.get("html_url", ""),
+                "stars": item.get("stargazers_count", 0)
+            })
     except Exception as e:
         print(f"⚠️ GitHub Fetch Error for '{topic}': {e}")
         
@@ -97,36 +178,34 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
 def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
     """Fetch real patents via Europe PMC REST API."""
     safe_query = urllib.parse.quote(query)
-    url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:PAT%20AND%20{safe_query}&format=json&resultType=core"
+    url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:PAT%20AND%20({safe_query})&format=json&resultType=core"
     
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     results = []
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            for item in data.get("resultList", {}).get("result", [])[:max_results]:
-                title = item.get("title", "")
-                abstract = item.get("abstractText", "No abstract available.")
-                
-                # Extract assignees or inventors if available
-                authors = []
-                for auth in item.get("authorList", {}).get("author", []):
-                    authors.append(auth.get("fullName", auth.get("lastName", "")))
-                if not authors:
-                    authors = ["Unknown Inventor/Assignee"]
-                
-                pub_date = item.get("firstPublicationDate", datetime.date.today().isoformat())
-                
-                results.append({
-                    "id": f"pat_{item.get('id', 'unknown')}",
-                    "title": f"[PATENT] {title}",
-                    "abstract": abstract,
-                    "authors": authors[:3],
-                    "source": "Europe PMC (Patents)",
-                    "domain": "Applied Technology / Patent",
-                    "date": pub_date,
-                    "url": f"https://europepmc.org/article/PAT/{item.get('id', '')}"
-                })
+        data = robust_fetch_json(req)
+        for item in data.get("resultList", {}).get("result", [])[:max_results]:
+            title = _sanitize_string(item.get("title", ""))
+            abstract = _sanitize_string(item.get("abstractText", "No abstract available."))
+            
+            authors = []
+            for auth in item.get("authorList", {}).get("author", []):
+                authors.append(_sanitize_string(auth.get("fullName", auth.get("lastName", ""))))
+            if not authors:
+                authors = ["Unknown Inventor/Assignee"]
+            
+            pub_date = item.get("firstPublicationDate", datetime.date.today().isoformat())
+            
+            results.append({
+                "id": f"pat_{item.get('id', 'unknown')}",
+                "title": f"[PATENT] {title}",
+                "abstract": abstract,
+                "authors": authors[:3],
+                "source": "Europe PMC (Patents)",
+                "domain": "Applied Technology / Patent",
+                "date": pub_date,
+                "url": f"https://europepmc.org/article/PAT/{item.get('id', '')}"
+            })
     except Exception as e:
         print(f"⚠️ Patent Fetch Error for '{query}': {e}")
         
@@ -145,26 +224,30 @@ def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     results = []
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-            for item in data.get("data", []):
-                title = item.get("title", "")
-                abstract = item.get("abstract", "No abstract available.")
-                
-                authors = [a.get("name", "") for a in item.get("authors", [])]
-                if not authors:
-                    authors = ["Unknown Author"]
-                
-                results.append({
-                    "id": f"ss_{item.get('paperId', 'unknown')}",
-                    "title": f"[CONFERENCE] {title}",
-                    "abstract": abstract,
-                    "authors": authors[:3],
-                    "source": item.get("venue", venue),
-                    "domain": "Conference Proceedings",
-                    "date": datetime.date(item.get("year", datetime.date.today().year), 1, 1).isoformat(),
-                    "url": item.get("url", "")
-                })
+        data = robust_fetch_json(req)
+        for item in data.get("data", []):
+            title = _sanitize_string(item.get("title", ""))
+            abstract = _sanitize_string(item.get("abstract", "No abstract available."))
+            
+            authors = [_sanitize_string(a.get("name", "")) for a in item.get("authors", [])]
+            if not authors:
+                authors = ["Unknown Author"]
+            
+            year = item.get("year", datetime.date.today().year)
+            if not year: year = datetime.date.today().year
+            v = _sanitize_string(item.get("venue", venue))
+            if not v: v = venue
+            
+            results.append({
+                "id": f"ss_{item.get('paperId', 'unknown')}",
+                "title": f"[CONFERENCE] {title}",
+                "abstract": abstract,
+                "authors": authors[:3],
+                "source": v,
+                "domain": "Conference Proceedings",
+                "date": datetime.date(year, 1, 1).isoformat(),
+                "url": item.get("url", "")
+            })
     except Exception as e:
         print(f"⚠️ Conference Fetch Error for '{venue}': {e}")
         
@@ -193,44 +276,46 @@ def fetch_startup_funding_rss(query: str, max_results: int = 3) -> List[Dict[str
     for feed_url in feeds:
         req = urllib.request.Request(feed_url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
         try:
-            with urllib.request.urlopen(req, timeout=10) as response:
-                xml_data = response.read()
-                root = ET.fromstring(xml_data)
+            xml_data = robust_fetch_xml(req)
+            if not xml_data:
+                continue
+            
+            root = ET.fromstring(xml_data)
+            
+            for item in root.findall(".//item"):
+                title = _sanitize_string(item.findtext("title", ""))
+                link = item.findtext("link", "")
+                desc = _sanitize_string(item.findtext("description", ""))
+                pub_date = item.findtext("pubDate", datetime.date.today().isoformat())
                 
-                for item in root.findall(".//item"):
-                    title = item.findtext("title", "")
-                    link = item.findtext("link", "")
-                    desc = item.findtext("description", "")
-                    pub_date = item.findtext("pubDate", datetime.date.today().isoformat())
-                    
-                    # Ensure relevance for global generic feeds
-                    if "techcrunch" in feed_url:
-                        if query.lower() not in title.lower() and query.lower() not in desc.lower():
-                            continue
-                            
-                    if title in seen_titles:
+                # Ensure relevance for global generic feeds
+                if "techcrunch" in feed_url:
+                    if query.lower() not in title.lower() and query.lower() not in desc.lower():
                         continue
-                    seen_titles.add(title)
-                    
-                    clean_desc = re.sub('<[^<]+>', '', desc).strip()
-                    if len(clean_desc) > 300:
-                        clean_desc = clean_desc[:300] + "..."
                         
-                    doc_id = "rss_" + hashlib.md5(link.encode()).hexdigest()[:10]
+                if title in seen_titles:
+                    continue
+                seen_titles.add(title)
+                
+                clean_desc = re.sub('<[^<]+>', '', desc).strip()
+                if len(clean_desc) > 300:
+                    clean_desc = clean_desc[:300] + "..."
                     
-                    results.append({
-                        "id": doc_id,
-                        "title": f"[STARTUP FUNDING] {title}",
-                        "abstract": clean_desc,
-                        "authors": ["Venture News"],
-                        "source": "Aggregated VC Feeds",
-                        "domain": "Venture Capital",
-                        "date": pub_date,
-                        "url": link
-                    })
-                    
-                    if len(results) >= max_results:
-                        break
+                doc_id = "rss_" + hashlib.md5(link.encode()).hexdigest()[:10]
+                
+                results.append({
+                    "id": doc_id,
+                    "title": f"[STARTUP FUNDING] {title}",
+                    "abstract": clean_desc,
+                    "authors": ["Venture News"],
+                    "source": "Aggregated VC Feeds",
+                    "domain": "Venture Capital",
+                    "date": pub_date,
+                    "url": link
+                })
+                
+                if len(results) >= max_results:
+                    break
         except Exception as e:
             print(f"⚠️ RSS Fetch Error for '{feed_url}': {e}")
             

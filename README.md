@@ -98,9 +98,14 @@ Digests also group discoveries by era of impact:
 
 | Timeline | Scope | Core Question | Example |
 |:---|:---|:---|:---|
-| **Foundational** | 5,000+ years | What changed civilization? | Calculus, Germ Theory, Transistors |
-| **Modern** | Last 50 years | What changed science? | CRISPR-Cas9, AlphaFold, mRNA |
-| **Emerging** | Last 5 years | What might change the future? | Quantum Error Correction, LLMs |
+| **Speculative** | Future (10+ years) | What might be possible? | AGI, Dyson Spheres |
+| **Emerging** | Next 5 years | What might change the future? | Quantum Error Correction, Brain-Computer Interfaces |
+| **Growing** | Last 5 years | What is accelerating now? | Generative AI, Solid-State Batteries |
+| **Breakthrough** | Last 10 years | What just proved its viability? | AlphaFold, mRNA Vaccines |
+| **Established** | Last 20 years | What is now standard practice? | CRISPR, Cloud Computing |
+| **Foundational** | Last 50 years | What changed science? | DNA Sequencing, Microprocessors |
+| **Civilizational** | Last 200 years | What changed society? | Germ Theory, Electricity |
+| **Historical** | 5,000+ years | What changed humanity? | Writing, Mathematics |
 
 ---
 

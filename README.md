@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/logo/logo.png" width="180" alt="Noetica logo" style="border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.5);" />
+<br>
 <img src="assets/hero-banner.svg" width="100%" alt="Noetica -- Mapping the Evolution of Human Knowledge" />
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)

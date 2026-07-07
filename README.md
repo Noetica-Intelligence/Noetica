@@ -13,7 +13,7 @@
 
 ---
 
-Noetica scans new papers, patents, funding rounds, and clinical trials as they are published, scores each one for genuine scientific significance, and emails you a briefing written at your level — beginner or specialist — covering only the fields you chose.
+Noetica scans new papers, patents, funding rounds, and clinical trials as they are published, scores each one for genuine scientific significance, and emails you a briefing written at your level. It also powers a **live 31-paradigm Web Dashboard** that tracks the absolute highest-signal discoveries globally.
 
 It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring, and an **LLM** for synthesis — entirely on free-tier infrastructure, so it costs $0 to run at any scale.
 
@@ -40,6 +40,7 @@ flowchart LR
     B --> C["Scoring Engine<br/>Novelty · Evidence · Trend"]
     C --> D["LLM Synthesis<br/>written at your level"]
     D --> E["Your Inbox<br/>sized to your time budget"]
+    C --> F["Web Dashboard<br/>31x5 Matrix (Live)"]
 ```
 
 </details>
@@ -48,7 +49,8 @@ flowchart LR
 2. **Noetica scans continuously.** On a scheduled cycle, it pulls from open sources — PubMed, Europe PMC, GitHub, NIH RePORTER, and public patent and funding databases.
 3. **The Scoring Engine ranks everything.** Every discovery is scored across three dimensions — see the [NET framework](#the-triple-engine-architecture) below.
 4. **An LLM writes your summary.** Top-ranked items are synthesized into one briefing, written at the technical depth you asked for.
-5. **It lands in your inbox.** No dashboard, no app — just an email, on schedule.
+5. **The Web Dashboard updates.** The knowledge graph is mapped to a massive 31x5 matrix (31 Paradigms x 5 Discovery Types) and deployed instantly via GitHub Pages.
+6. **It lands in your inbox.** The personalized report is delivered via email on schedule.
 
 ---
 
@@ -176,9 +178,10 @@ Noetica runs serverless on GitHub Actions:
 
 1. A cron-scheduled workflow spins up an Ubuntu runner.
 2. It installs Python dependencies and compiles the Zig engine from source.
-3. It runs the pipeline — fetch, score, synthesize.
-4. Digests are generated and sent via SMTP.
-5. The runner shuts down — $0 ongoing compute cost.
+3. It runs the pipeline — fetches across 31 paradigms using batched queries, scores with Zig, and synthesizes.
+4. The global results are compiled into a JSON matrix and pushed to GitHub Pages as a sleek, dynamic Web Dashboard.
+5. Personalized digests are generated and sent via SMTP.
+6. The runner shuts down — $0 ongoing compute cost.
 
 ---
 

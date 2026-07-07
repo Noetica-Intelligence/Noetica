@@ -45,6 +45,7 @@ jobs:
           FEEDBACK_SHEET_ID: ${{ secrets.FEEDBACK_SHEET_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python src/main.py
 
@@ -56,6 +57,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add docs/ data/ zig_engine/input.json
-          git commit -m "Auto-update Intelligence Dashboard and Data" || echo "No changes to commit"
+          git add docs/
+          git commit -m "Auto-update Intelligence Dashboard" || echo "No changes to commit"
           git push

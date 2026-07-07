@@ -1,221 +1,45 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Noetica - Official Reference Manual for the Noetica Scientific Intelligence Engine.">
-    <title>Noetica &mdash; Portal Root</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="index.css">
-    <!-- Theme pre-loader to prevent FOUC -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || 'system';
-            let activeTheme = savedTheme;
-            if (savedTheme === 'system') {
-                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                activeTheme = systemDark ? 'dark' : 'light';
-            }
-            document.documentElement.setAttribute('data-theme', activeTheme);
-        })();
-    </script>
+    <title>Noetica - Global Scientific Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <!-- Top Sticky Glass Header -->
-    <header class="kb-header">
-        <div id="scroll-progress" class="scroll-progress"></div>
-
-        <a href="index.html" class="logo-block" style="text-decoration: none; display: flex; align-items: center; gap: 1rem;">
-            <img src="logo.png" alt="Noetica Logo" class="logo-img" style="height: 40px;">
-            <div style="display: flex; flex-direction: column;">
-                <span style="font-size: 1.5rem; font-weight: 700; color: var(--color-text-primary); line-height: 1.1; letter-spacing: -0.5px;">Noetica</span>
-                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 2px;">OFFICIAL REFERENCE MANUAL</span>
-            </div>
-        </a>
-        <div class="header-controls" style="display: flex; align-items: center; gap: 1.5rem;">
-            <span class="version-text" style="font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--color-text-primary);">Version 1.0</span>
-            <a href="https://github.com/Noetica-Intelligence/Noetica" target="_blank" rel="noopener noreferrer" title="View Source on GitHub" style="color: var(--color-text-muted); transition: color 0.2s;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-    </svg>
-</a>
-            <button class="theme-toggle-btn" id="theme-toggle" title="Cycle Theme (System / Light / Dark)">
-                <!-- Sun Icon -->
-                <svg class="theme-icon" id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <!-- Moon Icon -->
-                <svg class="theme-icon" id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                <!-- Monitor Icon (System) -->
-                <svg class="theme-icon" id="theme-icon-system" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-                <span class="theme-text" id="theme-text" style="font-family: var(--font-mono); font-size: 0.75rem; margin-left: 0.4rem; text-transform: uppercase;">System</span>
-            </button>
+    <div class="cosmos-bg"></div>
+    
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="logo-text">N O E T I C A</h1>
+            <p class="subtitle">Mapping the Evolution of Human Knowledge</p>
+            <p class="description">
+                Tracking the single highest-signal breakthrough across 31 scientific paradigms and 5 discovery categories. 
+                Updated daily by the Noetica Scoring Engine.
+            </p>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="kb-container">
+    <main class="dashboard-container">
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Paradigms</h3>
+            <ul id="paradigm-list" class="paradigm-list">
+                <!-- Dynamically populated -->
+            </ul>
+        </aside>
         
-        <!-- Sidebar Table of Contents -->
-        <nav class="sidebar-toc">
-            <div class="toc-title">Documentation Sections</div>
-            <a href="index.html" class="toc-item active">
-                <span class="num">00.</span> Introduction Portal
-            </a>
-            <a href="principles.html" class="toc-item">
-                <span class="num">01.</span> Non-Negotiable Principles
-            </a>
-            <a href="timelines.html" class="toc-item">
-                <span class="num">02.</span> The Three Timelines
-            </a>
-            <a href="architecture.html" class="toc-item">
-                <span class="num">03.</span> Hybrid Architecture
-            </a>
-            <a href="ingestion.html" class="toc-item">
-                <span class="num">04.</span> V2 Data Fetchers
-            </a>
-            <a href="scoring.html" class="toc-item">
-                <span class="num">05.</span> BioSignal Scoring
-            </a>
-        </nav>
-        
-        <!-- Scholarly Document Reading Pane -->
-        <div class="reading-pane">
+        <section class="content-area">
+            <div class="content-header">
+                <h2 id="current-paradigm">Select a Paradigm</h2>
+            </div>
             
-            <section class="doc-section" id="section-portal-intro">
-                <div class="doc-section-title reveal-on-scroll">
-                    00 / Reference Manual Introduction
-                    <span>PORTAL ROOT</span>
-                </div>
-                
-                <p class="doc-intro reveal-on-scroll">
-                    Welcome to <strong>Noetica</strong>, the canonical reference manual documenting the architectural orchestration, ingestion pipelines, and structural philosophy powering the Noetica Intelligence Engine.
-                </p>
-                
-                <div class="motto-callout reveal-on-scroll">
-                    <div class="motto-text">
-                        "Build an open-source scientific intelligence platform that continuously discovers, ranks, connects, explains, and forecasts the most important developments in human knowledge across all disciplines &mdash; using evidence-based signals, not popularity signals."
-                    </div>
-                    <div class="motto-subtext">The Noetica Mission</div>
-                </div>
-
-                                <h2 class="reveal-on-scroll">Why Most Research Digest Systems Fail</h2>
-                <pre class="reveal-on-scroll"><code>500 papers/day &rarr; unread
- 50 papers/day &rarr; still unread
- 10 papers/day &rarr; mostly irrelevant</code></pre>
-                
-                <p class="doc-paragraph reveal-on-scroll">
-                    The problem is not volume. The problem is <strong>the wrong output</strong>.
-                </p>
-                <p class="doc-paragraph reveal-on-scroll">
-                    <strong>Wrong model:</strong> Input: User interests &rarr; Output: Research papers<br>
-                    <strong>Noetica model:</strong> Input: User interests + Expertise + Reading time + Career goals &rarr; Output: Ranked discoveries + Summaries + Why it matters + Future impact + Cross-field connections
-                </p>
-
-            </section>
-                    </div>
-    
-        
-
-    
-                <!-- Waitlist / Beta Section -->
-        <div class="waitlist-banner reveal-on-scroll" id="beta-registration">
-            <div class="waitlist-content">
-                <h3>Noetica Closed Beta is Live</h3>
-                <p>Join the waitlist to get early access when we open spots.</p>
-                <div class="waitlist-features">
-                    <div class="waitlist-feature">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        Limited to first 500 users
-                    </div>
-                    <div class="waitlist-feature">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        Early access
-                    </div>
-                    <div class="waitlist-feature">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                        Help shape Noetica
-                    </div>
-                    <div class="waitlist-feature">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        No spam. Ever.
-                    </div>
-                </div>
+            <div id="discovery-grid" class="discovery-grid">
+                <!-- Dynamically populated 5 cards -->
             </div>
-            <div class="waitlist-action">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeZvfiWcRGqm3fzzJucT3UB6cfgXDRzj42rfrR8yf6dcm9F_w/viewform?usp=dialog" class="btn-waitlist" target="_blank">Join the Waitlist &rarr;</a>
-                <small>Opens in Google Form</small>
-            </div>
-        </div>    </main>
-
-    <!-- 4-Column Footer -->
-    <div class="pre-footer-wrapper">
-        <div class="pre-footer-grid">
-            <!-- Col 1 -->
-            <div class="footer-col">
-                <img src="creator.jpg" alt="Sk Anish Md." class="creator-avatar" style="width: 60px; height: 60px; object-fit: cover; border: 2px solid var(--color-border);">
-                <h4>Sk Anish Md.</h4>
-                <p>A Bioinformatics student, developer, and researcher building tools that accelerate scientific discovery through AI, data, and open knowledge.</p>
-                <div class="footer-socials">
-                    <a href="https://github.com/skanishmd" target="_blank" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background=''; this.style.color='#ef4444'"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
-                    <a href="https://www.linkedin.com/in/skanishmd" target="_blank" style="color: #3b82f6; border-color: rgba(59, 130, 246, 0.4);" onmouseover="this.style.background='#3b82f6'; this.style.color='white'" onmouseout="this.style.background=''; this.style.color='#3b82f6'"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
-                    <a href="mailto:skanishmd321@gmail.com" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);" onmouseover="this.style.background='#f59e0b'; this.style.color='white'" onmouseout="this.style.background=''; this.style.color='#f59e0b'"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></a>
-                    <a href="https://www.instagram.com/sk4nishmd" target="_blank" style="color: #10b981; border-color: rgba(16, 185, 129, 0.4);" onmouseover="this.style.background='#10b981'; this.style.color='white'" onmouseout="this.style.background=''; this.style.color='#10b981'"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
-                </div>
-            </div>
-            <!-- Col 2 -->
-            <div class="footer-col">
-                <h4>Noetica Mission</h4>
-                <p>Empowering researchers to decode complex biological systems through uncompromised structural truth and open-source intelligence.</p>
-                <br>
-                <a href="index.html">Learn more about Noetica &rarr;</a>
-            </div>
-            <!-- Col 4 -->
-            <div class="footer-col">
-                <h4>Quick Links</h4>
-                <ul class="footer-links-list">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="principles.html">Documentation</a></li>
-                    <li><a href="architecture.html">Engine</a></li>
-                    <li><a href="index.html#beta-registration">Beta Program</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">About</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Most Footer -->
-    <div class="bottom-footer">
-        <div>&copy; 2026 Noetica. All rights reserved.</div>
-        <div class="bottom-footer-center">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
-            <a href="#">Contact</a>
-        </div>
-        <div>Built with <span style="color: #ef4444;">&#10084;</span> for science and humanity.</div>
-    </div>
+        </section>
+    </main>
 
     <script src="app.js"></script>
 </body>
 </html>
-

@@ -1,106 +1,80 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- THEME TOGGLE LOGIC ---
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const iconSun = document.getElementById('theme-icon-sun');
-    const iconMoon = document.getElementById('theme-icon-moon');
-    const iconSystem = document.getElementById('theme-icon-system');
-    const themeText = document.getElementById('theme-text');
-    
-    // States: 'system', 'light', 'dark'
-    const THEMES = ['system', 'light', 'dark'];
-    
-    function updateThemeUI(theme) {
-        // Hide all icons
-        iconSun.style.display = 'none';
-        iconMoon.style.display = 'none';
-        iconSystem.style.display = 'none';
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch("dashboard_data.json");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         
-        if (theme === 'light') {
-            iconSun.style.display = 'block';
-            themeText.innerText = 'Light';
-        } else if (theme === 'dark') {
-            iconMoon.style.display = 'block';
-            themeText.innerText = 'Dark';
-        } else {
-            iconSystem.style.display = 'block';
-            themeText.innerText = 'System';
-        }
-    }
-    
-    function applyTheme(theme) {
-        if (theme === 'system') {
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', systemDark ? 'dark' : 'light');
-        } else {
-            document.documentElement.setAttribute('data-theme', theme);
-        }
-        updateThemeUI(theme);
-    }
-    
-    // Initialize
-    let currentTheme = localStorage.getItem('theme') || 'system';
-    applyTheme(currentTheme);
-    
-    // Cycle theme on click
-    themeToggleBtn.addEventListener('click', () => {
-        let currentIndex = THEMES.indexOf(currentTheme);
-        currentIndex = (currentIndex + 1) % THEMES.length;
-        currentTheme = THEMES[currentIndex];
-        localStorage.setItem('theme', currentTheme);
-        applyTheme(currentTheme);
-    });
-    
-    // Listen for system preference changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        if (currentTheme === 'system') {
-            applyTheme('system');
-        }
-    });
+        const paradigmList = document.getElementById("paradigm-list");
+        const discoveryGrid = document.getElementById("discovery-grid");
+        const currentParadigmTitle = document.getElementById("current-paradigm");
+        
+        let currentParadigm = data.paradigms[0]; // Default to first
 
-    // --- INTERSECTION OBSERVER FOR SCROLL REVEALS ---
-    const revealElements = document.querySelectorAll('.reveal-on-scroll');
-    
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Stagger effect if multiple elements appear at once
-                    setTimeout(() => {
-                        entry.target.classList.add('is-visible');
-                    }, index * 50); // 50ms stagger
-                    observer.unobserve(entry.target); // Only animate once
-                }
+        // Render Sidebar
+        data.paradigms.forEach(paradigm => {
+            const li = document.createElement("li");
+            li.className = "paradigm-item";
+            if (paradigm === currentParadigm) li.classList.add("active");
+            li.textContent = paradigm;
+            
+            li.addEventListener("click", () => {
+                document.querySelectorAll(".paradigm-item").forEach(el => el.classList.remove("active"));
+                li.classList.add("active");
+                currentParadigm = paradigm;
+                renderGrid();
             });
-        }, {
-            root: null,
-            rootMargin: '0px 0px -50px 0px', // Trigger slightly before the element fully enters
-            threshold: 0.1
+            
+            paradigmList.appendChild(li);
         });
 
-        revealElements.forEach(el => revealObserver.observe(el));
-    } else {
-        // Fallback if reduced motion is enabled or IntersectionObserver is missing
-        revealElements.forEach(el => el.classList.add('is-visible'));
+        // Render Grid
+        function renderGrid() {
+            currentParadigmTitle.textContent = currentParadigm;
+            discoveryGrid.innerHTML = ""; // Clear existing
+            
+            // Animation staggered delay
+            let delay = 0;
+
+            data.types.forEach(type => {
+                const item = data.matrix[currentParadigm][type];
+                if (!item) return;
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.animation = `fadeInUp 0.5s ease forwards ${delay}s`;
+                card.style.opacity = "0"; // Initial state for animation
+
+                card.innerHTML = `
+                    <div class="card-type">${type}</div>
+                    <div class="card-score">NET: ${item.score.toFixed(1)}</div>
+                    <h3 class="card-title">${item.title}</h3>
+                    <div class="card-authors">${item.authors}</div>
+                    <div class="card-abstract">${item.abstract}</div>
+                    <a href="${item.url}" class="card-link" target="_blank">Explore Discovery →</a>
+                `;
+                
+                discoveryGrid.appendChild(card);
+                delay += 0.08;
+            });
+        }
+        
+        // Initial render
+        renderGrid();
+
+    } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+        document.getElementById("current-paradigm").textContent = "Error loading data.";
     }
-
-    // --- SCROLL PROGRESS BAR LOGIC ---
-    const scrollProgress = document.getElementById('scroll-progress');
-    if (scrollProgress) {
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            scrollProgress.style.width = scrollPercent + '%';
-        });
-    }
-
-    // --- PAGE TRANSITION ON LOAD ---
-    // Add page-loaded class slightly after DOM content loaded to trigger CSS entrance animations
-    setTimeout(() => {
-        document.body.classList.add('page-loaded');
-    }, 50);
-
 });
+
+// Add animation styles dynamically
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);

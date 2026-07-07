@@ -1,0 +1,1346 @@
+{
+  "paradigms": [
+    "Mathematics",
+    "Statistics",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Medicine",
+    "Computer Science",
+    "Artificial Intelligence",
+    "Engineering",
+    "Materials Science",
+    "Earth Science",
+    "Environmental Science",
+    "Climate Science",
+    "Astronomy",
+    "Neuroscience",
+    "Synthetic Biology",
+    "Quantum Computing",
+    "Economics",
+    "Psychology",
+    "Sociology",
+    "Political Science",
+    "Law",
+    "Philosophy",
+    "History",
+    "Linguistics",
+    "Arts & Design",
+    "Business & Management",
+    "Education",
+    "Agriculture",
+    "Public Health",
+    "Other"
+  ],
+  "types": [
+    "Research Papers / Preprints",
+    "Patents / Clinical Trials",
+    "Research Grants / Startup Funding",
+    "Scientific Datasets / Technical Reports",
+    "Open Source Projects / Software"
+  ],
+  "matrix": {
+    "Mathematics": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Mathematics Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Mathematics under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 70.8,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Mathematics under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 77.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Mathematics under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 82.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Mathematics under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 98.6,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Mathematics under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 83.2,
+        "is_mock": true
+      }
+    },
+    "Statistics": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Statistics Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Statistics under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.3,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Statistics under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Statistics under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 80.8,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Statistics under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 79.9,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Statistics under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.0,
+        "is_mock": true
+      }
+    },
+    "Physics": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Physics Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Physics under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 96.7,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Physics under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 96.9,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Physics under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 82.2,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Physics under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.3,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Physics under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 80.4,
+        "is_mock": true
+      }
+    },
+    "Chemistry": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Chemistry Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Chemistry under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 78.8,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Chemistry under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Chemistry under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 75.9,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Chemistry under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 73.6,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Chemistry under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 77.2,
+        "is_mock": true
+      }
+    },
+    "Biology": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Biology Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Biology under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.4,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Biology under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.9,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Biology under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.8,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Biology under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 83.1,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Biology under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.2,
+        "is_mock": true
+      }
+    },
+    "Medicine": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Medicine Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Medicine under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.2,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Medicine under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.5,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Medicine under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 91.9,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Medicine under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 79.9,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Medicine under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.0,
+        "is_mock": true
+      }
+    },
+    "Computer Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Computer Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Computer Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.5,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Computer Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 77.7,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Computer Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.9,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Computer Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 88.5,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Computer Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 88.0,
+        "is_mock": true
+      }
+    },
+    "Artificial Intelligence": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Artificial Intelligence Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Artificial Intelligence under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 81.5,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Artificial Intelligence under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.5,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Artificial Intelligence under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.8,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Artificial Intelligence under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 92.8,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Artificial Intelligence under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 94.1,
+        "is_mock": true
+      }
+    },
+    "Engineering": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Engineering Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Engineering under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 80.5,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Engineering under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Engineering under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Engineering under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 70.7,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Engineering under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.1,
+        "is_mock": true
+      }
+    },
+    "Materials Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Materials Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 81.2,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 92.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.6,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 75.9,
+        "is_mock": true
+      }
+    },
+    "Earth Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Earth Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Earth Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 90.6,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Earth Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 87.9,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Earth Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 96.6,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Earth Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.5,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Earth Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.9,
+        "is_mock": true
+      }
+    },
+    "Environmental Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Environmental Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Environmental Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.2,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Environmental Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.1,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Environmental Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Environmental Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.1,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Environmental Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.7,
+        "is_mock": true
+      }
+    },
+    "Climate Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Climate Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Climate Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.0,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Climate Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 77.5,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Climate Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.2,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Climate Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.7,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Climate Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 94.4,
+        "is_mock": true
+      }
+    },
+    "Astronomy": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Astronomy Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Astronomy under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.9,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Astronomy under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Astronomy under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Astronomy under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 91.3,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Astronomy under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 79.3,
+        "is_mock": true
+      }
+    },
+    "Neuroscience": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Neuroscience Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Neuroscience under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.6,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Neuroscience under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 70.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Neuroscience under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.8,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Neuroscience under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 79.0,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Neuroscience under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 78.9,
+        "is_mock": true
+      }
+    },
+    "Synthetic Biology": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Synthetic Biology Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.2,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.8,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.6,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.8,
+        "is_mock": true
+      }
+    },
+    "Quantum Computing": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Quantum Computing Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.4,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.6,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.4,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.4,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 80.0,
+        "is_mock": true
+      }
+    },
+    "Economics": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Economics Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Economics under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 72.5,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Economics under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 98.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Economics under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Economics under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.9,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Economics under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.2,
+        "is_mock": true
+      }
+    },
+    "Psychology": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Psychology Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Psychology under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.2,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Psychology under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Psychology under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.5,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Psychology under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 92.2,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Psychology under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.4,
+        "is_mock": true
+      }
+    },
+    "Sociology": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Sociology Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Sociology under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.8,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Sociology under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 81.2,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Sociology under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.6,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Sociology under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 79.8,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Sociology under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 85.4,
+        "is_mock": true
+      }
+    },
+    "Political Science": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Political Science Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.4,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 95.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.0,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.0,
+        "is_mock": true
+      }
+    },
+    "Law": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Law Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 96.1,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.6,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 82.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.4,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.0,
+        "is_mock": true
+      }
+    },
+    "Philosophy": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Philosophy Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.0,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 93.3,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.7,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.2,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 77.3,
+        "is_mock": true
+      }
+    },
+    "History": {
+      "Research Papers / Preprints": {
+        "title": "Advances in History Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in History under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 73.7,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in History under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 87.6,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "$15M Series A for Next-Gen Biotech",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in History under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 98.4,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in History under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.9,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in History under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.4,
+        "is_mock": true
+      }
+    },
+    "Linguistics": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Linguistics Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Linguistics under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 88.9,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Linguistics under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.6,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Linguistics under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Open Dataset of 100M Protein Structures",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Linguistics under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 83.5,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Linguistics under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.3,
+        "is_mock": true
+      }
+    },
+    "Arts & Design": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Arts & Design Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 75.3,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 89.0,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "NSF Grant for High-Temperature Superconductors",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 92.2,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.6,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.3,
+        "is_mock": true
+      }
+    },
+    "Business & Management": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Business & Management Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Business & Management under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 87.4,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Business & Management under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 74.0,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "$15M Series A for Next-Gen Biotech",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Business & Management under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 86.6,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Business & Management under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 75.1,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "v2.0 Release of Tensor Analytics Engine",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Business & Management under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 91.7,
+        "is_mock": true
+      }
+    },
+    "Education": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Education Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 72.3,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Patent for Quantum Dot Photovoltaics",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 71.8,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "$15M Series A for Next-Gen Biotech",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 78.9,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 78.7,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Open Source DNA Sequencing Library",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 97.9,
+        "is_mock": true
+      }
+    },
+    "Agriculture": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Agriculture Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Agriculture under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 99.1,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Agriculture under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.6,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "$15M Series A for Next-Gen Biotech",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Agriculture under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 84.1,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Agriculture under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 76.0,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Agriculture under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 75.8,
+        "is_mock": true
+      }
+    },
+    "Public Health": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Public Health Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Public Health under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 90.6,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Clinical Validation of mRNA Vector",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Public Health under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 82.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "$15M Series A for Next-Gen Biotech",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Public Health under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 90.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Technical Survey of 6G Telecommunications",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Public Health under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 73.7,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Public Health under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 88.4,
+        "is_mock": true
+      }
+    },
+    "Other": {
+      "Research Papers / Preprints": {
+        "title": "Advances in Other Research",
+        "authors": "Dr. Smith et al.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Research Papers / Preprints. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 83.1,
+        "is_mock": true
+      },
+      "Patents / Clinical Trials": {
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 82.4,
+        "is_mock": true
+      },
+      "Research Grants / Startup Funding": {
+        "title": "Seed Funding for Neural Interface Startup",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 87.3,
+        "is_mock": true
+      },
+      "Scientific Datasets / Technical Reports": {
+        "title": "Global Climate Assessment Report 2026",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 96.4,
+        "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "Physics Simulator for Rust",
+        "authors": "Various Contributors",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "url": "#",
+        "score": 83.1,
+        "is_mock": true
+      }
+    }
+  }
+}

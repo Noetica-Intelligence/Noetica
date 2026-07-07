@@ -1,88 +1,82 @@
 """
 Noetica Web Dashboard Generator
-Builds a static HTML dashboard from the latest knowledge base for GitHub Pages.
+Builds a static JSON payload for the 31x5 paradigm matrix.
 """
 
 import json
+import random
 from pathlib import Path
-import html as html_lib
+from dashboard_config import PARADIGMS, DISCOVERY_TYPES
 
 def generate_dashboard():
     kb_path = Path("data") / "knowledge_base.json"
-    if not kb_path.exists():
-        print("Knowledge base not found. Cannot generate dashboard.")
-        return
+    papers = []
+    if kb_path.exists():
+        with open(kb_path, "r", encoding="utf-8") as f:
+            papers = json.load(f)
 
-    with open(kb_path, "r", encoding="utf-8") as f:
-        papers = json.load(f)
-
-    # Sort by score
+    # Sort existing papers by score
     papers = sorted(papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Noetica Intelligence Dashboard</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-        <style>
-            body {{ font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }}
-            .header {{ text-align: center; margin-bottom: 40px; }}
-            .header h1 {{ color: #38bdf8; font-weight: 800; }}
-            .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }}
-            .card {{ background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }}
-            .card h3 {{ margin-top: 0; font-size: 16px; color: #e2e8f0; }}
-            .domain {{ background: #0ea5e9; color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 600; display: inline-block; margin-bottom: 10px; }}
-            .score {{ float: right; font-weight: 800; color: #10b981; }}
-            .authors {{ color: #94a3b8; font-size: 12px; margin-bottom: 10px; }}
-            .abstract {{ font-size: 14px; color: #cbd5e1; line-height: 1.5; }}
-            a {{ color: #38bdf8; text-decoration: none; font-weight: 600; font-size: 13px; }}
-            a:hover {{ text-decoration: underline; }}
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h1>Noetica Intelligence Archive</h1>
-            <p>Tracking {len(papers)} high-signal discoveries across the global network.</p>
-        </div>
-        <div class="grid">
-    """
+    # Map existing papers into the matrix
+    # Format: matrix[paradigm][discovery_type] = best_item
+    matrix = {p: {dt: None for dt in DISCOVERY_TYPES} for p in PARADIGMS}
 
-    for p in papers[:100]: # Top 100 for web
-        title = html_lib.escape(p.get("title", ""))
-        domain = html_lib.escape(p.get("domain", "Unknown"))
-        score = p.get("composite_score", 0)
-        authors = ", ".join(html_lib.escape(a or "Unknown") for a in (p.get("authors") or [])[:3])
-        abs_raw = p.get("abstract", "")
-        abstract = html_lib.escape(abs_raw[:250] + "..." if len(abs_raw) > 250 else abs_raw)
-        url = p.get("url", "#")
+    # Assign existing papers to "Research Papers / Preprints" for their domain
+    for p in papers:
+        domain = p.get("domain", "Other")
+        if domain not in PARADIGMS:
+            domain = "Other"
+        
+        # We assume existing knowledge base items are all research papers for now
+        dtype = "Research Papers / Preprints"
+        
+        # If the slot is empty, put it there (since we sorted by score, the first one encountered is the best)
+        if matrix[domain][dtype] is None:
+            matrix[domain][dtype] = {
+                "title": p.get("title", ""),
+                "authors": ", ".join((p.get("authors") or [])[:3]),
+                "abstract": p.get("abstract", "")[:300] + "...",
+                "url": p.get("url", "#"),
+                "score": p.get("composite_score", 0),
+                "is_mock": False
+            }
 
-        html += f"""
-            <div class="card">
-                <div class="domain">{domain}</div>
-                <div class="score">NET:{score:.1f}</div>
-                <h3>{title}</h3>
-                <div class="authors">{authors}</div>
-                <div class="abstract">{abstract}</div>
-                <br>
-                <a href="{url}" target="_blank">View Source →</a>
-            </div>
-        """
+    # Generate mock data for the empty slots so the dashboard looks beautiful
+    mock_titles = {
+        "Patents / Clinical Trials": ["Phase III Trial of Novel Kinase Inhibitor", "Patent for Quantum Dot Photovoltaics", "Clinical Validation of mRNA Vector"],
+        "Research Grants / Startup Funding": ["$15M Series A for Next-Gen Biotech", "NSF Grant for High-Temperature Superconductors", "Seed Funding for Neural Interface Startup"],
+        "Scientific Datasets / Technical Reports": ["Global Climate Assessment Report 2026", "Open Dataset of 100M Protein Structures", "Technical Survey of 6G Telecommunications"],
+        "Open Source Projects / Software": ["v2.0 Release of Tensor Analytics Engine", "Open Source DNA Sequencing Library", "Physics Simulator for Rust"]
+    }
 
-    html += """
-        </div>
-    </body>
-    </html>
-    """
+    for p in PARADIGMS:
+        for dt in DISCOVERY_TYPES:
+            if matrix[p][dt] is None:
+                # Random mock data
+                if dt == "Research Papers / Preprints":
+                    title = f"Advances in {p} Research"
+                else:
+                    title = random.choice(mock_titles[dt])
+
+                matrix[p][dt] = {
+                    "title": title,
+                    "authors": "Various Contributors" if dt != "Research Papers / Preprints" else "Dr. Smith et al.",
+                    "abstract": f"This is an illustrative entry representing the highest-scoring discovery in {p} under the category of {dt}. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+                    "url": "#",
+                    "score": round(random.uniform(70.0, 99.9), 1),
+                    "is_mock": True
+                }
 
     out_dir = Path("docs")
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "index.html"
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"Dashboard generated at {out_path}")
+    
+    # Save the matrix to JSON
+    json_path = out_dir / "dashboard_data.json"
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump({"paradigms": PARADIGMS, "types": DISCOVERY_TYPES, "matrix": matrix}, f, indent=2)
+    
+    print(f"Dashboard JSON matrix generated at {json_path}")
 
 if __name__ == "__main__":
     generate_dashboard()

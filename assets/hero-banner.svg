@@ -59,10 +59,8 @@
   <circle cx="300" cy="200" r="0.6" fill="#ffffff" opacity="0.2"/>
   <circle cx="900" cy="230" r="0.6" fill="#ffffff" opacity="0.15"/>
   
-  <!-- Central glowing orb -->
-  <circle cx="600" cy="95" r="45" fill="url(#glow)"/>
-  <circle cx="600" cy="95" r="10" fill="#f5c842" opacity="0.9"/>
-  <circle cx="600" cy="95" r="6" fill="#fde68a" opacity="0.95"/>
+  <!-- Real Noetica Logo -->
+  <image href="logo/logo.png" x="535" y="30" width="130" height="130"/>
   
   <!-- Title text -->
   <text x="600" y="175" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="48" font-weight="400" letter-spacing="18" fill="#e8e0d4" opacity="0.95">NOETICA</text>

@@ -4,10 +4,12 @@ authors:
 - family-names: "Noetica"
   given-names: "Intelligence"
 title: "Noetica: An Autonomous Scientific Intelligence Engine"
-version: 1.0.0
-date-released: 2026-06-25
+version: 2.0.0
+doi: "10.5281/zenodo.xxxxxxx"
+date-released: 2026-07-08
 url: "https://github.com/Noetica-Intelligence/Noetica"
 repository-code: "https://github.com/Noetica-Intelligence/Noetica"
 abstract: >-
-  Noetica is an autonomous intelligence engine that tracks, scores, and synthesizes 
-  global scientific discoveries using a hybrid Python/Zig Triple-Engine Architecture.
+  Noetica (Version 2.0) is an autonomous intelligence engine that tracks, scores, and synthesizes 
+  global scientific discoveries using a hybrid Python/Zig Triple-Engine Architecture. It features 
+  a real-time 31-paradigm web dashboard for tracking accelerating scientific breakthroughs.

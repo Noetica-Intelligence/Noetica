@@ -48,6 +48,11 @@ venv.bak/
 latest_report.html
 temp_input.json
 
+# Data output
+data/digests/
+data/*.json
+data/*.jsonl
+
 # IDEs and Editors
 .vscode/
 .idea/

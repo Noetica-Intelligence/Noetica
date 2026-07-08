@@ -48,14 +48,19 @@ MOCK_SOURCES = {
 
 
 def generate_dashboard():
-    kb_path = Path("data") / "knowledge_base.json"
+    kb_path = Path("data") / "knowledge_base_scored.json"
     papers = []
+    
     if kb_path.exists():
-        with open(kb_path, "r", encoding="utf-8") as f:
-            papers = json.load(f)
+        try:
+            with open(kb_path, "r", encoding="utf-8") as f:
+                papers = json.load(f)
+            print(f"Loaded {len(papers)} real papers from {kb_path.name}")
+        except Exception as e:
+            print(f"Failed to load papers: {e}")
 
     # Sort existing papers by composite score (0-10 scale)
-    papers = sorted(papers, key=lambda x: x.get("composite_score", 0), reverse=True)
+    papers = sorted(papers, key=lambda x: x.get("composite_score", 0) or 0, reverse=True)
 
     def map_source_to_dtype(source_types):
         if not source_types:

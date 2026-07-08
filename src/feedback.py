@@ -91,8 +91,8 @@ def ingest_feedback_from_sheet() -> int:
             if did and rating:
                 save_feedback(did, email, rating)
                 count += 1
-        print(f"📊 Ingested {count} feedback entries from sheet.")
+        print(f"[OK] Ingested {count} feedback entries from sheet.")
         return count
     except Exception as e:
-        print(f"⚠️  Could not read feedback sheet: {e}")
+        print(f"[WARN] Could not read feedback sheet: {e}")
         return 0

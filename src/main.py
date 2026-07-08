@@ -268,6 +268,13 @@ def main() -> int:
     # -------------------------------------------------------------------------
     print(f"\n[INFO] [4/6] Saving to Knowledge Base...")
     save_discoveries(scored_papers)
+    
+    # Save the fully scored array to a JSON file for the dashboard generator
+    try:
+        with open(Path("data") / "knowledge_base_scored.json", "w", encoding="utf-8") as f:
+            json.dump(scored_papers, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"       [ERROR] Failed to save knowledge_base_scored.json: {e}")
 
     # -------------------------------------------------------------------------
     # Step 4b: Check and fire alerts

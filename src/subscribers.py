@@ -18,7 +18,7 @@ def get_subscribers() -> list[dict]:
     """
     sheet_id = os.environ.get("GOOGLE_SHEET_ID")
     if not sheet_id:
-        print("⚠️  No GOOGLE_SHEET_ID found. Defaulting to environment variable subscribers.")
+        print("[WARN] No GOOGLE_SHEET_ID found. Defaulting to environment variable subscribers.")
         
         # Check NOETICA_SUBSCRIBERS first (comma separated list)
         subs_env = os.environ.get("NOETICA_SUBSCRIBERS")
@@ -53,7 +53,7 @@ def get_subscribers() -> list[dict]:
     else:
         csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
         
-    print(f"📥 Fetching subscribers from Google Sheet...")
+    print(f"[INFO] Fetching subscribers from Google Sheet...")
     
     try:
         req = urllib.request.Request(csv_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -121,15 +121,15 @@ def get_subscribers() -> list[dict]:
                     continue
                 subscribers.append(row)
                 
-        print(f"✅ Loaded {len(subscribers)} active subscribers.")
+        print(f"[OK] Loaded {len(subscribers)} active subscribers.")
         return subscribers
         
     except urllib.error.URLError as e:
-        print(f"❌ Error fetching Google Sheet. Is it Published to the Web? {e}")
-        print("⚠️ No subscribers loaded. Please configure GOOGLE_SHEET_ID or NOETICA_SUBSCRIBERS.")
+        print(f"[ERROR] Error fetching Google Sheet. Is it Published to the Web? {e}")
+        print("[WARN] No subscribers loaded. Please configure GOOGLE_SHEET_ID or NOETICA_SUBSCRIBERS.")
         return []
     except Exception as e:
-        print(f"❌ Unexpected error reading subscribers: {e}")
+        print(f"[ERROR] Unexpected error reading subscribers: {e}")
         return []
 
 def get_paper_limit_for_time(reading_time: str) -> int:

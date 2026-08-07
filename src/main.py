@@ -31,7 +31,11 @@ from source_registry  import fetch_all_intelligence
 from score_papers import score_and_rank
 try:
     from sentence_transformers import SentenceTransformer, util
-    semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+    try:
+        semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+    except Exception as e:
+        print(f"       [WARNING] Could not load SentenceTransformer model (likely HuggingFace rate limit): {e}")
+        semantic_model = None
 except ImportError:
     semantic_model = None
 from ai_synthesis     import generate_personalized_synthesis, format_abstract_pointwise

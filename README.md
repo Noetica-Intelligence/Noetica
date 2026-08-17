@@ -13,9 +13,9 @@
 
 ---
 
-Noetica scans new papers, patents, funding rounds, and clinical trials as they are published, scores each one for genuine scientific significance, and emails you a briefing written at your level. It also powers a **live 31-paradigm Web Dashboard** that tracks the absolute highest-signal discoveries globally.
+Noetica scans new papers, patents, funding rounds and clinical trials as they are published, scores each one for genuine scientific significance and emails you a briefing written at your level.
 
-It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring, and an **LLM** for synthesis — entirely on free-tier infrastructure, so it costs $0 to run at any scale.
+It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring and uses **Double-LLM** for synthesis entirely on free-tier infrastructure, so it costs $0 to run at any scale.
 
 <div align="center">
 <br>

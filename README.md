@@ -18,10 +18,7 @@ Noetica scans new papers, patents, funding rounds and clinical trials as they ar
 It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring and uses **Double-LLM** for synthesis entirely on free-tier infrastructure, so it costs $0 to run at any scale.
 
 <div align="center">
-<br>
-<img src="assets/digest-preview.svg" width="420" alt="Sample Noetica daily briefing preview" />
-<br>
-<sub><i>Illustrative mockup of a Noetica Intelligence Briefing. Swap in a real digest screenshot once available.</i></sub>
+  <img src="assets/digest-preview.svg" alt="Noetica Intelligence Briefing Preview" width="100%">
 <br><br>
 </div>
 

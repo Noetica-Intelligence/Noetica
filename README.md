@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/hero-banner-combined.png" width="100%" alt="Noetica -- Mapping the Evolution of Human Knowledge" />
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/Status-Early%20Access-F7A41D.svg?style=for-the-badge)](#get-early-access)
@@ -15,18 +15,13 @@
 
 Noetica scans new papers, patents, funding rounds and clinical trials as they are published, scores each one for genuine scientific significance and emails you a briefing written at your level.
 
-It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring and uses **Double-LLM** for synthesis entirely on free-tier infrastructure, so it costs $0 to run at any scale.
-
-<div align="center">
-  <img src="assets/digest-preview.svg" alt="Noetica Intelligence Briefing Preview" width="100%">
-<br><br>
-</div>
+It runs on three engines — **Python** for orchestration, **Zig** for the compute-heavy graph scoring, and an **LLM** for synthesis — entirely on free-tier infrastructure, so it costs $0 to run at any scale.
 
 ---
 
 ## How It Works
 
-<img src="assets/pipeline-diagram.svg" width="100%" alt="Noetica pipeline: your profile, global scan, scoring engine, LLM synthesis, your inbox" />
+
 
 <details>
 <summary>Prefer plain text? Expand for the Mermaid source.</summary>
@@ -91,7 +86,7 @@ This keeps ranking aligned with what expert readers actually find valuable — n
 
 Every node in the graph moves through a lifecycle as evidence accumulates:
 
-<img src="assets/lifecycle.svg" width="100%" alt="Knowledge lifecycle: speculative through historical" />
+
 
 Digests also group discoveries by era of impact:
 
@@ -199,7 +194,7 @@ Noetica/
 |
 |-- src/                    # Python orchestrator
 |-- zig_engine/             # Zig scoring engine
-|-- assets/                 # SVGs, logos, visual assets
+
 |-- docs/                   # Architecture and design docs
 |-- examples/               # Example payloads and digest templates
 |-- benchmarks/             # Zig engine performance metrics

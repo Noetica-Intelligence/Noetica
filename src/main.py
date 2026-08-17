@@ -42,7 +42,7 @@ from ai_synthesis     import generate_personalized_synthesis, format_abstract_po
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
-from database         import save_discoveries, get_feedback_boosted_ids
+from database         import save_discoveries, get_feedback_boosted_ids, get_sent_discovery_ids, record_sent_discoveries
 from alerts           import check_and_fire_alerts
 from emerging_fields  import get_emerging_trends
 from feedback         import ingest_feedback_from_sheet
@@ -320,6 +320,16 @@ def main() -> int:
 
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
         
+        # ── Cross-Day Deduplication ──────────────────────────────────────
+        # Remove discoveries already sent to this subscriber in the last 30 days
+        already_sent = get_sent_discovery_ids(email, days=30)
+        if already_sent:
+            before_count = len(user_papers)
+            user_papers = [p for p in user_papers if p.get("id") not in already_sent]
+            deduped = before_count - len(user_papers)
+            if deduped > 0:
+                print(f"       [DEDUP] Removed {deduped} already-sent discoveries for {email}.")
+
         # Enforce Discovery Type Quota
         discovery_prefs_str = sub.get("Discovery Preferences", "")
         allowed_types = parse_discovery_preferences(discovery_prefs_str)
@@ -354,7 +364,7 @@ def main() -> int:
         user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         if not user_top_papers:
-            print(f"       [WARNING] No matching discoveries for this subscriber's interests.")
+            print(f"       [WARNING] No NEW matching discoveries for this subscriber's interests.")
             continue
 
         print(f"       [INFO] Selected {len(user_top_papers)} personalized discoveries.")
@@ -376,6 +386,10 @@ def main() -> int:
 
         save_html_preview(html_body, email)
         os.environ["RECIPIENT_EMAIL"] = email
+
+        # Record sent discoveries BEFORE sending (so even dry-run marks them)
+        sent_ids = [p.get("id") for p in user_top_papers if p.get("id")]
+        record_sent_discoveries(email, sent_ids)
 
         if args.dry_run:
             print(f"       [DRY RUN] Email NOT sent to {email}.")

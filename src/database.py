@@ -150,6 +150,16 @@ def init_db():
         )
     """)
 
+    # ── Sent Discoveries Table (prevents cross-day repetition) ──────────────
+    execute_query(cursor, """
+        CREATE TABLE IF NOT EXISTS sent_discoveries (
+            subscriber_email TEXT NOT NULL,
+            discovery_id     TEXT NOT NULL,
+            sent_date        TEXT NOT NULL,
+            PRIMARY KEY (subscriber_email, discovery_id)
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -428,6 +438,44 @@ def get_trending_discoveries(top_n: int = 10) -> list[dict]:
     ]
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# SENT DISCOVERY TRACKING (cross-day deduplication)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_sent_discovery_ids(email: str, days: int = 30) -> set[str]:
+    """Return set of discovery IDs already sent to this subscriber in the last N days."""
+    init_db()
+    conn = _connect()
+    cursor = get_cursor(conn)
+    threshold = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    execute_query(cursor,
+        "SELECT discovery_id FROM sent_discoveries WHERE subscriber_email=? AND sent_date >= ?",
+        (email, threshold)
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return {r["discovery_id"] for r in rows}
+
+
+def record_sent_discoveries(email: str, discovery_ids: list[str]):
+    """Record that these discoveries were sent to this subscriber today."""
+    init_db()
+    conn = _connect()
+    cursor = get_cursor(conn)
+    today = datetime.date.today().isoformat()
+    for did in discovery_ids:
+        try:
+            execute_query(cursor,
+                "INSERT OR IGNORE INTO sent_discoveries (subscriber_email, discovery_id, sent_date) VALUES (?,?,?)",
+                (email, did, today)
+            )
+        except Exception:
+            pass  # ignore duplicates
+    conn.commit()
+    conn.close()
+
+
 if __name__ == "__main__":
     init_db()
-    print("✅ Database initialized successfully.")
+    print("Database initialized successfully.")
+

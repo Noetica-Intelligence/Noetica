@@ -14,7 +14,7 @@ import datetime
 # -------------------------------------------------------------------------
 
 BREAKTHROUGH_SIGNALS = [
-    # Methods
+    # Methods & AI
     "novel", "first", "breakthrough", "state-of-the-art", "unprecedented",
     "outperforms", "surpasses", "revolutionize", "transformative",
     # Discovery types
@@ -27,12 +27,16 @@ BREAKTHROUGH_SIGNALS = [
     # Interdisciplinary
     "cross-disciplinary", "bridges", "connecting", "unifying",
     "applies to", "applicable across",
+    # Clinical & Bio (Added to balance against AI)
+    "in vivo", "clinical efficacy", "therapeutic target", "phase 3", "phase iii", 
+    "fda approved", "overall survival", "progression-free", "curative",
+    "mechanism of action", "biomarker", "druggable"
 ]
 
 HYPE_PENALTIES = [
-    "we believe", "might", "could potentially", "preliminary",
-    "in theory", "hypothesize", "speculate", "further study needed",
-    "not yet validated", "awaiting peer review",
+    # Removed standard scientific cautiousness (hypothesize, might, further study)
+    # as biology requires it. Kept only explicit red flags.
+    "not yet validated", "anecdotal", "unproven", "speculate", "lacks statistical power"
 ]
 
 METHODOLOGY_QUALITY = [
@@ -40,7 +44,7 @@ METHODOLOGY_QUALITY = [
     "randomized controlled trial", "systematic review", "meta-analysis",
     "n=", "cohort study", "blind study", "validated on",
     "benchmark", "ablation study", "statistical significance",
-    "p-value", "confidence interval",
+    "p-value", "confidence interval", "double-blind", "placebo-controlled",
     # Physics / Math / CS / Chemistry
     "theorem", "proof", "simulation", "accuracy", "state-of-the-art",
     "first-principles", "ab initio", "experimental observation",
@@ -51,15 +55,17 @@ METHODOLOGY_QUALITY = [
 # Domain weights: domains with more cross-disciplinary influence get bonus
 DOMAIN_INFLUENCE_WEIGHTS = {
     "AI & Machine Learning":  1.2,
-    "Pure Mathematics":       1.15,
+    "Oncology":               1.2,
+    "Circadian Biology":      1.2,
+    "Structural Biology":     1.2,
+    "Bioinformatics":         1.15,
     "Theoretical Physics":    1.15,
-    "Statistics":             1.1,
-    "Bioinformatics":         1.1,
+    "Pure Mathematics":       1.15,
     "Quantum Computing":      1.15,
-    "Systems Biology":        1.1,
-    "Oncology":               1.05,
-    "Circadian Biology":      1.05,
-    "Neuroscience":           1.05,
+    "Systems Biology":        1.15,
+    "AI in Medicine":         1.15,
+    "Neuroscience":           1.1,
+    "Statistics":             1.1,
     "Philosophy":             1.0,
     "Economics":              1.0,
     "default":                1.0,

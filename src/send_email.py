@@ -139,19 +139,7 @@ def send_digest(subject: str, html_body: str, plain_fallback: str = "", recipien
     msg_alt.attach(MIMEText(plain_fallback, "plain", "utf-8"))
     msg_alt.attach(MIMEText(html_body,      "html",  "utf-8"))
 
-    try:
-        from email.mime.image import MIMEImage
-        import pathlib
-        
-        logo_path = pathlib.Path("assets/logo.png")
-        if logo_path.exists():
-            with open(logo_path, "rb") as img_file:
-                msg_img = MIMEImage(img_file.read())
-                msg_img.add_header("Content-ID", "<logo.png>")
-                msg_img.add_header("Content-Disposition", "inline", filename="logo.png")
-                msg.attach(msg_img)
-    except Exception as e:
-        pass
+
 
     try:
         print(f"📧 Connecting to {SMTP_HOST}:{SMTP_PORT} via SMTP...")

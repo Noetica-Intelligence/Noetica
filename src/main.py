@@ -42,7 +42,7 @@ from ai_synthesis     import generate_personalized_synthesis, format_abstract_po
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
-from database         import save_discoveries, get_feedback_boosted_ids, get_sent_discovery_ids, record_sent_discoveries
+from database         import save_discoveries, get_feedback_boosted_ids, get_sent_discovery_ids, record_sent_discoveries, get_sent_discoveries_details
 from alerts           import check_and_fire_alerts
 from emerging_fields  import get_emerging_trends
 from feedback         import ingest_feedback_from_sheet
@@ -90,6 +90,26 @@ def save_html_preview(html: str, email_addr: str) -> Path:
         f.write(html)
     print(f"  HTML preview saved  {out_path}")
     return out_path
+
+
+def is_semantically_similar(p1: dict, p2: dict) -> bool:
+    text1 = f"{p1.get('title', '')} {p1.get('abstract', '')}".lower()
+    text2 = f"{p2.get('title', '')} {p2.get('abstract', '')}".lower()
+    
+    if semantic_model:
+        emb1 = semantic_model.encode(text1, convert_to_tensor=True)
+        emb2 = semantic_model.encode(text2, convert_to_tensor=True)
+        return util.cos_sim(emb1, emb2).item() > 0.80
+    else:
+        # Fallback to Jaccard similarity if ML model is unavailable
+        import re
+        t1 = set(re.sub(r'[^a-z0-9\s]', '', text1).split())
+        t2 = set(re.sub(r'[^a-z0-9\s]', '', text2).split())
+        stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "with", "to", "for", "of", "is", "are", "was", "were", "by", "this", "that"}
+        t1 -= stopwords
+        t2 -= stopwords
+        if not t1 or not t2: return False
+        return float(len(t1.intersection(t2))) / float(len(t1.union(t2))) > 0.4
 
 
 def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict]:
@@ -321,14 +341,41 @@ def main() -> int:
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
         
         # ── Cross-Day Deduplication ──────────────────────────────────────
-        # Remove discoveries already sent to this subscriber in the last 30 days
-        already_sent = get_sent_discovery_ids(email, days=30)
-        if already_sent:
-            before_count = len(user_papers)
-            user_papers = [p for p in user_papers if p.get("id") not in already_sent]
-            deduped = before_count - len(user_papers)
-            if deduped > 0:
-                print(f"       [DEDUP] Removed {deduped} already-sent discoveries for {email}.")
+        already_sent_details = get_sent_discoveries_details(email, days=30)
+        already_sent_ids = {p["id"] for p in already_sent_details}
+        
+        before_count = len(user_papers)
+        deduped_user_papers = []
+        
+        for p in user_papers:
+            # 1. Exact ID Check
+            if p.get("id") in already_sent_ids:
+                continue
+                
+            # 2. Semantic Cross-Day Check
+            is_duplicate = False
+            for past in already_sent_details:
+                if is_semantically_similar(p, past):
+                    is_duplicate = True
+                    break
+            if is_duplicate:
+                continue
+                
+            # 3. Semantic Within-Digest Check
+            for selected in deduped_user_papers:
+                if is_semantically_similar(p, selected):
+                    is_duplicate = True
+                    break
+            if is_duplicate:
+                continue
+                
+            deduped_user_papers.append(p)
+            
+        deduped = before_count - len(deduped_user_papers)
+        if deduped > 0:
+            print(f"       [DEDUP] Removed {deduped} duplicate/repetitive discoveries for {email}.")
+            
+        user_papers = deduped_user_papers
 
         # Enforce Discovery Type Quota
         discovery_prefs_str = sub.get("Discovery Preferences", "")

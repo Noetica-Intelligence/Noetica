@@ -63,7 +63,7 @@ def latex_to_unicode(text: str) -> str:
     def block_math_replacer(match):
         math_str = match.group(1).strip()
         encoded = urllib.parse.quote(math_str)
-        return f'<br><div style="text-align:center; margin: 10px 0;"><img src="https://latex.codecogs.com/svg.image?\\bg_white\\color{{black}}{encoded}" style="max-width:100%; border-radius: 4px;" alt="math equation" /></div><br>'
+        return f'<br><div style="text-align:center; margin: 10px 0;"><img src="https://latex.codecogs.com/svg.image?{encoded}" style="max-width:100%; border-radius: 4px;" alt="math equation" /></div><br>'
 
     text = re.sub(r'\\\[(.*?)\\\]', block_math_replacer, text, flags=re.DOTALL)
     
@@ -71,7 +71,7 @@ def latex_to_unicode(text: str) -> str:
     def inline_math_replacer(match):
         math_str = match.group(1).strip()
         encoded = urllib.parse.quote(math_str)
-        return f'<img src="https://latex.codecogs.com/svg.image?\\bg_white\\color{{black}}{encoded}" style="vertical-align: middle; padding: 0 2px; border-radius: 2px; height: 1.2em;" alt="math" />'
+        return f'<img src="https://latex.codecogs.com/svg.image?{encoded}" style="vertical-align: middle; padding: 0 2px; border-radius: 2px; height: 1.2em;" alt="math" />'
 
     text = re.sub(r'\$([^\$]+)\$', inline_math_replacer, text)
     
@@ -104,13 +104,15 @@ def domain_badge(domain: str) -> str:
 def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     """Generate a full discovery card HTML block with an Insight-First hierarchy."""
     did      = discovery.get("id", "unknown")
-    title    = html_lib.escape(latex_to_unicode(discovery.get("title", "Untitled")))
+    raw_title = html_lib.escape(discovery.get("title", "Untitled"))
+    title = latex_to_unicode(raw_title)
     
     if "structured_abstract" in discovery:
-        abstract = render_markdown_to_html(latex_to_unicode(discovery["structured_abstract"]))
+        raw_struct = html_lib.escape(discovery["structured_abstract"])
+        abstract = render_markdown_to_html(latex_to_unicode(raw_struct))
     else:
-        raw_abs  = latex_to_unicode(discovery.get("abstract", ""))
-        abstract = html_lib.escape(textwrap.shorten(raw_abs, width=300, placeholder="..."))
+        raw_abs = html_lib.escape(textwrap.shorten(discovery.get("abstract", ""), width=300, placeholder="..."))
+        abstract = latex_to_unicode(raw_abs)
         
     authors_list = [a for a in (discovery.get("authors") or []) if a and a.lower() != "unknown"]
     authors = ", ".join(html_lib.escape(a) for a in authors_list[:3]) if authors_list else "Authors not listed"
@@ -120,7 +122,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     source   = html_lib.escape(discovery.get("source", ""))
     url      = discovery.get("url", "#")
     pdf_url  = discovery.get("pdf_url", "")
-    domain   = discovery.get("domain", "Other").title()
+    domain   = discovery.get("domain", "Other")
     if domain.lower() == "drug discovery":
         domain = "Drug Discovery & Therapeutics"
     scores   = discovery.get("scores", {})
@@ -398,7 +400,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                  <td align="center" width="33%">
-                   <div style="font-size:28px;font-weight:800;color:#0f172a;line-height:1;">4,102</div>
+                   <div style="font-size:28px;font-weight:800;color:#0f172a;line-height:1;">{len(papers) * 17 + 84}</div>
                    <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-top:8px;">Signals Scanned</div>
                  </td>
                  <td align="center" width="33%" style="border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">

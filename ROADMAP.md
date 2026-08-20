@@ -10,8 +10,8 @@ Noetica is an actively developed intelligence engine. This roadmap outlines the 
 
 ## Upcoming (V2)
 - `[x]` **Generalized 31x5 Web Dashboard**: A public-facing matrix tracking the absolute highest-signal discovery across all paradigms.
+- `[x]` **Permanent Cross-Day Deduplication (Bloom Filters)**: Pure Python Bloom filters ensuring a user never sees the same paper twice, ever.
 - `[ ]` **Local LLM Execution (Llama 3/Mistral)**: Removing the dependency on external APIs for highly-classified intelligence parsing.
-- `[ ]` **Bi-directional Knowledge Graph Expansion**: Implementing a Neo4j or ArangoDB instance for persistent structural memory rather than in-memory matrix recalculations.
 - `[ ]` **Customizable Signal Thresholds**: Allowing users to adjust the Noise-to-Signal ratio limits via a web interface.
 
 ## Future Vision (V3): The Polyglot Architecture

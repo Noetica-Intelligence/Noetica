@@ -85,7 +85,19 @@ def generate_dashboard():
     # POPULATE WITH REAL DATA
     # ─────────────────────────────────────────────
     for p in papers:
-        domain = p.get("domain", "Other")
+        raw_domain = p.get("domain", "Other")
+        
+        # Mapping granular domains to broad paradigms
+        domain = raw_domain
+        if "AI" in domain or "Machine Learning" in domain:
+            domain = "Artificial Intelligence"
+        elif "Math" in domain:
+            domain = "Mathematics"
+        elif "Physic" in domain:
+            domain = "Physics"
+        elif "Bio" in domain or "Oncology" in domain:
+            domain = "Biology"
+        
         if domain not in PARADIGMS:
             domain = "Other"
         
@@ -164,7 +176,7 @@ def generate_dashboard():
                     "strategic_implication": f"Consolidates existing empirical frameworks within {p_name}. Demonstrates moderate theoretical confidence; early-stage validation.",
                     "knowledge_graph_edge": f"Primary convergence vector linking {p_name} frameworks with adjacent disciplinary architecture.",
                     "domain": p_name,
-                    "date": "",
+                    "date": datetime.date.today().isoformat(),
                     "is_mock": True
                 }
 

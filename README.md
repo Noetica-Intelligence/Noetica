@@ -38,11 +38,12 @@ flowchart LR
 </details>
 
 1. **Set your boundaries.** A short form captures your fields of interest, your expertise level, and how much time you have to read.
-2. **Noetica scans continuously.** On a scheduled cycle, it pulls from open sources — PubMed, Europe PMC, GitHub, NIH RePORTER, and public patent and funding databases.
-3. **The Scoring Engine ranks everything.** Every discovery is scored across three dimensions — see the [NET framework](#the-triple-engine-architecture) below.
-4. **An LLM writes your summary.** Top-ranked items are synthesized into one briefing, written at the technical depth you asked for.
-5. **The Web Dashboard updates.** The knowledge graph is mapped to a massive 31x5 matrix (31 Paradigms x 5 Discovery Types) and deployed instantly via GitHub Pages.
-6. **It lands in your inbox.** The personalized report is delivered via email on schedule.
+2. **Noetica scans continuously.** It pulls from 7 major APIs (arXiv, PubMed, bioRxiv, Semantic Scholar, OpenAlex, ClinicalTrials.gov, and GitHub Search).
+3. **The Scoring Engine ranks everything.** Every discovery is scored for Breakthrough keywords, Methodology quality, Cross-disciplinary impact, and Recency.
+4. **Bloom Filter Deduplication.** Pure Python Bloom filters (zero dependencies) guarantee you will never see the same paper twice, ever.
+5. **An LLM writes your summary.** Top-ranked items are synthesized into one briefing by Gemini.
+6. **The Web Dashboard updates.** The knowledge graph is mapped to a massive 31x5 matrix (31 Paradigms x 5 Discovery Types) and deployed instantly via GitHub Pages.
+7. **It lands in your inbox.** The personalized report is delivered via email on schedule.
 
 ---
 

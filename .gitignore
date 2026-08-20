@@ -63,3 +63,6 @@ data/*.jsonl
 *.swo
 *~
 *.db
+
+run.log
+.env

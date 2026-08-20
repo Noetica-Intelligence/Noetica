@@ -334,7 +334,8 @@ def get_feedback_boosted_ids(days: int = 30) -> dict[str, float]:
         "Very Useful": 0.3,
         "Useful":      0.1,
         "Neutral":     0.0,
-        "Not Useful": -0.2,
+        "Noise":      -0.2,
+        "Not Useful": -0.2,  # legacy support
     }
     boosts: dict[str, float] = {}
     for row in rows:
@@ -437,61 +438,6 @@ def get_trending_discoveries(top_n: int = 10) -> list[dict]:
         for r in rows
     ]
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# SENT DISCOVERY TRACKING (cross-day deduplication)
-# ─────────────────────────────────────────────────────────────────────────────
-
-def get_sent_discoveries_details(email: str, days: int = 30) -> list[dict]:
-    """Return full details of discoveries sent to this subscriber in the last N days."""
-    init_db()
-    conn = _connect()
-    cursor = get_cursor(conn)
-    threshold = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
-    execute_query(cursor,
-        """
-        SELECT d.id, d.title, d.abstract 
-        FROM sent_discoveries sd
-        JOIN discoveries d ON sd.discovery_id = d.id
-        WHERE sd.subscriber_email=? AND sd.sent_date >= ?
-        """,
-        (email, threshold)
-    )
-    rows = cursor.fetchall()
-    conn.close()
-    return [{"id": r["id"], "title": r["title"], "abstract": r["abstract"]} for r in rows]
-
-def get_sent_discovery_ids(email: str, days: int = 30) -> set[str]:
-    """Return set of discovery IDs already sent to this subscriber in the last N days."""
-    init_db()
-    conn = _connect()
-    cursor = get_cursor(conn)
-    threshold = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
-    execute_query(cursor,
-        "SELECT discovery_id FROM sent_discoveries WHERE subscriber_email=? AND sent_date >= ?",
-        (email, threshold)
-    )
-    rows = cursor.fetchall()
-    conn.close()
-    return {r["discovery_id"] for r in rows}
-
-
-def record_sent_discoveries(email: str, discovery_ids: list[str]):
-    """Record that these discoveries were sent to this subscriber today."""
-    init_db()
-    conn = _connect()
-    cursor = get_cursor(conn)
-    today = datetime.date.today().isoformat()
-    for did in discovery_ids:
-        try:
-            execute_query(cursor,
-                "INSERT OR IGNORE INTO sent_discoveries (subscriber_email, discovery_id, sent_date) VALUES (?,?,?)",
-                (email, did, today)
-            )
-        except Exception:
-            pass  # ignore duplicates
-    conn.commit()
-    conn.close()
 
 
 if __name__ == "__main__":

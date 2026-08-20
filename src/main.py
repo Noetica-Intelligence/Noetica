@@ -42,10 +42,57 @@ from ai_synthesis     import generate_personalized_synthesis, format_abstract_po
 from build_email      import build_email_html, build_email_subject
 from send_email       import send_digest, build_plain_text_summary
 from subscribers      import get_subscribers, get_paper_limit_for_time, parse_interests, parse_discovery_preferences
-from database         import save_discoveries, get_feedback_boosted_ids, get_sent_discovery_ids, record_sent_discoveries, get_sent_discoveries_details
+from database         import save_discoveries, get_feedback_boosted_ids
 from alerts           import check_and_fire_alerts
 from emerging_fields  import get_emerging_trends
 from feedback         import ingest_feedback_from_sheet
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GIT-PERSISTENT DEDUP ENGINE
+# The SQLite DB is wiped on every GitHub Actions run because the runner is
+# ephemeral. This JSON file is committed+pushed alongside the dashboard,
+# so it persists forever across runs.
+# Format: { "subscriber@email.com": { "discovery_id": "2026-08-20", ... }, ... }
+# ─────────────────────────────────────────────────────────────────────────────
+SENT_HISTORY_PATH = Path("data") / "sent_history.json"
+
+def _load_sent_history() -> dict:
+    """Load the persistent sent history from the Git-tracked JSON file."""
+    if SENT_HISTORY_PATH.exists():
+        try:
+            with open(SENT_HISTORY_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, Exception):
+            return {}
+    return {}
+
+def _save_sent_history(history: dict):
+    """Save the sent history back to the Git-tracked JSON file."""
+    SENT_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(SENT_HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+
+def get_sent_ids_for_subscriber(history: dict, email: str, days: int = 30) -> set:
+    """Get discovery IDs already sent to this subscriber within the last N days."""
+    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    subscriber_history = history.get(email, {})
+    return {did for did, sent_date in subscriber_history.items() if sent_date >= cutoff}
+
+def record_sent_for_subscriber(history: dict, email: str, discovery_ids: list):
+    """Record that these discoveries were sent to this subscriber today."""
+    today = datetime.date.today().isoformat()
+    if email not in history:
+        history[email] = {}
+    for did in discovery_ids:
+        history[email][did] = today
+
+def prune_old_entries(history: dict, days: int = 60):
+    """Remove entries older than N days to keep the file small."""
+    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    for email in list(history.keys()):
+        history[email] = {did: date for did, date in history[email].items() if date >= cutoff}
+        if not history[email]:
+            del history[email]
 
 
 def parse_args():
@@ -318,6 +365,12 @@ def main() -> int:
     # Step 6: Build and send personalized digests
     # -------------------------------------------------------------------------
     print(f"\n[INFO] [6/6] Generating personalized digests...")
+
+    # Load persistent sent history from Git-tracked JSON file
+    sent_history = _load_sent_history()
+    prune_old_entries(sent_history, days=60)
+    print(f"       [DEDUP] Loaded sent history: {sum(len(v) for v in sent_history.values())} total entries across {len(sent_history)} subscriber(s).")
+
     success_count = 0
     for i, sub in enumerate(subscribers, 1):
         email    = sub.get("Email")
@@ -340,28 +393,20 @@ def main() -> int:
 
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
         
-        # ── Cross-Day Deduplication ──────────────────────────────────────
-        already_sent_details = get_sent_discoveries_details(email, days=30)
-        already_sent_ids = {p["id"] for p in already_sent_details}
+        # ── Cross-Day Deduplication (Git-Persistent JSON) ───────────────
+        # This uses the JSON file committed to the repo, NOT the ephemeral SQLite DB
+        already_sent_ids = get_sent_ids_for_subscriber(sent_history, email, days=30)
         
         before_count = len(user_papers)
         deduped_user_papers = []
         
         for p in user_papers:
-            # 1. Exact ID Check
+            # 1. Exact ID Check against persistent history
             if p.get("id") in already_sent_ids:
                 continue
                 
-            # 2. Semantic Cross-Day Check
+            # 2. Semantic Within-Digest Check (prevent similar topics in same email)
             is_duplicate = False
-            for past in already_sent_details:
-                if is_semantically_similar(p, past):
-                    is_duplicate = True
-                    break
-            if is_duplicate:
-                continue
-                
-            # 3. Semantic Within-Digest Check
             for selected in deduped_user_papers:
                 if is_semantically_similar(p, selected):
                     is_duplicate = True
@@ -434,9 +479,9 @@ def main() -> int:
         save_html_preview(html_body, email)
         os.environ["RECIPIENT_EMAIL"] = email
 
-        # Record sent discoveries BEFORE sending (so even dry-run marks them)
+        # Record sent discoveries into the persistent JSON history
         sent_ids = [p.get("id") for p in user_top_papers if p.get("id")]
-        record_sent_discoveries(email, sent_ids)
+        record_sent_for_subscriber(sent_history, email, sent_ids)
 
         if args.dry_run:
             print(f"       [DRY RUN] Email NOT sent to {email}.")
@@ -447,6 +492,10 @@ def main() -> int:
                 success_count += 1
                 import time
                 time.sleep(1.5) # Stagger to evade Gmail spam filter
+
+    # ── Persist sent history to Git-tracked JSON file ───────────────────────
+    _save_sent_history(sent_history)
+    print(f"\n       [DEDUP] Saved {sum(len(v) for v in sent_history.values())} entries to data/sent_history.json")
 
     print("\n" + "=" * 60)
     print(f"[SUCCESS] Run complete. {success_count}/{len(subscribers)} digests sent. {alerts_fired} alerts fired.")

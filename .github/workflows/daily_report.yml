@@ -53,10 +53,10 @@ jobs:
         run: |
           python src/generate_dashboard.py
           
-      - name: Commit and Push Dashboard
+      - name: Commit and Push Dashboard + Bloom Filters
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add docs/
-          git commit -m "Auto-update Intelligence Dashboard" || echo "No changes to commit"
+          git add docs/ data/dedup/
+          git commit -m "Auto-update Intelligence Dashboard + Bloom Dedup Filters" || echo "No changes to commit"
           git push

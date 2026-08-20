@@ -48,43 +48,10 @@ from emerging_fields  import get_emerging_trends
 from feedback         import ingest_feedback_from_sheet
 
 # ─────────────────────────────────────────────────────────────────────────────
-# GIT-PERSISTENT DEDUP ENGINE
-# The SQLite DB is wiped on every GitHub Actions run because the runner is
-# ephemeral. This JSON file is committed+pushed alongside the dashboard,
-# so it persists forever across runs.
-# Format: { "subscriber@email.com": { "discovery_id": "2026-08-20", ... }, ... }
-# DEDUP IS PERMANENT: once a discovery is sent, it is NEVER sent again.
+# BLOOM FILTER DEDUP ENGINE (permanent, content-based, zero external deps)
+# Replaces the old SQLite + JSON approaches. See src/bloom_dedup.py.
 # ─────────────────────────────────────────────────────────────────────────────
-SENT_HISTORY_PATH = Path("data") / "sent_history.json"
-
-def _load_sent_history() -> dict:
-    """Load the persistent sent history from the Git-tracked JSON file."""
-    if SENT_HISTORY_PATH.exists():
-        try:
-            with open(SENT_HISTORY_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, Exception):
-            return {}
-    return {}
-
-def _save_sent_history(history: dict):
-    """Save the sent history back to the Git-tracked JSON file."""
-    SENT_HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(SENT_HISTORY_PATH, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2, ensure_ascii=False)
-
-def get_sent_ids_for_subscriber(history: dict, email: str) -> set:
-    """Get ALL discovery IDs ever sent to this subscriber. Permanent — no expiry."""
-    return set(history.get(email, {}).keys())
-
-def record_sent_for_subscriber(history: dict, email: str, discovery_ids: list):
-    """Record that these discoveries were sent to this subscriber today."""
-    today = datetime.date.today().isoformat()
-    if email not in history:
-        history[email] = {}
-    for did in discovery_ids:
-        history[email][did] = today
-
+from bloom_dedup import load_filter, save_filter, is_seen, mark_seen
 
 
 def parse_args():
@@ -357,12 +324,8 @@ def main() -> int:
     # Step 6: Build and send personalized digests
     # -------------------------------------------------------------------------
     print(f"\n[INFO] [6/6] Generating personalized digests...")
-
-    # Load persistent sent history from Git-tracked JSON file
-    sent_history = _load_sent_history()
-    print(f"       [DEDUP] Loaded permanent sent history: {sum(len(v) for v in sent_history.values())} total entries across {len(sent_history)} subscriber(s).")
-
     success_count = 0
+
     for i, sub in enumerate(subscribers, 1):
         email    = sub.get("Email")
         name     = sub.get("Name") or email.split("@")[0]
@@ -374,7 +337,7 @@ def main() -> int:
 
         # Enforce Report Frequency
         if "weekly" in freq_str:
-            if datetime.date.today().weekday() != 6: # 6 is Sunday
+            if datetime.date.today().weekday() != 6:  # 6 = Sunday
                 print(f"       [SKIP] Weekly subscriber; delivers on Sundays")
                 continue
         elif "monthly" in freq_str:
@@ -383,71 +346,78 @@ def main() -> int:
                 continue
 
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
-        
-        # ── Permanent Deduplication (Git-Persistent JSON) ───────────────
-        # Blocks ANY discovery ever sent to this subscriber — no expiry, no repeats.
-        already_sent_ids = get_sent_ids_for_subscriber(sent_history, email)
-        
-        before_count = len(user_papers)
+
+        # ── Bloom Filter Deduplication ────────────────────────────────────────
+        # Load this subscriber's persistent Bloom filter (~90 KB, fixed forever).
+        # is_seen() checks SHA-256(title+abstract) → catches same paper from
+        # different APIs (arXiv vs PubMed vs Semantic Scholar).
+        # Zero false negatives — no repeat ever slips through.
+        bf = load_filter(email)
+        print(f"       [DEDUP] Bloom filter loaded ({bf.count} items seen so far).")
+
+        before_count       = len(user_papers)
         deduped_user_papers = []
-        
+
         for p in user_papers:
-            # 1. Exact ID Check against persistent history
-            if p.get("id") in already_sent_ids:
+            title    = p.get("title", "")
+            abstract = p.get("abstract", "")
+
+            # 1. Bloom filter check — has this content been sent before?
+            if is_seen(bf, title, abstract):
                 continue
-                
-            # 2. Semantic Within-Digest Check (prevent similar topics in same email)
-            is_duplicate = False
+
+            # 2. Within-digest semantic check — prevent similar topics in same email
+            is_dup = False
             for selected in deduped_user_papers:
                 if is_semantically_similar(p, selected):
-                    is_duplicate = True
+                    is_dup = True
                     break
-            if is_duplicate:
+            if is_dup:
                 continue
-                
+
             deduped_user_papers.append(p)
-            
-        deduped = before_count - len(deduped_user_papers)
-        if deduped > 0:
-            print(f"       [DEDUP] Removed {deduped} duplicate/repetitive discoveries for {email}.")
-            
+
+        removed = before_count - len(deduped_user_papers)
+        if removed > 0:
+            print(f"       [DEDUP] Filtered {removed} already-seen discoveries for {name}.")
+
         user_papers = deduped_user_papers
 
         # Enforce Discovery Type Quota
         discovery_prefs_str = sub.get("Discovery Preferences", "")
-        allowed_types = parse_discovery_preferences(discovery_prefs_str)
-        user_top_papers = []
-        
+        allowed_types       = parse_discovery_preferences(discovery_prefs_str)
+        user_top_papers     = []
+
         # 1. Guarantee at least 1 of each requested type (if available)
         for t in allowed_types:
             for p in user_papers:
                 if t in p.get("source_types", ["paper"]) and p not in user_top_papers:
                     user_top_papers.append(p)
                     break
-                    
-        # 1b. Guarantee at least 1 for each requested interest/sub-domain
+
+        # 1b. Guarantee at least 1 per requested interest/sub-domain
         for interest in parse_interests(sub.get("Interests", "")):
             for p in user_papers:
-                d = (p.get("domain") or "").lower()
+                d     = (p.get("domain") or "").lower()
                 t_str = (p.get("title") or "").lower()
                 a_str = (p.get("abstract") or "").lower()
                 if interest.lower() in d or interest.lower() in t_str or interest.lower() in a_str:
                     if p not in user_top_papers:
                         user_top_papers.append(p)
                         break
-                    
-        # 2. Fill the rest with the highest scoring remaining discoveries
+
+        # 2. Fill remaining slots with highest-scoring discoveries
         for p in user_papers:
             if len(user_top_papers) >= limit:
                 break
             if p not in user_top_papers:
                 user_top_papers.append(p)
-                
-        # Sort again by score to ensure they appear in order of importance
+
+        # Sort by composite score (highest first)
         user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
 
         if not user_top_papers:
-            print(f"       [WARNING] No NEW matching discoveries for this subscriber's interests.")
+            print(f"       [WARNING] No NEW matching discoveries for {name}'s interests.")
             continue
 
         print(f"       [INFO] Selected {len(user_top_papers)} personalized discoveries.")
@@ -457,12 +427,12 @@ def main() -> int:
                 p["structured_abstract"] = format_abstract_pointwise(p.get("abstract", ""))
 
         # Generate Personalized AI Synthesis
-        expertise_str = sub.get("Expertise Level", "Intermediate")
-        interests_str = sub.get("Interests", "All")
+        expertise_str     = sub.get("Expertise Level", "Intermediate")
+        interests_str     = sub.get("Interests", "All")
         print(f"       [INFO] Generating AI synthesis for expertise: {expertise_str}...")
         ai_synthesis_html = generate_personalized_synthesis(user_top_papers, expertise_str, interests_str)
 
-        # Build email with real emerging trends and AI synthesis
+        # Build email
         html_body = build_email_html(user_top_papers, today, emerging_trends=emerging_trends, subscriber_email=email, ai_synthesis_html=ai_synthesis_html)
         subject   = build_email_subject(user_top_papers, today)
         plain     = build_plain_text_summary(user_top_papers)
@@ -470,9 +440,12 @@ def main() -> int:
         save_html_preview(html_body, email)
         os.environ["RECIPIENT_EMAIL"] = email
 
-        # Record sent discoveries into the persistent JSON history
-        sent_ids = [p.get("id") for p in user_top_papers if p.get("id")]
-        record_sent_for_subscriber(sent_history, email, sent_ids)
+        # Mark all selected discoveries as seen in the Bloom filter
+        for p in user_top_papers:
+            mark_seen(bf, p.get("title", ""), p.get("abstract", ""))
+
+        # Persist the updated Bloom filter to disk
+        save_filter(email, bf)
 
         if args.dry_run:
             print(f"       [DRY RUN] Email NOT sent to {email}.")
@@ -482,11 +455,7 @@ def main() -> int:
             if send_digest(subject, html_body, plain, recipient_email=email):
                 success_count += 1
                 import time
-                time.sleep(1.5) # Stagger to evade Gmail spam filter
-
-    # ── Persist sent history to Git-tracked JSON file ───────────────────────
-    _save_sent_history(sent_history)
-    print(f"\n       [DEDUP] Saved {sum(len(v) for v in sent_history.values())} entries to data/sent_history.json")
+                time.sleep(1.5)  # Stagger to evade Gmail spam filter
 
     print("\n" + "=" * 60)
     print(f"[SUCCESS] Run complete. {success_count}/{len(subscribers)} digests sent. {alerts_fired} alerts fired.")

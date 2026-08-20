@@ -48,10 +48,13 @@ venv.bak/
 latest_report.html
 temp_input.json
 
-# Data output
+# Data output — exclude raw caches but track dedup filters and dashboard
 data/digests/
 data/*.json
 data/*.jsonl
+# Bloom filter files (one per subscriber, ~90 KB each, fixed size forever)
+!data/dedup/
+!data/dedup/*.bloom
 
 # IDEs and Editors
 .vscode/
@@ -60,4 +63,3 @@ data/*.jsonl
 *.swo
 *~
 *.db
-

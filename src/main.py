@@ -53,6 +53,7 @@ from feedback         import ingest_feedback_from_sheet
 # ephemeral. This JSON file is committed+pushed alongside the dashboard,
 # so it persists forever across runs.
 # Format: { "subscriber@email.com": { "discovery_id": "2026-08-20", ... }, ... }
+# DEDUP IS PERMANENT: once a discovery is sent, it is NEVER sent again.
 # ─────────────────────────────────────────────────────────────────────────────
 SENT_HISTORY_PATH = Path("data") / "sent_history.json"
 
@@ -72,11 +73,9 @@ def _save_sent_history(history: dict):
     with open(SENT_HISTORY_PATH, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2, ensure_ascii=False)
 
-def get_sent_ids_for_subscriber(history: dict, email: str, days: int = 30) -> set:
-    """Get discovery IDs already sent to this subscriber within the last N days."""
-    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
-    subscriber_history = history.get(email, {})
-    return {did for did, sent_date in subscriber_history.items() if sent_date >= cutoff}
+def get_sent_ids_for_subscriber(history: dict, email: str) -> set:
+    """Get ALL discovery IDs ever sent to this subscriber. Permanent — no expiry."""
+    return set(history.get(email, {}).keys())
 
 def record_sent_for_subscriber(history: dict, email: str, discovery_ids: list):
     """Record that these discoveries were sent to this subscriber today."""
@@ -86,13 +85,6 @@ def record_sent_for_subscriber(history: dict, email: str, discovery_ids: list):
     for did in discovery_ids:
         history[email][did] = today
 
-def prune_old_entries(history: dict, days: int = 60):
-    """Remove entries older than N days to keep the file small."""
-    cutoff = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
-    for email in list(history.keys()):
-        history[email] = {did: date for did, date in history[email].items() if date >= cutoff}
-        if not history[email]:
-            del history[email]
 
 
 def parse_args():
@@ -368,8 +360,7 @@ def main() -> int:
 
     # Load persistent sent history from Git-tracked JSON file
     sent_history = _load_sent_history()
-    prune_old_entries(sent_history, days=60)
-    print(f"       [DEDUP] Loaded sent history: {sum(len(v) for v in sent_history.values())} total entries across {len(sent_history)} subscriber(s).")
+    print(f"       [DEDUP] Loaded permanent sent history: {sum(len(v) for v in sent_history.values())} total entries across {len(sent_history)} subscriber(s).")
 
     success_count = 0
     for i, sub in enumerate(subscribers, 1):
@@ -393,9 +384,9 @@ def main() -> int:
 
         user_papers = filter_papers_for_subscriber(scored_papers, sub)
         
-        # ── Cross-Day Deduplication (Git-Persistent JSON) ───────────────
-        # This uses the JSON file committed to the repo, NOT the ephemeral SQLite DB
-        already_sent_ids = get_sent_ids_for_subscriber(sent_history, email, days=30)
+        # ── Permanent Deduplication (Git-Persistent JSON) ───────────────
+        # Blocks ANY discovery ever sent to this subscriber — no expiry, no repeats.
+        already_sent_ids = get_sent_ids_for_subscriber(sent_history, email)
         
         before_count = len(user_papers)
         deduped_user_papers = []

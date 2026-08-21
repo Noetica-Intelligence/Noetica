@@ -147,7 +147,7 @@ This keeps ranking aligned with what expert readers actually find valuable — n
 
 Every node in the graph moves through a lifecycle as evidence accumulates:
 
-
+`Speculative → Emerging → Growing → Breakthrough → Established → Foundational → Civilizational → Historical`
 
 Digests also group discoveries by era of impact:
 

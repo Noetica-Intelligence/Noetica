@@ -61,17 +61,48 @@ flowchart LR
 Noetica operates on a hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) graph scoring, and an autonomous LLM Agent (Gemini) for scientific synthesis.
 
 ```mermaid
-graph TD
+flowchart TD
     %% Styling
-    classDef default fill:#1e293b,stroke:#cbd5e1,stroke-width:2px,color:#f8fafc;
-    classDef native fill:#0f172a,stroke:#F7A41D,stroke-width:3px,color:#f8fafc;
-    classDef db fill:#0369a1,stroke:#bae6fd,stroke-width:2px,color:#ffffff;
-    
-    A[Global Intel Sources] -->|"arXiv, PubMed, OpenAlex"| B(Python V3 Ingestion Engine)
-    B -->|"Patents, Grants, GitHub"| B
-    B -->|"@embedFile JSON"| C{Zig Native Engine}
-    C -->|"O N² Traversal & Math"| D[(PostgreSQL / SQLite Dual-Engine)]
-    D -->|"Top Breakthroughs"| E[LLM Polymath Agent]
+    classDef default fill:#0f172a,stroke:#cbd5e1,stroke-width:1px,color:#f8fafc;
+    classDef highlight fill:#1e293b,stroke:#F7A41D,stroke-width:2px,color:#f8fafc;
+    classDef endpoint fill:#0369a1,stroke:#bae6fd,stroke-width:2px,color:#ffffff;
+
+    subgraph "1. FETCH (7 sources)"
+        A1[arXiv API] --> P[Raw Papers Pool]
+        A2[PubMed API] --> P
+        A3[bioRxiv API] --> P
+        A4[Semantic Scholar API] --> P
+        A5[OpenAlex API] --> P
+        A6[ClinicalTrials.gov API] --> P
+        A7[GitHub Search API] --> P
+    end
+
+    subgraph "2. PROCESS"
+        P --> C["Cluster & Dedup<br/>(SHA-256 + Jaccard)"]
+        C --> S["Score & Rank<br/>(Breakthrough + Methodology<br/>+ Cross-disciplinary + Recency)"]
+        S --> KB["Save to Knowledge Base<br/>(SQLite + JSON cache)"]
+    end
+
+    subgraph "3. PERSONALIZE (per subscriber)"
+        GS["Google Sheets<br/>Subscribers"] --> F
+        KB --> F["Filter by Interests<br/>(SentenceTransformer cosine sim)"]
+        F --> BF["Bloom Filter<br/>(permanent dedup)"]
+        BF --> Q["Enforce Type Quotas<br/>(≤1 per requested type)"]
+        Q --> AI["AI Synthesis<br/>(Gemini/Groq LLM)"]
+    end
+
+    subgraph "4. DELIVER"
+        AI --> HTML["Build HTML Email<br/>(responsive, scored cards)"]
+        HTML --> SMTP["Send via Gmail SMTP"]
+        SMTP --> INBOX["📬 Subscriber's Inbox"]:::highlight
+    end
+
+    subgraph "5. PERSIST"
+        BF -->|"Save .bloom"| GIT["Git Commit + Push"]
+        KB -->|"Dashboard JSON"| DASH["GitHub Pages Dashboard"]:::highlight
+        GIT --> REPO["GitHub Repository"]
+        DASH --> REPO
+    end
 ```
 
 ---

@@ -2,7 +2,7 @@
 
 <img src="assets/logo.png" alt="Noetica Logo" width="160" />
 
-# 🌌 Noetica
+# Noetica
 **Mapping the Evolution of Human Knowledge.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)

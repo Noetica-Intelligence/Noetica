@@ -28,11 +28,22 @@ It runs on three engines — **Python** for orchestration, **Zig** for the compu
 
 ```mermaid
 flowchart LR
-    A["Your Profile<br/>fields · level · time budget"] --> B["Global Scan<br/>PubMed · arXiv · OpenAlex · Patents"]
-    B --> C["Scoring Engine<br/>Novelty · Evidence · Trend"]
-    C --> D["LLM Synthesis<br/>written at your level"]
-    D --> E["Your Inbox<br/>sized to your time budget"]
-    C --> F["Web Dashboard<br/>31x5 Matrix (Live)"]
+    %% Styling
+    classDef default fill:#0f172a,stroke:#cbd5e1,stroke-width:1px,color:#f8fafc;
+    classDef highlight fill:#1e293b,stroke:#F7A41D,stroke-width:2px,color:#f8fafc;
+    classDef endpoint fill:#0369a1,stroke:#bae6fd,stroke-width:2px,color:#ffffff;
+
+    A[7 API Sources]:::endpoint -->|Fetch| B[Raw Discoveries]
+    B -->|Cluster & Dedup| C[Unique Pool]
+    C -->|Score & Rank| D[Scored Papers]
+    
+    D -->|Filter per User| E[Personalized Set]
+    E -->|Bloom Filter| F[Never-Repeated Set]
+    F -->|AI Synthesis| G[Gemini LLM]:::highlight
+    G -->|Build HTML| H[Beautiful Email]
+    H -->|SMTP| I[Gmail Inbox]:::endpoint
+    
+    D -->|Dashboard| J[GitHub Pages]:::endpoint
 ```
 
 1. **Set your boundaries.** A short form captures your fields of interest, your expertise level, and how much time you have to read.

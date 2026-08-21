@@ -45,7 +45,7 @@ flowchart LR
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 Noetica operates on a hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) graph scoring, and an autonomous LLM Agent (Gemini) for scientific synthesis.
 

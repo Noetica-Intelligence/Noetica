@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noetica"
+version = "1.0.0"
+description = "Mapping the Evolution of Human Knowledge"
+authors = [
+    {name = "Noetica Intelligence", email = "hello@noetica.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests==2.31.0",
+    "google-genai",
+    "groq",
+    "sentence-transformers==3.0.0",
+    "langdetect",
+    "feedparser",
+    "beautifulsoup4",
+    "lxml",
+    "gspread",
+    "oauth2client",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "flake8>=7.0.0",
+    "black>=24.0.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'

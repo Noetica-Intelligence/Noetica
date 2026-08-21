@@ -26,19 +26,14 @@ It runs on three engines — **Python** for orchestration, **Zig** for the compu
 
 
 
-<details>
-<summary>Prefer plain text? Expand for the Mermaid source.</summary>
-
 ```mermaid
 flowchart LR
-    A["Your Profile<br/>fields · level · time budget"] --> B["Global Scan<br/>PubMed · Europe PMC · GitHub · Patents"]
+    A["Your Profile<br/>fields · level · time budget"] --> B["Global Scan<br/>PubMed · arXiv · OpenAlex · Patents"]
     B --> C["Scoring Engine<br/>Novelty · Evidence · Trend"]
     C --> D["LLM Synthesis<br/>written at your level"]
     D --> E["Your Inbox<br/>sized to your time budget"]
     C --> F["Web Dashboard<br/>31x5 Matrix (Live)"]
 ```
-
-</details>
 
 1. **Set your boundaries.** A short form captures your fields of interest, your expertise level, and how much time you have to read.
 2. **Noetica scans continuously.** It pulls from 7 major APIs (arXiv, PubMed, bioRxiv, Semantic Scholar, OpenAlex, ClinicalTrials.gov, and GitHub Search).
@@ -47,6 +42,26 @@ flowchart LR
 5. **An LLM writes your summary.** Top-ranked items are synthesized into one briefing by Gemini.
 6. **The Web Dashboard updates.** The knowledge graph is mapped to a massive 31x5 matrix (31 Paradigms x 5 Discovery Types) and deployed instantly via GitHub Pages.
 7. **It lands in your inbox.** The personalized report is delivered via email on schedule.
+
+---
+
+## 🏛️ Architecture
+
+Noetica operates on a hybrid-tier architecture combining the massive ecosystem of Python for data ingestion, the raw compiled speed of Zig for O(N²) graph scoring, and an autonomous LLM Agent (Gemini) for scientific synthesis.
+
+```mermaid
+graph TD
+    %% Styling
+    classDef default fill:#1e293b,stroke:#cbd5e1,stroke-width:2px,color:#f8fafc;
+    classDef native fill:#0f172a,stroke:#F7A41D,stroke-width:3px,color:#f8fafc;
+    classDef db fill:#0369a1,stroke:#bae6fd,stroke-width:2px,color:#ffffff;
+    
+    A[Global Intel Sources] -->|arXiv, PubMed, OpenAlex| B(Python V3 Ingestion Engine)
+    B -->|Patents, Grants, GitHub| B
+    B -->|@embedFile JSON| C{Zig Native Engine}
+    C -->|O N² Traversal & Math| D[(PostgreSQL / SQLite Dual-Engine)]
+    D -->|Top Breakthroughs| E[LLM Polymath Agent]
+```
 
 ---
 

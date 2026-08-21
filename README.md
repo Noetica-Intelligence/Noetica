@@ -1,8 +1,9 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Noetica Logo" width="250" />
+<img src="assets/logo.png" alt="Noetica Logo" width="160" />
 
-# Noetica
+# 🌌 Noetica
+**Mapping the Evolution of Human Knowledge.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f172a.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/Status-Early%20Access-F7A41D.svg?style=for-the-badge)](#get-early-access)

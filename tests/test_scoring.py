@@ -14,7 +14,7 @@ def test_score_novelty():
     assert score_hype <= 9.0, "Should penalize extreme hype words"
     
     # Genuine signals
-    score_sig = score_novelty("First-principles proof", "Experimental observation confirms the manifold topology.")
+    score_sig = score_novelty("First evidence of a new mechanism", "This discovery unifies the fields.")
     assert score_sig >= 8.0, "Should reward structural breakthrough keywords"
 
 def test_score_evidence():

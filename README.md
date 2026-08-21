@@ -56,11 +56,11 @@ graph TD
     classDef native fill:#0f172a,stroke:#F7A41D,stroke-width:3px,color:#f8fafc;
     classDef db fill:#0369a1,stroke:#bae6fd,stroke-width:2px,color:#ffffff;
     
-    A[Global Intel Sources] -->|arXiv, PubMed, OpenAlex| B(Python V3 Ingestion Engine)
-    B -->|Patents, Grants, GitHub| B
-    B -->|@embedFile JSON| C{Zig Native Engine}
-    C -->|O N² Traversal & Math| D[(PostgreSQL / SQLite Dual-Engine)]
-    D -->|Top Breakthroughs| E[LLM Polymath Agent]
+    A[Global Intel Sources] -->|"arXiv, PubMed, OpenAlex"| B(Python V3 Ingestion Engine)
+    B -->|"Patents, Grants, GitHub"| B
+    B -->|"@embedFile JSON"| C{Zig Native Engine}
+    C -->|"O N² Traversal & Math"| D[(PostgreSQL / SQLite Dual-Engine)]
+    D -->|"Top Breakthroughs"| E[LLM Polymath Agent]
 ```
 
 ---

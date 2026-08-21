@@ -8,6 +8,7 @@ source_types, NET sub-scores, and a proper 0-10 composite score.
 
 import json
 import random
+import datetime
 from pathlib import Path
 from dashboard_config import PARADIGMS, DISCOVERY_TYPES
 

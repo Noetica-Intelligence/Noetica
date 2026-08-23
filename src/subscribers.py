@@ -16,16 +16,100 @@ def get_subscribers() -> list[dict]:
                       Report Frequency, Interests, Discovery Preferences, 
                       Exploration Preference, Consent
     """
+    subscribers = []
     sheet_id = os.environ.get("GOOGLE_SHEET_ID")
-    if not sheet_id:
-        print("[WARN] No GOOGLE_SHEET_ID found. Defaulting to environment variable subscribers.")
+    
+    if sheet_id and sheet_id.strip() and sheet_id != "YOUR_SHEET_ID_HERE":
+        if sheet_id.startswith("http"):
+            csv_url = sheet_id
+        else:
+            csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+            
+        print(f"[INFO] Fetching subscribers from Google Sheet...")
+        try:
+            req = urllib.request.Request(csv_url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req) as response:
+                lines = [line.decode('utf-8') for line in response.readlines()]
+                
+            reader = csv.reader(lines)
+            headers = next(reader)
+            unique_headers = []
+            seen = set()
+            for h in headers:
+                if h in seen:
+                    unique_headers.append(f"{h}_duplicate_{len(seen)}")
+                else:
+                    unique_headers.append(h)
+                    seen.add(h)
+                    
+            dict_reader = csv.DictReader(lines[1:], fieldnames=unique_headers)
+            for raw_row in dict_reader:
+                row = {}
+                for k, v in raw_row.items():
+                    if not k: continue
+                    k_lower = k.lower()
+                    val = v.strip() if v else ""
+                    
+                    if "email" in k_lower:
+                        if not row.get("Email") or val:
+                            row["Email"] = val
+                    elif "name" in k_lower:
+                        row["Name"] = val
+                    elif "expertise" in k_lower or "best describes" in k_lower:
+                        row["Expertise Level"] = val
+                    elif "time" in k_lower or "dedicate" in k_lower:
+                        row["Reading Time"] = val
+                    elif "frequency" in k_lower or "often" in k_lower:
+                        row["Report Frequency"] = val
+                    elif "paradigms" in k_lower or "sub-fields" in k_lower or "sub-domain" in k_lower or ("interest" in k_lower and "outside" not in k_lower):
+                        if "Interests" in row and val:
+                            row["Interests"] += "," + val
+                        elif val:
+                            row["Interests"] = val
+                    elif "types" in k_lower or "preferences" in k_lower:
+                        row["Discovery Preferences"] = val
+                    elif "outside" in k_lower or "exploration" in k_lower:
+                        row["Exploration Preference"] = val
+                    elif "consent" in k_lower:
+                        row["Consent"] = val
+                    elif "opt-out" in k_lower or "unsubscribed" in k_lower:
+                        row["OptOut"] = val
+                    elif "active" in k_lower or "status" in k_lower:
+                        row["Active"] = val
+
+                # Default missing consent column to yes so it doesn't fail if they forgot the question
+                if "Consent" not in row:
+                    row["Consent"] = "yes"
+
+                # Only include users who provided an email and did not explicitly decline consent
+                consent_str = str(row.get("Consent", "yes")).strip().lower()
+                if row.get("Email") and consent_str not in ["no", "i disagree", "false"]:
+                    # Check for opt-out or inactive status
+                    if str(row.get("OptOut", "no")).strip().lower() == "yes":
+                        continue
+                    if str(row.get("Active", "yes")).strip().lower() == "no":
+                        continue
+                    subscribers.append(row)
+                    
+            print(f"[OK] Loaded {len(subscribers)} active subscribers from Google Sheet.")
+            
+        except urllib.error.URLError as e:
+            print(f"[ERROR] Error fetching Google Sheet. Is it Published to the Web? {e}")
+            print("[WARN] Google Sheet fetch failed. Falling back to environment variables.")
+        except Exception as e:
+            print(f"[ERROR] Unexpected error reading subscribers from sheet: {e}")
+            print("[WARN] Google Sheet fetch failed. Falling back to environment variables.")
+
+    if subscribers:
+        return subscribers
         
-        # Check NOETICA_SUBSCRIBERS first (comma separated list)
-        subs_env = os.environ.get("NOETICA_SUBSCRIBERS")
-        if subs_env:
-            subs_list = []
-            for email in subs_env.split(","):
-                subs_list.append({
+    # FALLBACK to NOETICA_SUBSCRIBERS
+    subs_env = os.environ.get("NOETICA_SUBSCRIBERS")
+    if subs_env:
+        print("[INFO] Loading subscribers from NOETICA_SUBSCRIBERS...")
+        for email in subs_env.split(","):
+            if email.strip():
+                subscribers.append({
                     "Email": email.strip(),
                     "Name": email.split("@")[0].capitalize(),
                     "Reading Time": "15 Minutes",
@@ -33,11 +117,14 @@ def get_subscribers() -> list[dict]:
                     "Exploration Preference": "Yes",
                     "Report Frequency": "Daily"
                 })
-            return subs_list
+        if subscribers:
+            print(f"[OK] Loaded {len(subscribers)} subscribers from NOETICA_SUBSCRIBERS.")
+            return subscribers
             
-        recipient = os.environ.get("RECIPIENT_EMAIL")
-        if not recipient:
-            return []
+    # FALLBACK to RECIPIENT_EMAIL
+    recipient = os.environ.get("RECIPIENT_EMAIL")
+    if recipient:
+        print("[INFO] Loading single admin subscriber from RECIPIENT_EMAIL...")
         return [{
             "Email": recipient,
             "Name": "Admin",
@@ -46,91 +133,8 @@ def get_subscribers() -> list[dict]:
             "Exploration Preference": "Yes",
             "Report Frequency": "Daily"
         }]
-
-    # Fetch CSV from Google Sheets
-    if sheet_id.startswith("http"):
-        csv_url = sheet_id
-    else:
-        csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
         
-    print(f"[INFO] Fetching subscribers from Google Sheet...")
-    
-    try:
-        req = urllib.request.Request(csv_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            lines = [line.decode('utf-8') for line in response.readlines()]
-            
-        reader = csv.reader(lines)
-        headers = next(reader)
-        unique_headers = []
-        seen = set()
-        for h in headers:
-            if h in seen:
-                unique_headers.append(f"{h}_duplicate_{len(seen)}")
-            else:
-                unique_headers.append(h)
-                seen.add(h)
-                
-        dict_reader = csv.DictReader(lines[1:], fieldnames=unique_headers)
-        subscribers = []
-        for raw_row in dict_reader:
-            row = {}
-            for k, v in raw_row.items():
-                if not k: continue
-                k_lower = k.lower()
-                val = v.strip() if v else ""
-                
-                if "email" in k_lower:
-                    if not row.get("Email") or val:
-                        row["Email"] = val
-                elif "name" in k_lower:
-                    row["Name"] = val
-                elif "expertise" in k_lower or "best describes" in k_lower:
-                    row["Expertise Level"] = val
-                elif "time" in k_lower or "dedicate" in k_lower:
-                    row["Reading Time"] = val
-                elif "frequency" in k_lower or "often" in k_lower:
-                    row["Report Frequency"] = val
-                elif "paradigms" in k_lower or "sub-fields" in k_lower or "sub-domain" in k_lower or ("interest" in k_lower and "outside" not in k_lower):
-                    if "Interests" in row and val:
-                        row["Interests"] += "," + val
-                    elif val:
-                        row["Interests"] = val
-                elif "types" in k_lower or "preferences" in k_lower:
-                    row["Discovery Preferences"] = val
-                elif "outside" in k_lower or "exploration" in k_lower:
-                    row["Exploration Preference"] = val
-                elif "consent" in k_lower:
-                    row["Consent"] = val
-                elif "opt-out" in k_lower or "unsubscribed" in k_lower:
-                    row["OptOut"] = val
-                elif "active" in k_lower or "status" in k_lower:
-                    row["Active"] = val
-
-            # Default missing consent column to yes so it doesn't fail if they forgot the question
-            if "Consent" not in row:
-                row["Consent"] = "yes"
-
-            # Only include users who provided an email and did not explicitly decline consent
-            consent_str = str(row.get("Consent", "yes")).strip().lower()
-            if row.get("Email") and consent_str not in ["no", "i disagree", "false"]:
-                # Check for opt-out or inactive status
-                if str(row.get("OptOut", "no")).strip().lower() == "yes":
-                    continue
-                if str(row.get("Active", "yes")).strip().lower() == "no":
-                    continue
-                subscribers.append(row)
-                
-        print(f"[OK] Loaded {len(subscribers)} active subscribers.")
-        return subscribers
-        
-    except urllib.error.URLError as e:
-        print(f"[ERROR] Error fetching Google Sheet. Is it Published to the Web? {e}")
-        print("[WARN] No subscribers loaded. Please configure GOOGLE_SHEET_ID or NOETICA_SUBSCRIBERS.")
-        return []
-    except Exception as e:
-        print(f"[ERROR] Unexpected error reading subscribers: {e}")
-        return []
+    return []
 
 def get_paper_limit_for_time(reading_time: str) -> int:
     """Map reading time to number of papers."""

@@ -61,7 +61,7 @@ def generate_dashboard():
             print(f"Failed to load papers: {e}")
 
     # Sort existing papers by composite score (0-10 scale)
-    papers = sorted(papers, key=lambda x: x.get("composite_score", 0) or 0, reverse=True)
+    papers = sorted(papers, key=lambda x: x.get("composite_score") or x.get("scores", {}).get("composite", 0) or 0, reverse=True)
 
     def map_source_to_dtype(source_types):
         if not source_types:

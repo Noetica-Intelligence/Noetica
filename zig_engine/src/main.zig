@@ -13,14 +13,15 @@ pub const Discovery = struct {
 };
 
 pub fn main() !void {
-    // 1. Read JSON from STDIN
+    // 1. Read JSON from input.json
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const allocator = arena.allocator();
+    const stdout = std.io.getStdOut().writer();
     
     const input_data = std.fs.cwd().readFileAlloc(allocator, "input.json", 1024 * 1024 * 100) catch |err| {
         std.debug.print("Failed to read input.json: {}\n", .{err});
-        std.debug.print("{{ \"nodes\": [], \"edges\": [] }}\n", .{});
+        try stdout.print("{{ \"nodes\": [], \"edges\": [] }}\n", .{});
         return;
     };
     
@@ -65,35 +66,35 @@ pub fn main() !void {
     // 4. Compute Network Graph PageRank
     const net_results = try network.computeNetwork(allocator, discoveries.len, edges.items, domains, initial_scores);
     
-    // 5. Write Output
-    std.debug.print("{{\n", .{});
-    std.debug.print("  \"nodes\": [\n", .{});
+    // 5. Write Output to STDOUT
+    try stdout.print("{{\n", .{});
+    try stdout.print("  \"nodes\": [\n", .{});
 
     for (discoveries, 0..) |d, i| {
         const bio = biosignal.computeBioSignal(d.title, d.abstract);
         const net = net_results[i];
         
-        std.debug.print(
-            \\    {{ "id": "{s}", "title": "{s}", "score": {d:.2}, "primary_signal": "{s}", "network_rank": {d}, "influence": {d:.2}, "centrality": "{s}" }}{s}
+        try stdout.print(
+            \\    {{ "id": "{s}", "score": {d:.2}, "primary_signal": "{s}", "network_rank": {d}, "influence": {d:.2}, "centrality": "{s}" }}{s}
         , .{
-            d.id, d.title, initial_scores[i], bio.primary_signal, net.influence_rank, net.influence_score, network.nodeClassString(net.centrality_class),
+            d.id, initial_scores[i], bio.primary_signal, net.influence_rank, net.influence_score, network.nodeClassString(net.centrality_class),
             if (i == discoveries.len - 1) "\n" else ",\n"
         });
     }
-    std.debug.print("  ],\n", .{});
+    try stdout.print("  ],\n", .{});
     
-    std.debug.print("  \"edges\": [\n", .{});
+    try stdout.print("  \"edges\": [\n", .{});
     for (edges.items, 0..) |e, idx| {
         const d1 = discoveries[e.source];
         const d2 = discoveries[e.target];
         const out = edge_outputs.items[idx];
         
-        std.debug.print(
+        try stdout.print(
             \\    {{ "source": "{s}", "target": "{s}", "relationship": "{s}", "weight": {d:.2} }}{s}
         , .{ d1.id, d2.id, out.rel_type, out.weight,
              if (idx == edges.items.len - 1) "\n" else ",\n"
         });
     }
-    std.debug.print("\n  ]\n", .{});
-    std.debug.print("}}\n", .{});
+    try stdout.print("\n  ]\n", .{});
+    try stdout.print("}}\n", .{});
 }

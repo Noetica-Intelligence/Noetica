@@ -13,7 +13,7 @@ def fetch_recent_oncology_trials(days_back=7):
     """Fetches recent clinical trials related to Oncology/Cancer."""
     logger.info(f"Fetching oncology clinical trials from the last {days_back} days...")
     
-    date_from = (datetime.utcnow() - timedelta(days=days_back)).strftime('%Y-%m-%d')
+    date_from = (datetime.now(datetime.timezone.utc) - timedelta(days=days_back)).strftime('%Y-%m-%d')
     
     # Using the ClinicalTrials.gov API v2
     params = {
@@ -53,7 +53,8 @@ def fetch_recent_oncology_trials(days_back=7):
                 "domain": "Clinical Oncology",
                 "authors": ["ClinicalTrials.gov"],
                 "date": date.today().isoformat(),
-                "pdf_url": ""
+                "pdf_url": "",
+                "source_types": ["trial"]
             })
             
         logger.info(f"Successfully fetched {len(trials)} clinical trials.")

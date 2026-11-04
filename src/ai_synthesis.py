@@ -1,3 +1,5 @@
+_ABSTRACT_CACHE = {}
+
 """
 Scientific Intelligence Engine - Personalized AI Synthesis
 Uses Gemini to generate a tailored executive summary for the user's specific expertise level.
@@ -20,6 +22,8 @@ def format_abstract_pointwise(abstract: str) -> str:
     """
     if not abstract:
         return ""
+    if abstract in _ABSTRACT_CACHE:
+        return _ABSTRACT_CACHE[abstract]
         
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or not genai:
@@ -44,7 +48,7 @@ ORIGINAL ABSTRACT:
 {abstract}
 """
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt
         )
         text = response.text.strip()
@@ -54,7 +58,8 @@ ORIGINAL ABSTRACT:
         text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
         
         # We always return the generated text, as the AI likely structured it somehow.
-        return text.replace("\\n", " ")
+        _ABSTRACT_CACHE[abstract] = text.replace("\\n", " ")
+        return _ABSTRACT_CACHE[abstract]
     except Exception as e:
         print(f"   ⚠️  Gemini Abstract Formatting failed: {e}")
         return abstract
@@ -107,7 +112,7 @@ TOP DISCOVERIES TODAY:
         # Dynamic Expertise Router
         exp_lower = expertise.lower()
         if "advanced" in exp_lower or "research" in exp_lower or "industry" in exp_lower:
-            target_model = "gpt-oss-120b"
+            target_model = "llama-3.3-70b-versatile"
             print(f"      ↳ Routing to Deep Reasoning Model ({target_model})")
         else:
             target_model = "llama-3.3-70b-versatile"
@@ -168,7 +173,7 @@ TOP DISCOVERIES TODAY:
 {paper_context}
 """
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=prompt
         )
         text = response.text.strip()

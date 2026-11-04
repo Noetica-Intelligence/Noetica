@@ -91,7 +91,14 @@ def get_subscribers() -> list[dict]:
                         continue
                     subscribers.append(row)
                     
-            print(f"[OK] Loaded {len(subscribers)} active subscribers from Google Sheet.")
+            # Deduplicate by email address, keeping the most recent entry
+            dedup_by_email = {}
+            for s in subscribers:
+                email_key = s.get("Email", "").strip().lower()
+                if email_key:
+                    dedup_by_email[email_key] = s
+            subscribers = list(dedup_by_email.values())
+            print(f"[OK] Loaded {len(subscribers)} unique active subscriber(s) from Google Sheet.")
             
         except urllib.error.URLError as e:
             print(f"[ERROR] Error fetching Google Sheet. Is it Published to the Web? {e}")

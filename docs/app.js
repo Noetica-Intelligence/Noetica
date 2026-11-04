@@ -145,8 +145,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     <div class="card-calibrate">
                         <span class="calibrate-label">Calibrate Model:</span>
-                        <button class="btn-useful" onclick="calibrate('${item.title}', 'useful')">👍 Useful</button>
-                        <button class="btn-noise" onclick="calibrate('${item.title}', 'noise')">👎 Noise</button>
+                        <button class="btn-useful" data-title="${encodeURIComponent(item.title)}" data-type="useful">👍 Useful</button>
+                        <button class="btn-noise" data-title="${encodeURIComponent(item.title)}" data-type="noise">👎 Noise</button>
                     </div>
                 `;
                 
@@ -165,13 +165,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ── Calibrate Model (Feedback) ──
-function calibrate(title, type) {
-    const btn = event.target;
+function calibrate(title, type, btn) {
+    if (!btn) return;
     btn.classList.add("calibrated");
     
-    // Store feedback in localStorage
-    const feedbackKey = `noetica_feedback_${btoa(title).substring(0, 20)}`;
-    localStorage.setItem(feedbackKey, type);
+    // Safe string hash for localStorage key (avoids btoa Unicode / non-Latin1 crashes)
+    let hash = 0;
+    for (let i = 0; i < title.length; i++) {
+        hash = ((hash << 5) - hash) + title.charCodeAt(i);
+        hash |= 0;
+    }
+    const feedbackKey = `noetica_feedback_${Math.abs(hash)}`;
+    try {
+        localStorage.setItem(feedbackKey, type);
+    } catch (e) {
+        console.warn("Storage full or unavailable:", e);
+    }
     
     // Visual feedback
     if (type === "useful") {
@@ -185,6 +194,15 @@ function calibrate(title, type) {
     }
     btn.disabled = true;
 }
+
+// Global delegated event listener for feedback buttons (safe against single quotes in titles)
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-useful, .btn-noise");
+    if (!btn) return;
+    const rawTitle = decodeURIComponent(btn.getAttribute("data-title") || "");
+    const type = btn.getAttribute("data-type") || "useful";
+    calibrate(rawTitle, type, btn);
+});
 
 // ── Animation Keyframes ──
 const style = document.createElement('style');

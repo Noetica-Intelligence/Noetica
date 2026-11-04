@@ -293,6 +293,7 @@ def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = Non
         "citation_v":  round(citation_v, 2),
         "composite":   final_score,  # Now stores the 10-point float
     }
+    paper["composite_score"] = final_score
     
     # Updated Output Payload
     paper["strategic_implication"] = " ".join(implications)
@@ -305,7 +306,7 @@ def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = Non
 
 def score_and_rank(papers: list[dict], top_n: int = 15, feedback_boosts: dict[str, float] = None) -> list[dict]:
     scored = [compute_composite_score(p, feedback_boosts) for p in papers]
-    scored.sort(key=lambda p: p["scores"]["composite"], reverse=True)
+    scored.sort(key=lambda p: p.get("composite_score", p.get("scores", {}).get("composite", 0)), reverse=True)
 
     domain_counts: dict[str, int] = {}
     diverse_top: list[dict] = []

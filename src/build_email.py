@@ -245,7 +245,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
     if wildcard:
         wc_title  = html_lib.escape(latex_to_unicode(wildcard.get("title","")))
         wc_url    = wildcard.get("url","#")
-        wc_domain = wildcard.get("domain","").title()
+        wc_domain = wildcard.get("domain", "")
         wc_source = html_lib.escape(wildcard.get("source", ""))
         
         wc_authors_list = [a for a in (wildcard.get("authors") or []) if a and a.lower() != "unknown"]
@@ -253,10 +253,10 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         if len(wc_authors_list) > 3: wc_authors += " et al."
         
         if "structured_abstract" in wildcard:
-            wc_abstract = render_markdown_to_html(latex_to_unicode(wildcard["structured_abstract"]))
+            wc_abstract = render_markdown_to_html(latex_to_unicode(html_lib.escape(wildcard["structured_abstract"])))
         else:
-            raw_wc_abs = latex_to_unicode(wildcard.get("abstract", ""))
-            wc_abstract = html_lib.escape(textwrap.shorten(raw_wc_abs, width=300, placeholder="..."))
+            raw_wc_abs = html_lib.escape(textwrap.shorten(wildcard.get("abstract", ""), width=300, placeholder="..."))
+            wc_abstract = latex_to_unicode(raw_wc_abs)
             
         base_strat = wildcard.get("strategic_implication", "")
         wc_strat  = html_lib.escape(f"Highly disruptive anomaly detected. {base_strat}")

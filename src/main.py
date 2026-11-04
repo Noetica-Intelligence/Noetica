@@ -265,7 +265,8 @@ def main() -> int:
         if zig_bin_path.exists():
             res = subprocess.run([str(zig_bin_path)], capture_output=True, text=True, cwd=str(zig_dir))
             if res.returncode == 0:
-                zig_data = json.loads(res.stdout)
+                raw_out = res.stdout.strip() or res.stderr.strip()
+                zig_data = json.loads(raw_out)
                 zig_nodes = {n["id"]: n for n in zig_data.get("nodes", [])}
                 
                 # Merge zig scores into papers
@@ -279,10 +280,14 @@ def main() -> int:
                         p["biosignal"] = zn.get("primary_signal", "none")
                         
                         # Add a bonus to the final score based on network influence
-                        p["composite_score"] = min(10.0, p.get("composite_score", 0) + (zn.get("influence", 0) * 0.2))
+                        curr_score = p.get("composite_score") or p.get("scores", {}).get("composite", 0)
+                        updated_score = min(10.0, round(curr_score + (zn.get("influence", 0) * 0.2), 2))
+                        p["composite_score"] = updated_score
+                        if "scores" in p:
+                            p["scores"]["composite"] = updated_score
                 
                 # Sort again by updated score
-                scored_papers = sorted(scored_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
+                scored_papers = sorted(scored_papers, key=lambda x: x.get("composite_score") or x.get("scores", {}).get("composite", 0) or 0, reverse=True)
                 print("       [SUCCESS] Zig Engine enrichment complete.")
             else:
                 print(f"       [ERROR] Zig Engine failed (code {res.returncode}): {res.stderr}")
@@ -414,7 +419,7 @@ def main() -> int:
                 user_top_papers.append(p)
 
         # Sort by composite score (highest first)
-        user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score", 0), reverse=True)
+        user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score") or x.get("scores", {}).get("composite", 0) or 0, reverse=True)
 
         if not user_top_papers:
             print(f"       [WARNING] No NEW matching discoveries for {name}'s interests.")

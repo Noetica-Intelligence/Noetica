@@ -150,17 +150,21 @@ def _send_alert_email(subject: str, html_body: str, recipients: list[str]):
         print("⚠️  Alert: no SMTP credentials found — skipping email send.")
         return
 
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"]    = sender_email
-    msg["To"]      = ", ".join(recipients)
-    msg.attach(MIMEText(html_body, "html"))
-
+    sent_count = 0
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipients, msg.as_string())
-        print(f"🚨 Alert sent to {len(recipients)} recipient(s): {subject}")
+            for recipient in recipients:
+                if not recipient:
+                    continue
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = subject
+                msg["From"]    = f"Noetica Alert <{sender_email}>"
+                msg["To"]      = recipient
+                msg.attach(MIMEText(html_body, "html"))
+                server.sendmail(sender_email, [recipient], msg.as_string())
+                sent_count += 1
+        print(f"🚨 Alert sent privately to {sent_count} recipient(s): {subject}")
     except Exception as e:
         print(f"❌ Alert email failed: {e}")
 

@@ -122,7 +122,8 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
                 "domain": "Biomedical Funding",
                 "date": item.get("project_start_date", datetime.date.today().isoformat()),
                 "url": f"https://reporter.nih.gov/project-details/{item.get('appl_id')}",
-                "funding_amount": cost
+                "funding_amount": cost,
+                "source_types": ["grant"]
             })
     except Exception as e:
         print(f"⚠️ NIH Fetch Error for '{query}': {e}")
@@ -164,7 +165,8 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
                 "domain": "Open Source Software",
                 "date": item.get("updated_at", datetime.date.today().isoformat()),
                 "url": item.get("html_url", ""),
-                "stars": item.get("stargazers_count", 0)
+                "stars": item.get("stargazers_count", 0),
+                "source_types": ["repo"]
             })
     except Exception as e:
         print(f"⚠️ GitHub Fetch Error for '{topic}': {e}")
@@ -204,7 +206,8 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
                 "source": "Europe PMC (Patents)",
                 "domain": "Applied Technology / Patent",
                 "date": pub_date,
-                "url": f"https://europepmc.org/article/PAT/{item.get('id', '')}"
+                "url": f"https://europepmc.org/article/PAT/{item.get('id', '')}",
+                "source_types": ["patent"]
             })
     except Exception as e:
         print(f"⚠️ Patent Fetch Error for '{query}': {e}")
@@ -246,7 +249,8 @@ def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
                 "source": v,
                 "domain": "Conference Proceedings",
                 "date": datetime.date(year, 1, 1).isoformat(),
-                "url": item.get("url", "")
+                "url": item.get("url", ""),
+                "source_types": ["paper"]
             })
     except Exception as e:
         print(f"⚠️ Conference Fetch Error for '{venue}': {e}")
@@ -311,7 +315,8 @@ def fetch_startup_funding_rss(query: str, max_results: int = 3) -> List[Dict[str
                     "source": "Aggregated VC Feeds",
                     "domain": "Venture Capital",
                     "date": pub_date,
-                    "url": link
+                    "url": link,
+                    "source_types": ["funding"]
                 })
                 
                 if len(results) >= max_results:

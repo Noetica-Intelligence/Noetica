@@ -6,7 +6,10 @@ import pytest
 # Add src to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from score_papers import score_novelty, score_evidence, score_recency, score_domain_impact, get_cross_disciplinary_connections
+from score_papers import (
+    score_novelty, score_evidence, score_recency, score_domain_impact,
+    get_cross_disciplinary_connections, compute_composite_score, score_and_rank
+)
 
 def test_score_novelty():
     # Hype penalty
@@ -37,3 +40,32 @@ def test_cross_disciplinary():
     connections = get_cross_disciplinary_connections("Quantum Computing")
     assert "Cryptography" in connections
     assert "AI" in connections
+
+def test_compute_composite_score_sets_composite_score_key():
+    paper = {
+        "id": "test_paper_1",
+        "title": "Novel mechanism of FGFR4 inhibition in hepatocellular carcinoma",
+        "abstract": "We show in vivo clinical efficacy with n=450 patients. p-value 0.01.",
+        "domain": "Oncology",
+        "date": datetime.date.today().isoformat(),
+        "source": "Nature",
+        "cited_by": 5
+    }
+    scored = compute_composite_score(paper)
+    assert "composite_score" in scored, "Must directly set 'composite_score' on paper dict"
+    assert scored["composite_score"] > 0.0
+    assert scored["scores"]["composite"] == scored["composite_score"]
+
+def test_feedback_boost_applied():
+    paper = {
+        "id": "boost_paper_99",
+        "title": "Quantum algorithms for molecular dynamics",
+        "abstract": "Theorem and proof of linear speedup.",
+        "domain": "Quantum Computing",
+        "date": datetime.date.today().isoformat(),
+        "source": "arXiv",
+        "cited_by": 0
+    }
+    scored_unboosted = compute_composite_score(dict(paper), feedback_boosts={})
+    scored_boosted = compute_composite_score(dict(paper), feedback_boosts={"boost_paper_99": 0.3})
+    assert scored_boosted["composite_score"] >= scored_unboosted["composite_score"] + 0.25

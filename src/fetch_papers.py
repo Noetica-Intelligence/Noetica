@@ -430,6 +430,18 @@ def cluster_discoveries(papers: list[dict]) -> list[dict]:
             new_authors = [a for a in p.get("authors", []) if a not in matched_cluster.get("authors", [])]
             matched_cluster["authors"].extend(new_authors)
             
+            # Aggregate source_types
+            st_existing = set(matched_cluster.get("source_types", ["paper"]))
+            st_new = set(p.get("source_types", ["paper"]))
+            matched_cluster["source_types"] = list(st_existing | st_new)
+            
+            # Preserve pdf_url if cluster lacks one
+            if not matched_cluster.get("pdf_url") and p.get("pdf_url"):
+                matched_cluster["pdf_url"] = p.get("pdf_url")
+                
+            # Retain highest cited_by
+            matched_cluster["cited_by"] = max(matched_cluster.get("cited_by", 0), p.get("cited_by", 0))
+            
             # Prefer peer-reviewed metadata over preprints
             if matched_cluster.get("source") == "arXiv" and p.get("source") != "arXiv":
                 matched_cluster["source"] = p.get("source")

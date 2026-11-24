@@ -232,7 +232,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     </div>"""
 
 
-def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[dict] = None, subscriber_email: str = "", ai_synthesis_html: str = "") -> str:
+def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[dict] = None, subscriber_email: str = "", ai_synthesis_html: str = "", total_scanned: int = 0) -> str:
     today = datetime.date.today().strftime("%A, %B %d, %Y")
     total = len(papers)
 
@@ -400,7 +400,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                  <td align="center" width="33%">
-                   <div style="font-size:28px;font-weight:800;color:#0f172a;line-height:1;">{len(papers) * 17 + 84}</div>
+                   <div style="font-size:28px;font-weight:800;color:#0f172a;line-height:1;">{total_scanned if total_scanned > 0 else total}</div>
                    <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-top:8px;">Signals Scanned</div>
                  </td>
                  <td align="center" width="33%" style="border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">

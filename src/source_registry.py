@@ -16,11 +16,12 @@ Each source entry is a dict:
 
 import time
 import os
+import json
 
 # ── Import all fetchers ───────────────────────────────────────────────────────
 from fetch_papers import (
     fetch_arxiv, fetch_pubmed, fetch_openalex, fetch_biorxiv,
-    fetch_semantic_scholar, cluster_discoveries,
+    fetch_semantic_scholar, cluster_discoveries, days_ago, safe_get,
     ARXIV_CATEGORIES, PUBMED_QUERIES, OPENALEX_CONCEPTS,
 )
 from v2_fetchers import (
@@ -65,7 +66,7 @@ def _fetch_all_pubmed():
             p["domain"] = domain
             p["source_types"] = ["paper"]
         papers.extend(batch)
-        time.sleep(0.5)
+        time.sleep(0.8)
     return papers
 
 def _fetch_all_openalex():
@@ -75,59 +76,102 @@ def _fetch_all_openalex():
     ]
     papers = []
     for cid, name in zip(OPENALEX_CONCEPTS, names):
-        batch = fetch_openalex(cid, max_results=3)
+        batch = fetch_openalex(cid, max_results=4)
         for p in batch:
             p["domain"] = name
             p["source_types"] = ["paper"]
         papers.extend(batch)
-        time.sleep(0.5)
+        time.sleep(0.3)
     return papers
 
 def _fetch_all_biorxiv():
     papers = []
     for cat in ["bioinformatics", "cancer biology", "neuroscience", "systems biology"]:
-        batch = fetch_biorxiv(cat, max_results=4)
+        batch = fetch_biorxiv(cat, max_results=5, server="biorxiv")
         for p in batch:
             p["source_types"] = ["paper"]
         papers.extend(batch)
-        time.sleep(0.5)
+        time.sleep(0.4)
+    for cat in ["oncology", "health informatics", "infectious diseases"]:
+        batch = fetch_biorxiv(cat, max_results=4, server="medrxiv")
+        for p in batch:
+            p["source_types"] = ["paper"]
+        papers.extend(batch)
+        time.sleep(0.4)
     return papers
 
 def _fetch_all_semantic_scholar():
     queries = [
         "large language models science",
-        "quantum computing algorithms",
         "CRISPR gene therapy clinical",
         "drug discovery AI generative",
-        "climate change machine learning",
-        "philosophy of mind consciousness",
-        "behavioral economics decision making",
+        "oncology circadian biomarker",
     ]
     papers = []
     for q in queries:
-        batch = fetch_semantic_scholar(q, max_results=3)
+        batch = fetch_semantic_scholar(q, max_results=4)
         for p in batch:
             p["source_types"] = ["paper"]
         papers.extend(batch)
-        time.sleep(1.5)   # Semantic Scholar rate-limit friendly
+        time.sleep(2.5)
+    # Also pull high-citation recent 30-day papers via OpenAlex as a reliable zero-429 citation momentum feed
+    since_30 = days_ago(30)
+    for cid, name in [("C41008148", "Computer Science"), ("C86803240", "Biology"), ("C71924100", "Medicine")]:
+        url = (
+            f"https://api.openalex.org/works?"
+            f"filter=concepts.id:{cid},from_publication_date:{since_30},type:article|preprint,has_abstract:true"
+            f"&sort=cited_by_count:desc&per-page=3&mailto=research@example.com"
+        )
+        raw = safe_get(url)
+        if raw:
+            try:
+                data = json.loads(raw)
+                for w in data.get("results", []):
+                    title = (w.get("title") or "").strip()
+                    if not title:
+                        continue
+                    abstract_inv = w.get("abstract_inverted_index")
+                    abstract = ""
+                    if abstract_inv:
+                        word_pos = {pos: word for word, positions in abstract_inv.items() for pos in positions}
+                        abstract = " ".join(word_pos[i] for i in sorted(word_pos))[:800]
+                    doi = w.get("doi", "")
+                    oa_url = w.get("open_access", {}).get("oa_url", "") or w.get("primary_location", {}).get("landing_page_url", "") or (f"https://doi.org/{doi}" if doi else "")
+                    papers.append({
+                        "source": "OpenAlex (Cited)",
+                        "id": w.get("id", ""),
+                        "title": title,
+                        "abstract": abstract,
+                        "authors": [a.get("author", {}).get("display_name", "") for a in w.get("authorships", [])[:4]],
+                        "date": w.get("publication_date", ""),
+                        "url": oa_url,
+                        "pdf_url": w.get("open_access", {}).get("oa_url", ""),
+                        "domain": name,
+                        "cited_by": w.get("cited_by_count", 0),
+                        "source_types": ["paper"],
+                    })
+            except Exception:
+                pass
     return papers
 
 def _fetch_all_nih():
     results = []
-    for chunk in chunker(PARADIGMS, 4):
+    for chunk in chunker(PARADIGMS, 8):
         query = " OR ".join(f'"{c}"' for c in chunk)
-        batch = fetch_nih_grants(query, max_results=3)
+        batch = fetch_nih_grants(query, max_results=5)
         for p in batch:
             p["source_types"] = ["grant"]
             p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
+        time.sleep(0.5)
     return results
 
 def _fetch_all_github():
     results = []
-    for chunk in chunker(PARADIGMS, 4):
+    # GitHub Search API caps boolean queries at max 5 AND/OR/NOT operators -> chunk size <= 5
+    for chunk in chunker(PARADIGMS, 5):
         query = " OR ".join(f'"{c}"' for c in chunk)
-        batch = fetch_github_repos(query, max_results=3)
+        batch = fetch_github_repos(query, max_results=4)
         for p in batch:
             p["source_types"] = ["repo"]
             p["domain"] = assign_domain_from_chunk(p, chunk)
@@ -136,30 +180,28 @@ def _fetch_all_github():
 
 def _fetch_all_patents():
     results = []
-    for chunk in chunker(PARADIGMS, 4):
-        query = " OR ".join(f'"{c}"' for c in chunk)
-        batch = fetch_patents(query, max_results=2)
+    patent_queries = [
+        '"cancer" OR "oncology" OR "kinase" OR "CRISPR"',
+        '"machine learning" OR "neural network" OR "quantum computing"',
+        '"biomarker" OR "drug delivery" OR "therapeutics"',
+    ]
+    for query in patent_queries:
+        batch = fetch_patents(query, max_results=4)
         for p in batch:
             p["source_types"] = ["patent"]
-            p["domain"] = assign_domain_from_chunk(p, chunk)
         results.extend(batch)
+        time.sleep(0.8)
     return results
 
 def _fetch_all_conferences():
-    results = []
-    for venue in ["NeurIPS", "ICML", "Nature", "Cell", "Science", "CVPR"]:
-        batch = fetch_conferences(venue, max_results=2)
-        for p in batch:
-            p["source_types"] = ["paper"]
-        results.extend(batch)
-        time.sleep(1)
-    return results
+    # Merged into _fetch_all_semantic_scholar to prevent concurrent 429 rate-limit bursts
+    return []
 
 def _fetch_all_funding():
     results = []
-    for chunk in chunker(PARADIGMS, 4):
+    for chunk in chunker(PARADIGMS, 8):
         query = " OR ".join(f'"{c}"' for c in chunk)
-        batch = fetch_startup_funding_rss(query, max_results=2)
+        batch = fetch_startup_funding_rss(query, max_results=4)
         for p in batch:
             p["source_types"] = ["funding"]
             p["domain"] = assign_domain_from_chunk(p, chunk)
@@ -245,9 +287,9 @@ SOURCE_REGISTRY = [
     {
         "name":        "Conferences",
         "type":        "paper",
-        "enabled":     True,
+        "enabled":     False,
         "fetcher":     _fetch_all_conferences,
-        "description": "Peer-reviewed AI/Bio conference proceedings",
+        "description": "Peer-reviewed AI/Bio conference proceedings (handled serially in S2)",
     },
     {
         "name":        "Venture Capital Feeds",
@@ -269,16 +311,19 @@ def fetch_all_intelligence() -> list[dict]:
     Returns a deduplicated, clustered list of discovery dicts.
     """
     all_items: list[dict] = []
-    max_total = int(os.environ.get("MAX_PAPERS_TOTAL", "60"))
+    max_total = int(os.environ.get("MAX_PAPERS_TOTAL", "250"))
 
     enabled = [s for s in SOURCE_REGISTRY if s["enabled"]]
     print(f"\n📡 Running {len(enabled)} enabled source(s) concurrently...\n")
 
     import concurrent.futures
-    import langdetect
+    try:
+        import langdetect
+    except ImportError:
+        langdetect = None
     
     def is_english(text):
-        if not text or len(text.strip()) < 20: return True
+        if not langdetect or not text or len(text.strip()) < 20: return True
         try:
             return langdetect.detect(text) == 'en'
         except:
@@ -325,5 +370,22 @@ def fetch_all_intelligence() -> list[dict]:
     # Cluster duplicates (by title similarity)
     all_items = cluster_discoveries(all_items)
 
+    # Fair round-robin cap across sources if pool exceeds max_total,
+    # preventing fast APIs from starving slower ones (PubMed, Patents, ClinicalTrials).
+    if len(all_items) > max_total:
+        from collections import defaultdict
+        by_src = defaultdict(list)
+        for item in all_items:
+            by_src[item.get("source", "Other")].append(item)
+        balanced = []
+        buckets = list(by_src.values())
+        idx = 0
+        while len(balanced) < max_total and any(idx < len(b) for b in buckets):
+            for b in buckets:
+                if idx < len(b) and len(balanced) < max_total:
+                    balanced.append(b[idx])
+            idx += 1
+        all_items = balanced
+
     print(f"\n✅ Total unique discoveries after deduplication & clustering: {len(all_items)}")
-    return all_items[:max_total]
+    return all_items

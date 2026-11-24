@@ -82,24 +82,42 @@ def generate_dashboard():
     # Initialize the 31x5 matrix
     matrix = {p: {dt: None for dt in DISCOVERY_TYPES} for p in PARADIGMS}
 
+    # Case-insensitive paradigm lookup map
+    paradigm_lookup = {pm.lower(): pm for pm in PARADIGMS}
+
     # ─────────────────────────────────────────────
     # POPULATE WITH REAL DATA
     # ─────────────────────────────────────────────
     for p in papers:
-        raw_domain = p.get("domain", "Other")
-        
-        # Mapping granular domains to broad paradigms
-        domain = raw_domain
-        if "AI" in domain or "Machine Learning" in domain:
+        raw_domain = (p.get("domain") or "Other").strip()
+        d_low = raw_domain.lower()
+
+        # Exact match (case-insensitive) preserves distinct paradigms like "Synthetic Biology" & "Neuroscience"
+        if d_low in paradigm_lookup:
+            domain = paradigm_lookup[d_low]
+        elif "ai" in d_low or "machine learning" in d_low:
             domain = "Artificial Intelligence"
-        elif "Math" in domain:
+        elif "math" in d_low:
             domain = "Mathematics"
-        elif "Physic" in domain:
+        elif "quantum" in d_low:
+            domain = "Quantum Computing"
+        elif "physic" in d_low:
             domain = "Physics"
-        elif "Bio" in domain or "Oncology" in domain:
+        elif "synthetic bio" in d_low:
+            domain = "Synthetic Biology"
+        elif "neuro" in d_low:
+            domain = "Neuroscience"
+        elif "oncology" in d_low or "cancer" in d_low or "immunology" in d_low or "clinical" in d_low or "medicine" in d_low or "health" in d_low or "infectious" in d_low:
+            domain = "Medicine"
+        elif "bio" in d_low or "molecular" in d_low or "gnn" in d_low:
             domain = "Biology"
-        
-        if domain not in PARADIGMS:
+        elif "astro" in d_low:
+            domain = "Astronomy"
+        elif "crypto" in d_low or "systems cs" in d_low or "robotics" in d_low or "open source" in d_low:
+            domain = "Computer Science"
+        elif "material" in d_low:
+            domain = "Materials Science"
+        else:
             domain = "Other"
         
         dtype = map_source_to_dtype(p.get("source_types", ["paper"]))

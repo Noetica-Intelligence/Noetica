@@ -118,64 +118,70 @@ def is_semantically_similar(p1: dict, p2: dict) -> bool:
         return float(len(t1.intersection(t2))) / float(len(t1.union(t2))) > 0.4
 
 
+def _partition_for_subscriber(all_papers: list[dict], sub: dict) -> tuple[list[dict], list[dict]]:
+    """
+    Partition global ranked discoveries into (matched_papers, exploration_pool)
+    strictly respecting the subscriber's allowed discovery types.
+    """
+    interests_str = sub.get("Interests", "")
+    interests = parse_interests(interests_str)
+
+    discovery_prefs_str = sub.get("Discovery Preferences", "")
+    allowed_types = parse_discovery_preferences(discovery_prefs_str)
+
+    allowed_papers = [
+        p for p in all_papers
+        if any(t in allowed_types for t in p.get("source_types", ["paper"]))
+    ]
+
+    if not interests:
+        return allowed_papers, []
+
+    interest_embs = None
+    if semantic_model:
+        interest_embs = [semantic_model.encode(i, convert_to_tensor=True) for i in interests]
+
+    matched = []
+    non_matching = []
+    for p in allowed_papers:
+        domain   = (p.get("domain") or "").lower()
+        title    = (p.get("title") or "").lower()
+        abstract = (p.get("abstract") or "").lower()
+
+        # 1. Direct domain or keyword match always qualifies
+        is_match = any(
+            i.lower() in domain or i.lower() in title or i.lower() in abstract
+            for i in interests
+        )
+
+        # 2. Semantic vector matching if not already matched by keyword
+        if not is_match and semantic_model and interest_embs:
+            doc_str = f"{title} {abstract}"
+            doc_emb = semantic_model.encode(doc_str, convert_to_tensor=True)
+            for int_emb in interest_embs:
+                if util.cos_sim(int_emb, doc_emb).item() > 0.30:
+                    is_match = True
+                    break
+
+        if is_match:
+            matched.append(p)
+        else:
+            non_matching.append(p)
+
+    return matched, non_matching
+
+
 def filter_papers_for_subscriber(all_papers: list[dict], sub: dict) -> list[dict]:
     """
     Filter global ranked discoveries based on subscriber's stated interests.
     80% interests + 20% forced exploration.
     """
-    interests_str = sub.get("Interests", "")
-    interests = parse_interests(interests_str)
-    
-    discovery_prefs_str = sub.get("Discovery Preferences", "")
-    allowed_types = parse_discovery_preferences(discovery_prefs_str)
-    
     exploration = str(sub.get("Exploration Preference", "yes")).strip().lower() == "yes"
-
-    filtered = []
-    for p in all_papers:
-        # 1. Enforce Discovery Preferences strictly
-        p_types = p.get("source_types", ["paper"])
-        if not any(t in allowed_types for t in p_types):
-            continue
-
-        # 2. Check if it matches interests
-        if not interests:
-            filtered.append(p)
-            continue
-
-        domain   = (p.get("domain") or "").lower()
-        title    = (p.get("title") or "").lower()
-        abstract = (p.get("abstract") or "").lower()
-        
-        # True Semantic Vector Matching ($0 Open-Source AI)
-        matched = False
-        if semantic_model and interests:
-            # Create a single document string
-            doc_str = f"{title} {abstract}"
-            doc_emb = semantic_model.encode(doc_str, convert_to_tensor=True)
-            for interest in interests:
-                int_emb = semantic_model.encode(interest, convert_to_tensor=True)
-                score = util.cos_sim(int_emb, doc_emb).item()
-                if score > 0.45:  # High semantic similarity threshold
-                    matched = True
-                    break
-        else:
-            # Fallback to dumb keyword matching
-            matched = any(i.lower() in domain or i.lower() in title or i.lower() in abstract for i in interests)
-
-        if matched:
-            filtered.append(p)
-
-    # 20% forced exploration  inject top non-matching discoveries (must still match allowed_types!)
-    if exploration and len(filtered) < len(all_papers):
-        non_matching = [
-            p for p in all_papers 
-            if p not in filtered and any(t in allowed_types for t in p.get("source_types", ["paper"]))
-        ]
-        exploration_count = min(2, max(1, int(len(filtered) * 0.25))) if len(filtered) > 0 else 2
-        filtered.extend(non_matching[:exploration_count])
-
-    return filtered
+    matched, non_matching = _partition_for_subscriber(all_papers, sub)
+    if exploration and non_matching:
+        exploration_count = min(2, max(1, int(len(matched) * 0.25))) if matched else 2
+        return matched + non_matching[:exploration_count]
+    return matched
 
 
 def main() -> int:
@@ -350,7 +356,8 @@ def main() -> int:
                 print(f"       [SKIP] Monthly subscriber; delivers on the 1st")
                 continue
 
-        user_papers = filter_papers_for_subscriber(scored_papers, sub)
+        matched_pool, exploration_pool = _partition_for_subscriber(scored_papers, sub)
+        exploration = str(sub.get("Exploration Preference", "yes")).strip().lower() == "yes"
 
         # ── Bloom Filter Deduplication ────────────────────────────────────────
         # Load this subscriber's persistent Bloom filter (~90 KB, fixed forever).
@@ -360,49 +367,66 @@ def main() -> int:
         bf = load_filter(email)
         print(f"       [DEDUP] Bloom filter loaded ({bf.count} items seen so far).")
 
-        before_count       = len(user_papers)
-        deduped_user_papers = []
+        def _dedup_candidates(candidates: list[dict], existing: list[dict]) -> tuple[list[dict], int]:
+            kept = []
+            dropped = 0
+            for p in candidates:
+                title    = p.get("title", "")
+                abstract = p.get("abstract", "")
+                if is_seen(bf, title, abstract):
+                    dropped += 1
+                    continue
+                if any(is_semantically_similar(p, sel) for sel in existing + kept):
+                    dropped += 1
+                    continue
+                kept.append(p)
+            return kept, dropped
 
-        for p in user_papers:
-            title    = p.get("title", "")
-            abstract = p.get("abstract", "")
-
-            # 1. Bloom filter check — has this content been sent before?
-            if is_seen(bf, title, abstract):
-                continue
-
-            # 2. Within-digest semantic check — prevent similar topics in same email
-            is_dup = False
-            for selected in deduped_user_papers:
-                if is_semantically_similar(p, selected):
-                    is_dup = True
+        unseen_matched, dropped_m = _dedup_candidates(matched_pool, [])
+        unseen_explore = []
+        dropped_e = 0
+        if exploration:
+            # Deduplicate exploration pool lazily only up to limit candidates needed
+            for p in exploration_pool:
+                if len(unseen_explore) >= max(limit, 4):
                     break
-            if is_dup:
-                continue
+                title    = p.get("title", "")
+                abstract = p.get("abstract", "")
+                if is_seen(bf, title, abstract):
+                    dropped_e += 1
+                    continue
+                if any(is_semantically_similar(p, sel) for sel in unseen_matched + unseen_explore):
+                    dropped_e += 1
+                    continue
+                unseen_explore.append(p)
 
-            deduped_user_papers.append(p)
-
-        removed = before_count - len(deduped_user_papers)
+        removed = dropped_m + dropped_e
         if removed > 0:
             print(f"       [DEDUP] Filtered {removed} already-seen discoveries for {name}.")
 
-        user_papers = deduped_user_papers
-
-        # Enforce Discovery Type Quota
+        # Enforce Discovery Type Quota & Reading-Time Budget
         discovery_prefs_str = sub.get("Discovery Preferences", "")
         allowed_types       = parse_discovery_preferences(discovery_prefs_str)
         user_top_papers     = []
 
-        # 1. Guarantee at least 1 of each requested type (if available)
+        # 1. Reserve 1–2 serendipity slots (exploration) at the end if enabled
+        explore_target = min(2, max(1, limit // 5)) if (exploration and unseen_explore and limit >= 3) else 0
+        main_limit = max(1, limit - explore_target)
+
+        # 1a. Guarantee at least 1 of each requested type (if available)
         for t in allowed_types:
-            for p in user_papers:
+            if len(user_top_papers) >= main_limit:
+                break
+            for p in unseen_matched:
                 if t in p.get("source_types", ["paper"]) and p not in user_top_papers:
                     user_top_papers.append(p)
                     break
 
         # 1b. Guarantee at least 1 per requested interest/sub-domain
         for interest in parse_interests(sub.get("Interests", "")):
-            for p in user_papers:
+            if len(user_top_papers) >= main_limit:
+                break
+            for p in unseen_matched:
                 d     = (p.get("domain") or "").lower()
                 t_str = (p.get("title") or "").lower()
                 a_str = (p.get("abstract") or "").lower()
@@ -411,15 +435,27 @@ def main() -> int:
                         user_top_papers.append(p)
                         break
 
-        # 2. Fill remaining slots with highest-scoring discoveries
-        for p in user_papers:
-            if len(user_top_papers) >= limit:
+        # 2. Fill remaining main slots with highest-scoring unseen matching discoveries
+        for p in unseen_matched:
+            if len(user_top_papers) >= main_limit:
                 break
             if p not in user_top_papers:
                 user_top_papers.append(p)
 
-        # Sort by composite score (highest first)
-        user_top_papers = sorted(user_top_papers, key=lambda x: x.get("composite_score") or x.get("scores", {}).get("composite", 0) or 0, reverse=True)
+        # Sort main matching picks highest-first
+        user_top_papers = sorted(
+            user_top_papers,
+            key=lambda x: x.get("composite_score") or x.get("scores", {}).get("composite", 0) or 0,
+            reverse=True,
+        )
+
+        # 3. Backfill remaining slots up to reading-time limit using unseen exploration/diverse items
+        #    (guaranteeing wildcard anomaly card is genuinely cross-disciplinary!)
+        for p in unseen_explore:
+            if len(user_top_papers) >= limit:
+                break
+            if p not in user_top_papers:
+                user_top_papers.append(p)
 
         if not user_top_papers:
             print(f"       [WARNING] No NEW matching discoveries for {name}'s interests.")
@@ -438,7 +474,14 @@ def main() -> int:
         ai_synthesis_html = generate_personalized_synthesis(user_top_papers, expertise_str, interests_str)
 
         # Build email
-        html_body = build_email_html(user_top_papers, today, emerging_trends=emerging_trends, subscriber_email=email, ai_synthesis_html=ai_synthesis_html)
+        html_body = build_email_html(
+            user_top_papers,
+            today,
+            emerging_trends=emerging_trends,
+            subscriber_email=email,
+            ai_synthesis_html=ai_synthesis_html,
+            total_scanned=len(papers),
+        )
         subject   = build_email_subject(user_top_papers, today)
         plain     = build_plain_text_summary(user_top_papers)
 

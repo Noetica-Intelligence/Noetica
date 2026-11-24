@@ -135,9 +135,10 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
 # ─────────────────────────────────────────────
 
 def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]:
-    """Fetch trending repositories from GitHub API with token-aware throttling."""
+    """Fetch newly trending repositories from GitHub API with token-aware throttling."""
+    since_30d = (datetime.date.today() - datetime.timedelta(days=30)).isoformat()
     safe_topic = urllib.parse.quote(topic)
-    url = f"https://api.github.com/search/repositories?q={safe_topic}+stars:>50&sort=updated&order=desc&per_page={max_results}"
+    url = f"https://api.github.com/search/repositories?q={safe_topic}+created:>{since_30d}+stars:>5&sort=stars&order=desc&per_page={max_results}"
     
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     
@@ -151,7 +152,16 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
     results = []
     try:
         data = robust_fetch_json(req)
-        for item in data.get("items", []):
+        items = data.get("items", [])
+        if not items:
+            # Fallback to recently pushed repos if strict 30d created filter is empty
+            fallback_url = f"https://api.github.com/search/repositories?q={safe_topic}+stars:>25&sort=updated&order=desc&per_page={max_results}"
+            req_fb = urllib.request.Request(fallback_url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+            if github_token:
+                req_fb.add_header("Authorization", f"Bearer {github_token}")
+            data = robust_fetch_json(req_fb)
+            items = data.get("items", [])
+        for item in items:
             title = _sanitize_string(item.get("full_name", ""))
             desc = _sanitize_string(item.get("description", "No description provided."))
             author = _sanitize_string(item.get("owner", {}).get("login", "Unknown"))
@@ -178,14 +188,14 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
 # ─────────────────────────────────────────────
 
 def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
-    """Fetch real patents via Europe PMC REST API."""
+    """Fetch patents via Europe PMC REST API with fast pageSize cap & retry tolerance."""
     safe_query = urllib.parse.quote(query)
-    url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:PAT%20AND%20({safe_query})&format=json&resultType=core"
+    url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:PAT%20AND%20({safe_query})&format=json&resultType=core&pageSize={max_results}"
     
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     results = []
     try:
-        data = robust_fetch_json(req)
+        data = robust_fetch_json(req, timeout=15, max_retries=2)
         for item in data.get("resultList", {}).get("result", [])[:max_results]:
             title = _sanitize_string(item.get("title", ""))
             abstract = _sanitize_string(item.get("abstractText", "No abstract available."))
@@ -222,7 +232,8 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
 def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
     """Fetch recent conference proceedings via Semantic Scholar."""
     safe_venue = urllib.parse.quote(venue)
-    url = f"https://api.semanticscholar.org/graph/v1/paper/search?query={safe_venue}&fields=title,abstract,authors,year,url,venue&limit={max_results}"
+    curr_year = datetime.date.today().year
+    url = f"https://api.semanticscholar.org/graph/v1/paper/search?query={safe_venue}&fields=title,abstract,authors,year,url,venue&publicationDateOrYear={curr_year - 1}-{curr_year}&limit={max_results}"
     
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     results = []

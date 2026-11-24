@@ -1,6 +1,6 @@
 import urllib.request
 import urllib.parse
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 import json
 import logging
 
@@ -13,7 +13,7 @@ def fetch_recent_oncology_trials(days_back=7):
     """Fetches recent clinical trials related to Oncology/Cancer."""
     logger.info(f"Fetching oncology clinical trials from the last {days_back} days...")
     
-    date_from = (datetime.now(datetime.timezone.utc) - timedelta(days=days_back)).strftime('%Y-%m-%d')
+    date_from = (datetime.now(timezone.utc) - timedelta(days=days_back)).strftime('%Y-%m-%d')
     
     # Using the ClinicalTrials.gov API v2
     params = {
@@ -41,6 +41,7 @@ def fetch_recent_oncology_trials(days_back=7):
             nct_id = id_module.get('nctId')
             title = id_module.get('briefTitle', 'Unknown Title')
             status = status_module.get('overallStatus', 'Unknown')
+            post_date = status_module.get('studyFirstPostDateStruct', {}).get('date', date.today().isoformat())
             abstract = desc_module.get('briefSummary', '')
             
             trials.append({
@@ -52,7 +53,7 @@ def fetch_recent_oncology_trials(days_back=7):
                 "url": f"https://clinicaltrials.gov/study/{nct_id}",
                 "domain": "Clinical Oncology",
                 "authors": ["ClinicalTrials.gov"],
-                "date": date.today().isoformat(),
+                "date": post_date,
                 "pdf_url": "",
                 "source_types": ["trial"]
             })

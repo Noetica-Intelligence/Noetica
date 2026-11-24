@@ -38,16 +38,16 @@ ARXIV_CATEGORIES = {
 
 # PubMed search queries per domain
 PUBMED_QUERIES = {
-    "Oncology":              "hepatocellular carcinoma FGFR4 drug discovery[Title/Abstract]",
-    "Circadian Biology":     "circadian rhythms chronotherapy drug timing[Title/Abstract]",
-    "AI in Medicine":        "artificial intelligence drug discovery precision medicine[Title/Abstract]",
-    "GNNs for Biology":      "graph neural network drug discovery bioinformatics[Title/Abstract]",
-    "Molecular Dynamics":    "molecular dynamics simulation drug target[Title/Abstract]",
-    "Structural Biology":    "AlphaFold protein structure prediction[Title/Abstract]",
-    "Immunology":            "cancer immunotherapy checkpoint inhibitor[Title/Abstract]",
-    "Neuroscience":          "computational neuroscience brain connectome[Title/Abstract]",
-    "Systems Biology":       "systems biology network analysis disease[Title/Abstract]",
-    "Synthetic Biology":     "synthetic biology CRISPR gene editing[Title/Abstract]",
+    "Oncology":              "(hepatocellular carcinoma[Title/Abstract] OR FGFR4[Title/Abstract] OR targeted cancer therapy[Title/Abstract])",
+    "Circadian Biology":     "(circadian rhythm[Title/Abstract] OR chronotherapy[Title/Abstract] OR clock gene[Title/Abstract])",
+    "AI in Medicine":        "(artificial intelligence[Title/Abstract] AND (medicine[Title/Abstract] OR drug discovery[Title/Abstract]))",
+    "GNNs for Biology":      "(graph neural network[Title/Abstract] OR molecular representation[Title/Abstract])",
+    "Molecular Dynamics":    "(molecular dynamics[Title/Abstract] AND (binding[Title/Abstract] OR protein[Title/Abstract]))",
+    "Structural Biology":    "(AlphaFold[Title/Abstract] OR protein structure prediction[Title/Abstract] OR cryo-EM[Title/Abstract])",
+    "Immunology":            "(immunotherapy[Title/Abstract] AND (checkpoint[Title/Abstract] OR CAR-T[Title/Abstract] OR tumor[Title/Abstract]))",
+    "Neuroscience":          "(computational neuroscience[Title/Abstract] OR connectome[Title/Abstract] OR neural decoding[Title/Abstract])",
+    "Systems Biology":       "(systems biology[Title/Abstract] OR multi-omics[Title/Abstract] OR gene regulatory network[Title/Abstract])",
+    "Synthetic Biology":     "(synthetic biology[Title/Abstract] OR CRISPR[Title/Abstract])",
 }
 
 # OpenAlex topics (concept IDs — broad and interdisciplinary)
@@ -73,15 +73,22 @@ MAX_PAPERS_TOTAL  = int(os.environ.get("MAX_PAPERS_TOTAL", "60"))
 # HELPERS
 # ─────────────────────────────────────────────
 
-def safe_get(url: str, timeout: int = 20) -> bytes | None:
+def safe_get(url: str, timeout: int = 20, extra_headers: dict | None = None, fail_fast_429: bool = False) -> bytes | None:
     """HTTP GET with retry logic."""
     headers = {"User-Agent": "ScientificIntelligenceBot/1.0 (research digest; contact: research@example.com)"}
+    if extra_headers:
+        headers.update(extra_headers)
     req = urllib.request.Request(url, headers=headers)
     ctx = ssl._create_unverified_context()
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
                 return resp.read()
+        except urllib.error.HTTPError as e:
+            print(f"  [WARN] Attempt {attempt+1} failed for {url[:80]}: {e}")
+            if e.code == 429 and fail_fast_429:
+                return None
+            time.sleep((2 ** attempt) + 4)
         except Exception as e:
             print(f"  [WARN] Attempt {attempt+1} failed for {url[:80]}: {e}")
             time.sleep((2 ** attempt) + 4)
@@ -148,13 +155,14 @@ def fetch_arxiv(categories: list[str], max_results: int = 5) -> list[dict]:
 def fetch_pubmed(query: str, max_results: int = 5) -> list[dict]:
     """Fetch recent papers from PubMed using E-utilities."""
     base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
-    since = days_ago(3)
+    since = (datetime.date.today() - datetime.timedelta(days=7)).strftime("%Y/%m/%d")
+    today_slash = datetime.date.today().strftime("%Y/%m/%d")
 
-    # Step 1: esearch
+    # Step 1: esearch (use Entrez date 'edat' with YYYY/MM/DD)
     search_url = (
         f"{base}/esearch.fcgi?db=pubmed&term={urllib.parse.quote(query)}"
         f"&retmax={max_results}&sort=relevance&retmode=json"
-        f"&mindate={since}&maxdate={today_iso()}&datetype=pdat"
+        f"&mindate={since}&maxdate={today_slash}&datetype=edat"
     )
     raw = safe_get(search_url)
     if not raw:
@@ -216,12 +224,12 @@ def fetch_pubmed(query: str, max_results: int = 5) -> list[dict]:
 # ─────────────────────────────────────────────
 
 def fetch_openalex(concept_id: str, max_results: int = 3) -> list[dict]:
-    """Fetch recent highly-cited works from OpenAlex for a concept."""
+    """Fetch recent articles and preprints with abstracts from OpenAlex."""
     since = days_ago(7)
     url = (
         f"https://api.openalex.org/works?"
-        f"filter=concepts.id:{concept_id},from_publication_date:{since},is_oa:true"
-        f"&sort=cited_by_count:desc"
+        f"filter=concepts.id:{concept_id},from_publication_date:{since},type:article|preprint,has_abstract:true"
+        f"&sort=publication_date:desc"
         f"&per-page={max_results}"
         f"&mailto=research@example.com"
     )
@@ -279,11 +287,12 @@ def fetch_openalex(concept_id: str, max_results: int = 3) -> list[dict]:
 # BIORXIV FETCHER
 # ─────────────────────────────────────────────
 
-def fetch_biorxiv(category: str = "bioinformatics", max_results: int = 5) -> list[dict]:
-    """Fetch latest preprints from bioRxiv."""
+def fetch_biorxiv(category: str = "bioinformatics", max_results: int = 5, server: str = "biorxiv") -> list[dict]:
+    """Fetch latest preprints from bioRxiv or medRxiv."""
     since = days_ago(7)
     today = today_iso()
-    url = f"https://api.biorxiv.org/details/biorxiv/{since}/{today}/0/json"
+    cat_slug = urllib.parse.quote(category.lower().replace(" ", "_"))
+    url = f"https://api.biorxiv.org/details/{server}/{since}/{today}/0/json?category={cat_slug}"
     raw = safe_get(url)
     if not raw:
         return []
@@ -292,21 +301,23 @@ def fetch_biorxiv(category: str = "bioinformatics", max_results: int = 5) -> lis
         data = json.loads(raw)
         collection = data.get("collection", [])
         filtered = [p for p in collection if category.lower() in (p.get("category") or "").lower()]
+        if not filtered:
+            filtered = collection
         for p in filtered[:max_results]:
             doi = p.get("doi", "")
             papers.append({
-                "source":   "bioRxiv",
-                "id":       f"biorxiv:{doi}",
+                "source":   "medRxiv" if server == "medrxiv" else "bioRxiv",
+                "id":       f"{server}:{doi}",
                 "title":    p.get("title", "").strip(),
                 "abstract": (p.get("abstract") or "")[:800],
                 "authors":  p.get("authors", "").split(";")[:4],
                 "date":     p.get("date", ""),
-                "url":      f"https://www.biorxiv.org/content/{doi}",
-                "pdf_url":  f"https://www.biorxiv.org/content/{doi}.full.pdf",
+                "url":      f"https://www.{server}.org/content/{doi}",
+                "pdf_url":  f"https://www.{server}.org/content/{doi}.full.pdf",
                 "domain":   category,
             })
     except json.JSONDecodeError as e:
-        print(f"  [ERROR] bioRxiv JSON error: {e}")
+        print(f"  [ERROR] {server} JSON error: {e}")
     return papers
 
 
@@ -315,8 +326,8 @@ def fetch_biorxiv(category: str = "bioinformatics", max_results: int = 5) -> lis
 # ─────────────────────────────────────────────
 
 def fetch_semantic_scholar(query: str, max_results: int = 5) -> list[dict]:
-    """Fetch recent papers from Semantic Scholar."""
-    since = days_ago(7)
+    """Fetch recent papers from Semantic Scholar (supports optional SEMANTIC_SCHOLAR_API_KEY)."""
+    since = days_ago(14)
     url = (
         f"https://api.semanticscholar.org/graph/v1/paper/search?"
         f"query={urllib.parse.quote(query)}"
@@ -324,7 +335,9 @@ def fetch_semantic_scholar(query: str, max_results: int = 5) -> list[dict]:
         f"&limit={max_results}"
         f"&publicationDateOrYear={since}:"
     )
-    raw = safe_get(url)
+    api_key = os.environ.get("SEMANTIC_SCHOLAR_API_KEY")
+    extra_headers = {"x-api-key": api_key} if api_key else None
+    raw = safe_get(url, extra_headers=extra_headers, fail_fast_429=not bool(api_key))
     if not raw:
         return []
     papers = []

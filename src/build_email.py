@@ -119,14 +119,15 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     if len(authors_list) > 3:
         authors += " et al."
     date     = discovery.get("date", "")[:10]
-    source   = html_lib.escape(discovery.get("source", ""))
+    raw_source = str(discovery.get("source", "") or "")
+    source   = html_lib.escape(raw_source)
     url      = discovery.get("url", "#")
     pdf_url  = discovery.get("pdf_url", "")
     domain   = discovery.get("domain", "Other")
     if domain.lower() == "drug discovery":
         domain = "Drug Discovery & Therapeutics"
     scores   = discovery.get("scores", {})
-    status   = discovery.get("status", "Emerging Signal")
+    status   = html_lib.escape(str(discovery.get("status", "Emerging Signal") or "Emerging Signal"))
     
     # Generate Feedback URLs
     useful_url = build_feedback_url(did, subscriber_email, "Useful")
@@ -139,6 +140,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     composite_score = scores.get("composite", 6.5)
 
     # Compute Source Aggregation String
+    source_agg_str = raw_source
     st_data = discovery.get("source_types")
     if isinstance(st_data, dict):
         parts = []
@@ -153,8 +155,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         for st_name in st_data:
             parts.append(f"1 {st_name}")
         source_agg_str = ", ".join(parts)
-    else:
-        source_agg_str = source
+    source_agg_str = html_lib.escape(source_agg_str)
 
     pdf_btn = ""
     if pdf_url:

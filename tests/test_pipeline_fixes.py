@@ -14,6 +14,8 @@ import source_registry
 import subscribers
 import v2_fetchers
 import alerts
+import build_email
+import send_email
 
 
 def test_fetch_clinical_trials_uses_timezone_utc_and_sets_source_types():
@@ -265,3 +267,88 @@ def test_alerts_respect_dry_run_and_cap(monkeypatch):
         fired = alerts.check_and_fire_alerts(discoveries, subs, dry_run=False, max_alerts=3)
     assert fired == 3
     assert len(sent) == 3
+
+
+def test_fetch_all_conferences_splits_issn_filters():
+    called_venues = []
+
+    def fake_fetch_conf(venue, max_results=4):
+        called_venues.append(venue)
+        return []
+
+    with patch.object(source_registry, "fetch_conferences", side_effect=fake_fetch_conf), \
+         patch.object(source_registry.time, "sleep"):
+        source_registry._fetch_all_conferences()
+
+    issn_calls = [v for v in called_venues if v.startswith("issn:")]
+    assert len(issn_calls) >= 5
+    assert all("|" not in v for v in issn_calls)
+
+
+def test_paper_card_handles_empty_source_types_dict():
+    html = build_email.paper_card(
+        1,
+        {
+            "id": "empty_st_1",
+            "title": "Circadian FGFR4 Study",
+            "abstract": "Detailed mechanistic evidence.",
+            "source": "Nature",
+            "source_types": {},
+            "domain": "Medicine",
+            "url": "https://example.org/nature",
+            "authors": ["Roy S"],
+            "scores": {"composite": 8.7},
+        },
+        "sub@example.com",
+    )
+    assert "Circadian FGFR4 Study" in html
+    assert "Nature" in html
+
+
+def test_send_digest_uses_runtime_env_updates(monkeypatch):
+    monkeypatch.setenv("SENDER_EMAIL", "bot@example.com")
+    monkeypatch.setenv("RECIPIENT_EMAIL", "sub@example.com")
+    monkeypatch.setenv("RESEND_API_KEY", "re_test_123")
+    monkeypatch.delenv("SENDGRID_API_KEY", raising=False)
+    monkeypatch.delenv("SENDER_PASSWORD", raising=False)
+
+    captured = []
+    with patch.object(
+        send_email,
+        "_send_via_resend",
+        side_effect=lambda *a, **kw: captured.append((a, kw)) or True,
+    ):
+        ok = send_email.send_digest("Subject", "<p>Body</p>")
+
+    assert ok is True
+    assert len(captured) == 1
+    assert captured[0][0][0] == "sub@example.com"
+    assert captured[0][1]["sender_email"] == "bot@example.com"
+    assert captured[0][1]["api_key"] == "re_test_123"
+
+
+def test_alerts_fallback_to_resend_without_smtp_password(monkeypatch):
+    monkeypatch.setenv("SENDER_EMAIL", "bot@example.com")
+    monkeypatch.setenv("RESEND_API_KEY", "re_test_123")
+    monkeypatch.delenv("SENDGRID_API_KEY", raising=False)
+    monkeypatch.delenv("SENDER_PASSWORD", raising=False)
+    monkeypatch.delenv("GMAIL_APP_PASSWORD", raising=False)
+
+    discoveries = [{
+        "id": "fgfr4_1",
+        "title": "FGFR4 Inhibitor Chronotherapy Breakthrough",
+        "abstract": "Hepatocellular carcinoma trial.",
+        "scores": {"composite": 9.5},
+        "cross_disciplinary": ["A", "B", "C"],
+    }]
+    subs = [{"Email": "user@example.com", "Discovery Preferences": "Emerging Frontiers"}]
+
+    sent = []
+    with patch.object(alerts, "_init_alert_table"), \
+         patch.object(alerts, "_already_alerted", return_value=False), \
+         patch.object(alerts, "_record_alert"), \
+         patch.object(alerts, "_send_via_resend", side_effect=lambda *a, **kw: sent.append(a[0]) or True):
+        fired = alerts.check_and_fire_alerts(discoveries, subs, dry_run=False, max_alerts=1)
+
+    assert fired == 1
+    assert sent == ["user@example.com"]

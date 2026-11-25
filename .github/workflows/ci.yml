@@ -35,3 +35,14 @@ jobs:
     - name: Run Tests with pytest
       run: |
         pytest tests/ -v
+
+    - name: Setup Zig
+      uses: mlugg/setup-zig@v2
+      with:
+        version: 0.16.0
+
+    - name: Build and Test Zig Engine
+      run: |
+        cd zig_engine
+        zig build
+        zig build test

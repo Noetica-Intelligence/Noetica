@@ -4,7 +4,6 @@ from datetime import datetime, timedelta, date, timezone
 import json
 import logging
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 CLINICAL_TRIALS_API_URL = "https://clinicaltrials.gov/api/v2/studies"

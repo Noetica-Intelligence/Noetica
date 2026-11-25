@@ -43,6 +43,8 @@ pub fn computeNetwork(
 ) ![]NetworkResult {
 
     var results = try allocator.alloc(NetworkResult, node_count);
+    if (node_count == 0) return results;
+
     for (results) |*r| {
         r.* = NetworkResult{
             .influence_score  = 0.0,
@@ -110,18 +112,20 @@ pub fn computeNetwork(
     // ── Step 3: Domain Bridge Detection ──────────────────────────────────────
     // A node is a bridge if its edges connect to nodes in 2+ different domains
     for (0..node_count) |i| {
-        var connected_domains = std.BoundedArray([]const u8, 32){};
+        var connected_domains: [32][]const u8 = undefined;
+        var domain_count: usize = 0;
         for (edges) |e| {
             if (e.source == i or e.target == i) {
                 const other = if (e.source == i) e.target else e.source;
                 if (other < domains.len) {
                     const d = domains[other];
                     var already = false;
-                    for (connected_domains.slice()) |cd| {
+                    for (connected_domains[0..domain_count]) |cd| {
                         if (std.mem.eql(u8, cd, d)) { already = true; break; }
                     }
-                    if (!already and connected_domains.len < 32) {
-                        connected_domains.append(d) catch {};
+                    if (!already and domain_count < 32) {
+                        connected_domains[domain_count] = d;
+                        domain_count += 1;
                     }
                 }
             }
@@ -130,14 +134,15 @@ pub fn computeNetwork(
         if (i < domains.len) {
             const own = domains[i];
             var already = false;
-            for (connected_domains.slice()) |cd| {
+            for (connected_domains[0..domain_count]) |cd| {
                 if (std.mem.eql(u8, cd, own)) { already = true; break; }
             }
-            if (!already and connected_domains.len < 32) {
-                connected_domains.append(own) catch {};
+            if (!already and domain_count < 32) {
+                connected_domains[domain_count] = own;
+                domain_count += 1;
             }
         }
-        results[i].domain_bridge = connected_domains.len >= 3;
+        results[i].domain_bridge = domain_count >= 3;
     }
 
     // ── Step 4: Classify nodes ────────────────────────────────────────────────

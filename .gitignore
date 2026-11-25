@@ -66,3 +66,4 @@ data/*.jsonl
 
 run.log
 .env
+zig_engine/input.json

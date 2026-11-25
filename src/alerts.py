@@ -27,6 +27,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from database import _connect, get_cursor, execute_query
+from send_email import _send_via_resend, _send_via_sendgrid
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ALERT RULES
@@ -142,33 +143,57 @@ def _record_alert(rule_id: str, discovery_id: str):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _send_alert_email(subject: str, html_body: str, recipients: list[str]) -> bool:
-    """Send an alert email via Gmail SMTP. Returns True if sent."""
+    """Send an alert email via Resend/SendGrid or Gmail SMTP fallback. Returns True if sent."""
     sender_email    = os.environ.get("SENDER_EMAIL") or os.environ.get("GMAIL_EMAIL", "")
     sender_password = os.environ.get("SENDER_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD", "")
+    resend_key      = os.environ.get("RESEND_API_KEY", "")
+    sendgrid_key    = os.environ.get("SENDGRID_API_KEY", "")
 
-    if not sender_email or not sender_password:
-        print("⚠️  Alert: no SMTP credentials found — skipping email send.")
+    if not sender_email or (not sender_password and not resend_key and not sendgrid_key):
+        print("⚠️  Alert: no email credentials found — skipping email send.")
+        return False
+
+    clean_recipients = [r for r in recipients if r]
+    if not clean_recipients:
         return False
 
     sent_count = 0
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
-            server.login(sender_email, sender_password)
-            for recipient in recipients:
-                if not recipient:
-                    continue
-                msg = MIMEMultipart("alternative")
-                msg["Subject"] = subject
-                msg["From"]    = f"Noetica Alert <{sender_email}>"
-                msg["To"]      = recipient
-                msg.attach(MIMEText(html_body, "html"))
-                server.sendmail(sender_email, [recipient], msg.as_string())
-                sent_count += 1
+    remaining: list[str] = []
+    for recipient in clean_recipients:
+        delivered = False
+        if resend_key:
+            delivered = _send_via_resend(
+                recipient, subject, html_body,
+                sender_email=sender_email, api_key=resend_key, from_label="Noetica Alert",
+            )
+        if not delivered and sendgrid_key:
+            delivered = _send_via_sendgrid(
+                recipient, subject, html_body,
+                sender_email=sender_email, api_key=sendgrid_key, from_label="Noetica Alert",
+            )
+        if delivered:
+            sent_count += 1
+        else:
+            remaining.append(recipient)
+
+    if remaining and sender_password:
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
+                server.login(sender_email, sender_password)
+                for recipient in remaining:
+                    msg = MIMEMultipart("alternative")
+                    msg["Subject"] = subject
+                    msg["From"]    = f"Noetica Alert <{sender_email}>"
+                    msg["To"]      = recipient
+                    msg.attach(MIMEText(html_body, "html"))
+                    server.sendmail(sender_email, [recipient], msg.as_string())
+                    sent_count += 1
+        except Exception as e:
+            print(f"❌ Alert SMTP email failed: {e}")
+
+    if sent_count > 0:
         print(f"🚨 Alert sent privately to {sent_count} recipient(s): {subject}")
-        return sent_count > 0
-    except Exception as e:
-        print(f"❌ Alert email failed: {e}")
-        return False
+    return sent_count > 0
 
 
 def _build_alert_html(rule: dict, discovery: dict) -> str:
@@ -247,8 +272,10 @@ def check_and_fire_alerts(
 
     sender_email    = os.environ.get("SENDER_EMAIL") or os.environ.get("GMAIL_EMAIL", "")
     sender_password = os.environ.get("SENDER_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD", "")
-    if not sender_email or not sender_password:
-        print("⚠️  Alert: no SMTP credentials found — skipping priority alerts.")
+    resend_key      = os.environ.get("RESEND_API_KEY", "")
+    sendgrid_key    = os.environ.get("SENDGRID_API_KEY", "")
+    if not sender_email or (not sender_password and not resend_key and not sendgrid_key):
+        print("⚠️  Alert: no email credentials found — skipping priority alerts.")
         return 0
 
     _init_alert_table()

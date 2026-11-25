@@ -12,16 +12,15 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "requests==2.31.0",
+    "requests>=2.33.0",
     "google-genai",
     "groq",
-    "sentence-transformers==3.0.0",
+    "sentence-transformers>=5.6.0",
     "langdetect",
     "feedparser",
     "beautifulsoup4",
     "lxml",
-    "gspread",
-    "oauth2client",
+    "python-dotenv",
 ]
 
 [project.optional-dependencies]

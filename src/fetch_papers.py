@@ -79,7 +79,10 @@ def safe_get(url: str, timeout: int = 20, extra_headers: dict | None = None, fai
     if extra_headers:
         headers.update(extra_headers)
     req = urllib.request.Request(url, headers=headers)
-    ctx = ssl._create_unverified_context()
+    try:
+        ctx = ssl.create_default_context()
+    except Exception:
+        ctx = ssl._create_unverified_context()  # noqa: S501 — last-resort fallback
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:

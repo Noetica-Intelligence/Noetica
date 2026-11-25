@@ -1,5 +1,3 @@
-_ABSTRACT_CACHE = {}
-
 """
 Scientific Intelligence Engine - Personalized AI Synthesis
 Uses Gemini to generate a tailored executive summary for the user's specific expertise level.
@@ -15,6 +13,9 @@ try:
     import groq
 except ImportError:
     groq = None
+
+_ABSTRACT_CACHE: dict[str, str] = {}
+
 
 def _build_paper_context(papers: list[dict], limit: int = 5) -> str:
     """Format top discoveries into a compact prompt context."""

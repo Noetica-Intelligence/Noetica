@@ -6,6 +6,7 @@ Outputs a 0-100 score and narrative AI rationale.
 
 import re
 import math
+import random
 import datetime
 
 
@@ -236,7 +237,6 @@ def compute_composite_score(paper: dict, feedback_boosts: dict[str, float] = Non
     # -------------------------------------------------------------------------
     # STRATEGIC IMPLICATION SYNTHESIS
     # -------------------------------------------------------------------------
-    import random
     is_preprint = "arxiv" in source.lower() or "biorxiv" in source.lower() or "medrxiv" in source.lower()
 
     implications = []

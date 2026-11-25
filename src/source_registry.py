@@ -251,8 +251,11 @@ def _fetch_all_patents():
 def _fetch_all_conferences():
     """Fetch recent peer-reviewed flagship journals & AI/Bio venues via OpenAlex."""
     venues = [
-        ("issn:0028-0836|0036-8075|0092-8674", "Biology"),  # Nature, Science, Cell
-        ("issn:1087-0156|1367-4803", "Biology"),             # Nature Biotech, Bioinformatics
+        ("issn:0028-0836", "Biology"),   # Nature
+        ("issn:0036-8075", "Biology"),   # Science
+        ("issn:0092-8674", "Biology"),   # Cell
+        ("issn:1087-0156", "Biology"),   # Nature Biotechnology
+        ("issn:1367-4803", "Biology"),   # Bioinformatics
         ("NeurIPS", "Artificial Intelligence"),
         ("ICML", "Artificial Intelligence"),
     ]

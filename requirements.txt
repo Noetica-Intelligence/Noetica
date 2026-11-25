@@ -6,3 +6,4 @@ langdetect
 feedparser
 beautifulsoup4
 lxml
+python-dotenv

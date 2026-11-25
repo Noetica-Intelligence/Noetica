@@ -14,6 +14,7 @@ GitHub Actions runs this at 02:30 UTC (08:00 AM IST) daily.
 import os
 import sys
 import json
+import time
 import datetime
 import argparse
 from pathlib import Path
@@ -550,7 +551,6 @@ def main() -> int:
                     mark_seen(bf, p.get("title", ""), p.get("abstract", ""))
                 save_filter(email, bf)
                 success_count += 1
-                import time
                 time.sleep(1.5)  # Stagger to evade Gmail spam filter
 
     print("\n" + "=" * 60)

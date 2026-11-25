@@ -10,6 +10,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../s
 import fetch_papers
 import fetch_clinical_trials
 import main as orchestrator
+import source_registry
+import subscribers
+import v2_fetchers
+import alerts
 
 
 def test_fetch_clinical_trials_uses_timezone_utc_and_sets_source_types():
@@ -104,3 +108,160 @@ def test_partition_matches_exact_domain_and_keywords():
     matched, non_matching = orchestrator._partition_for_subscriber(papers, sub)
     assert [p["id"] for p in matched] == ["1"]
     assert [p["id"] for p in non_matching] == ["2"]
+
+
+def test_partition_matches_domain_aliases_without_semantic_model():
+    papers = [
+        {"id": "ai1", "title": "Scaling Transformers", "abstract": "Token routing study", "domain": "AI & Machine Learning", "source_types": ["paper"]},
+        {"id": "med1", "title": "FGFR4 Inhibitor Study", "abstract": "Targeted liver therapy", "domain": "Oncology", "source_types": ["paper"]},
+        {"id": "phys1", "title": "Dark Matter Halos", "abstract": "Galaxy formation simulation", "domain": "Astrophysics", "source_types": ["paper"]},
+    ]
+    sub = {
+        "Interests": "Artificial Intelligence, Medicine",
+        "Discovery Preferences": "Research Papers",
+        "Exploration Preference": "Yes",
+    }
+    with patch.object(orchestrator, "semantic_model", None):
+        matched, non_matching = orchestrator._partition_for_subscriber(papers, sub)
+    assert [p["id"] for p in matched] == ["ai1", "med1"]
+    assert [p["id"] for p in non_matching] == ["phys1"]
+
+
+def test_sanitize_string_handles_none_and_dementia_grant_domain():
+    assert v2_fetchers._sanitize_string(None) == ""
+    grant = {
+        "title": "[GRANT] Evaluating Care Pathways for People with Dementia",
+        "abstract": "Medicare clinical study for aging patients.",
+    }
+    assert source_registry.infer_paradigm_domain(grant, default_domain="Medicine") == "Medicine"
+    assert source_registry.assign_domain_from_chunk(grant, ["Mathematics", "Medicine"]) == "Medicine"
+
+
+def test_parse_interests_parentheses_and_dataset_prefs():
+    parsed = subscribers.parse_interests("Medicine (Oncology, Immunology), Artificial Intelligence")
+    assert "Medicine" in parsed
+    assert "Oncology" in parsed
+    assert "Immunology" in parsed
+    assert "Artificial Intelligence" in parsed
+
+    types = subscribers.parse_discovery_preferences("Scientific Datasets / Technical Reports")
+    assert "dataset" in types
+    assert "repo" in types
+
+
+def test_fetch_all_intelligence_tracks_raw_count_before_cap(monkeypatch):
+    fake_items = [
+        {
+            "id": f"doc_{i}",
+            "title": f"Distinct Scientific Discovery {i}",
+            "abstract": f"Unique abstract body number {i} for clustering bypass.",
+            "source": "arXiv",
+            "source_types": ["paper"],
+        }
+        for i in range(12)
+    ]
+    fake_registry = [
+        {
+            "name": "arXiv",
+            "type": "paper",
+            "enabled": True,
+            "fetcher": lambda: list(fake_items),
+            "description": "Test source",
+        }
+    ]
+    monkeypatch.setenv("MAX_PAPERS_TOTAL", "5")
+    with patch.object(source_registry, "SOURCE_REGISTRY", fake_registry):
+        result = source_registry.fetch_all_intelligence()
+    assert len(result) == 5
+    assert source_registry.fetch_all_intelligence.last_raw_count == 12
+
+
+def test_dry_run_and_failed_send_preserve_bloom_filter(tmp_path, monkeypatch):
+    fake_subs = [{
+        "Email": "test@example.com",
+        "Name": "Tester",
+        "Reading Time": "10 Minutes",
+        "Report Frequency": "Daily",
+        "Interests": "Oncology",
+        "Discovery Preferences": "Research Papers",
+        "Exploration Preference": "No",
+        "Expertise Level": "Advanced",
+    }]
+    fake_papers = [{
+        "id": "p1",
+        "title": "Novel FGFR4 Inhibition in Hepatocellular Carcinoma",
+        "abstract": "Clinical trial shows n=120 efficacy p-value 0.01.",
+        "domain": "Oncology",
+        "source": "PubMed",
+        "date": datetime.date.today().isoformat(),
+        "url": "https://example.org/1",
+        "authors": ["Smith A"],
+        "source_types": ["paper"],
+    }]
+    monkeypatch.chdir(tmp_path)
+    mark_calls = []
+    save_calls = []
+
+    with patch.object(orchestrator, "ingest_feedback_from_sheet", return_value=0), \
+         patch.object(orchestrator, "get_subscribers", return_value=fake_subs), \
+         patch.object(orchestrator, "fetch_all_intelligence", return_value=list(fake_papers)), \
+         patch.object(orchestrator, "save_discoveries"), \
+         patch.object(orchestrator, "check_and_fire_alerts", return_value=0), \
+         patch.object(orchestrator, "get_emerging_trends", return_value=[]), \
+         patch.object(orchestrator, "generate_personalized_synthesis", return_value=""), \
+         patch.object(orchestrator, "format_abstract_pointwise", side_effect=lambda x: x), \
+         patch.object(orchestrator, "mark_seen", side_effect=lambda *a: mark_calls.append(a)), \
+         patch.object(orchestrator, "save_filter", side_effect=lambda *a: save_calls.append(a)), \
+         patch.object(sys, "argv", ["main.py", "--dry-run"]):
+        rc = orchestrator.main()
+
+    assert rc == 0
+    assert mark_calls == []
+    assert save_calls == []
+
+    # Failed SMTP send must also NOT persist Bloom filter
+    with patch.object(orchestrator, "ingest_feedback_from_sheet", return_value=0), \
+         patch.object(orchestrator, "get_subscribers", return_value=fake_subs), \
+         patch.object(orchestrator, "fetch_all_intelligence", return_value=list(fake_papers)), \
+         patch.object(orchestrator, "save_discoveries"), \
+         patch.object(orchestrator, "check_and_fire_alerts", return_value=0), \
+         patch.object(orchestrator, "get_emerging_trends", return_value=[]), \
+         patch.object(orchestrator, "generate_personalized_synthesis", return_value=""), \
+         patch.object(orchestrator, "format_abstract_pointwise", side_effect=lambda x: x), \
+         patch.object(orchestrator, "send_digest", return_value=False), \
+         patch.object(orchestrator, "mark_seen", side_effect=lambda *a: mark_calls.append(a)), \
+         patch.object(orchestrator, "save_filter", side_effect=lambda *a: save_calls.append(a)), \
+         patch.object(sys, "argv", ["main.py"]):
+        rc2 = orchestrator.main()
+
+    assert rc2 == 1
+    assert mark_calls == []
+    assert save_calls == []
+
+
+def test_alerts_respect_dry_run_and_cap(monkeypatch):
+    discoveries = [
+        {
+            "id": f"d_{i}",
+            "title": "Breakthrough FGFR4 Circadian Therapy",
+            "abstract": "Hepatocellular carcinoma chronotherapy study.",
+            "scores": {"composite": 9.8},
+            "cross_disciplinary": ["A", "B", "C"],
+        }
+        for i in range(10)
+    ]
+    subs = [{"Email": "user@example.com", "Discovery Preferences": "Emerging Frontiers"}]
+
+    # dry_run must return 0 without calling SMTP or DB
+    assert alerts.check_and_fire_alerts(discoveries, subs, dry_run=True) == 0
+
+    monkeypatch.setenv("SENDER_EMAIL", "bot@example.com")
+    monkeypatch.setenv("SENDER_PASSWORD", "secret")
+    sent = []
+    with patch.object(alerts, "_init_alert_table"), \
+         patch.object(alerts, "_already_alerted", return_value=False), \
+         patch.object(alerts, "_record_alert"), \
+         patch.object(alerts, "_send_alert_email", side_effect=lambda *a: sent.append(a) or True):
+        fired = alerts.check_and_fire_alerts(discoveries, subs, dry_run=False, max_alerts=3)
+    assert fired == 3
+    assert len(sent) == 3

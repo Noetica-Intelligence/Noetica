@@ -98,24 +98,66 @@ def save_html_preview(html: str, email_addr: str) -> Path:
     return out_path
 
 
+_EMBEDDING_CACHE: dict[str, object] = {}
+
+_INTEREST_ALIASES: dict[str, tuple[str, ...]] = {
+    "artificial intelligence": ("artificial intelligence", "ai & machine learning", "machine learning", "deep learning", "large language model", "llm", "neural network"),
+    "ai & machine learning":   ("ai & machine learning", "artificial intelligence", "machine learning", "deep learning"),
+    "medicine":                ("medicine", "oncology", "clinical oncology", "immunology", "circadian biology", "clinical trial", "cancer", "therapeutic", "health informatics", "infectious diseases"),
+    "biology":                 ("biology", "bioinformatics", "systems biology", "synthetic biology", "structural biology", "molecular dynamics", "gnns for biology", "cancer biology"),
+    "computer science":        ("computer science", "systems cs", "robotics", "cryptography", "open source software", "software", "algorithm"),
+    "physics":                 ("physics", "theoretical physics", "experimental physics", "astrophysics", "quantum computing"),
+    "mathematics":             ("mathematics", "pure mathematics", "applied mathematics", "statistics"),
+    "oncology":                ("oncology", "clinical oncology", "cancer", "tumor", "carcinoma", "fgfr4"),
+    "bioinformatics":          ("bioinformatics", "computational biology", "genomics", "proteomics", "gnns for biology"),
+}
+
+
+def _expand_interest_terms(interest: str) -> tuple[str, ...]:
+    low = interest.strip().lower()
+    if low in _INTEREST_ALIASES:
+        return _INTEREST_ALIASES[low]
+    return (low,)
+
+
+def _matches_interest(paper: dict, interest: str) -> bool:
+    domain = (paper.get("domain") or "").lower()
+    title = (paper.get("title") or "").lower()
+    abstract = (paper.get("abstract") or "").lower()
+    haystack = f"{domain} {title} {abstract}"
+    return any(term in haystack for term in _expand_interest_terms(interest))
+
+
+def _get_text_embedding(text: str):
+    """Compute and memoize SentenceTransformer embedding for repeated similarity checks."""
+    if not semantic_model:
+        return None
+    cached = _EMBEDDING_CACHE.get(text)
+    if cached is None:
+        cached = semantic_model.encode(text, convert_to_tensor=True)
+        _EMBEDDING_CACHE[text] = cached
+    return cached
+
+
 def is_semantically_similar(p1: dict, p2: dict) -> bool:
     text1 = f"{p1.get('title', '')} {p1.get('abstract', '')}".lower()
     text2 = f"{p2.get('title', '')} {p2.get('abstract', '')}".lower()
-    
+
     if semantic_model:
-        emb1 = semantic_model.encode(text1, convert_to_tensor=True)
-        emb2 = semantic_model.encode(text2, convert_to_tensor=True)
+        emb1 = _get_text_embedding(text1)
+        emb2 = _get_text_embedding(text2)
         return util.cos_sim(emb1, emb2).item() > 0.80
-    else:
-        # Fallback to Jaccard similarity if ML model is unavailable
-        import re
-        t1 = set(re.sub(r'[^a-z0-9\s]', '', text1).split())
-        t2 = set(re.sub(r'[^a-z0-9\s]', '', text2).split())
-        stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "with", "to", "for", "of", "is", "are", "was", "were", "by", "this", "that"}
-        t1 -= stopwords
-        t2 -= stopwords
-        if not t1 or not t2: return False
-        return float(len(t1.intersection(t2))) / float(len(t1.union(t2))) > 0.4
+
+    # Fallback to Jaccard similarity if ML model is unavailable
+    import re
+    t1 = set(re.sub(r'[^a-z0-9\s]', '', text1).split())
+    t2 = set(re.sub(r'[^a-z0-9\s]', '', text2).split())
+    stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "with", "to", "for", "of", "is", "are", "was", "were", "by", "this", "that"}
+    t1 -= stopwords
+    t2 -= stopwords
+    if not t1 or not t2:
+        return False
+    return float(len(t1.intersection(t2))) / float(len(t1.union(t2))) > 0.4
 
 
 def _partition_for_subscriber(all_papers: list[dict], sub: dict) -> tuple[list[dict], list[dict]]:
@@ -139,25 +181,19 @@ def _partition_for_subscriber(all_papers: list[dict], sub: dict) -> tuple[list[d
 
     interest_embs = None
     if semantic_model:
-        interest_embs = [semantic_model.encode(i, convert_to_tensor=True) for i in interests]
+        interest_embs = [_get_text_embedding(i.lower()) for i in interests]
 
     matched = []
     non_matching = []
     for p in allowed_papers:
-        domain   = (p.get("domain") or "").lower()
-        title    = (p.get("title") or "").lower()
-        abstract = (p.get("abstract") or "").lower()
-
-        # 1. Direct domain or keyword match always qualifies
-        is_match = any(
-            i.lower() in domain or i.lower() in title or i.lower() in abstract
-            for i in interests
-        )
+        # 1. Direct domain, alias, or keyword match always qualifies
+        is_match = any(_matches_interest(p, i) for i in interests)
 
         # 2. Semantic vector matching if not already matched by keyword
         if not is_match and semantic_model and interest_embs:
-            doc_str = f"{title} {abstract}"
-            doc_emb = semantic_model.encode(doc_str, convert_to_tensor=True)
+            title = (p.get("title") or "").lower()
+            abstract = (p.get("abstract") or "").lower()
+            doc_emb = _get_text_embedding(f"{title} {abstract}")
             for int_emb in interest_embs:
                 if util.cos_sim(int_emb, doc_emb).item() > 0.30:
                     is_match = True
@@ -225,14 +261,19 @@ def main() -> int:
     # Step 2: Fetch all intelligence from source registry
     # -------------------------------------------------------------------------
     print("\n[INFO] [2/6] Fetching intelligence from all sources...")
+    used_live_fetch = False
     if args.load_cache:
         papers = load_cache()
         if papers is None:
             papers = fetch_all_intelligence()
             save_cache(papers)
+            used_live_fetch = True
     else:
         papers = fetch_all_intelligence()
         save_cache(papers)
+        used_live_fetch = True
+    raw_candidate = getattr(fetch_all_intelligence, "last_raw_count", None) if used_live_fetch else None
+    raw_discovery_count = raw_candidate if isinstance(raw_candidate, int) and raw_candidate > 0 else len(papers)
 
     if not papers:
         print("[ERROR] No discoveries fetched. Aborting.")
@@ -261,9 +302,23 @@ def main() -> int:
         project_root = Path(__file__).parent.parent
         zig_dir = project_root / "zig_engine"
         zig_input_path = zig_dir / "input.json"
-        
+
+        # Sanitize to guaranteed non-null strings so Zig strict JSON parser never fails on null fields or quotes in ID
+        zig_payload = []
+        for idx, p in enumerate(scored_papers):
+            raw_id = str(p.get("id") or f"doc_{idx}")
+            clean_id = raw_id.replace('"', "").replace("\\", "_").replace("\n", "").replace("\r", "") or f"doc_{idx}"
+            p["id"] = clean_id
+            zig_payload.append({
+                "id": clean_id,
+                "title": str(p.get("title") or ""),
+                "abstract": str(p.get("abstract") or ""),
+                "domain": str(p.get("domain") or "Other"),
+                "source": str(p.get("source") or "Unknown"),
+            })
+
         with open(zig_input_path, "w", encoding="utf-8") as f:
-            json.dump(scored_papers, f)
+            json.dump(zig_payload, f)
             
         zig_bin_name = "zig_engine.exe" if os.name == "nt" else "zig_engine"
         zig_bin_path = zig_dir / "zig-out" / "bin" / zig_bin_name
@@ -320,7 +375,7 @@ def main() -> int:
     # -------------------------------------------------------------------------
     # Step 4b: Check and fire alerts
     # -------------------------------------------------------------------------
-    alerts_fired = check_and_fire_alerts(scored_papers, subscribers)
+    alerts_fired = check_and_fire_alerts(scored_papers, subscribers, dry_run=args.dry_run)
     if alerts_fired:
         print(f"       [ALERT] {alerts_fired} priority alert(s) sent.")
 
@@ -427,13 +482,9 @@ def main() -> int:
             if len(user_top_papers) >= main_limit:
                 break
             for p in unseen_matched:
-                d     = (p.get("domain") or "").lower()
-                t_str = (p.get("title") or "").lower()
-                a_str = (p.get("abstract") or "").lower()
-                if interest.lower() in d or interest.lower() in t_str or interest.lower() in a_str:
-                    if p not in user_top_papers:
-                        user_top_papers.append(p)
-                        break
+                if _matches_interest(p, interest) and p not in user_top_papers:
+                    user_top_papers.append(p)
+                    break
 
         # 2. Fill remaining main slots with highest-scoring unseen matching discoveries
         for p in unseen_matched:
@@ -480,7 +531,7 @@ def main() -> int:
             emerging_trends=emerging_trends,
             subscriber_email=email,
             ai_synthesis_html=ai_synthesis_html,
-            total_scanned=len(papers),
+            total_scanned=raw_discovery_count,
         )
         subject   = build_email_subject(user_top_papers, today)
         plain     = build_plain_text_summary(user_top_papers)
@@ -488,19 +539,16 @@ def main() -> int:
         save_html_preview(html_body, email)
         os.environ["RECIPIENT_EMAIL"] = email
 
-        # Mark all selected discoveries as seen in the Bloom filter
-        for p in user_top_papers:
-            mark_seen(bf, p.get("title", ""), p.get("abstract", ""))
-
-        # Persist the updated Bloom filter to disk
-        save_filter(email, bf)
-
         if args.dry_run:
-            print(f"       [DRY RUN] Email NOT sent to {email}.")
+            print(f"       [DRY RUN] Email NOT sent to {email} (Bloom filter preserved).")
             success_count += 1
         else:
             print(f"       [INFO] Sending to {email}...")
             if send_digest(subject, html_body, plain, recipient_email=email):
+                # Mark as seen ONLY after confirmed delivery so failed sends or dry runs don't drop discoveries
+                for p in user_top_papers:
+                    mark_seen(bf, p.get("title", ""), p.get("abstract", ""))
+                save_filter(email, bf)
                 success_count += 1
                 import time
                 time.sleep(1.5)  # Stagger to evade Gmail spam filter

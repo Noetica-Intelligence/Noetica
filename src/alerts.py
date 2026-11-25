@@ -141,14 +141,14 @@ def _record_alert(rule_id: str, discovery_id: str):
 # EMAIL
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _send_alert_email(subject: str, html_body: str, recipients: list[str]):
-    """Send an alert email via Gmail SMTP."""
+def _send_alert_email(subject: str, html_body: str, recipients: list[str]) -> bool:
+    """Send an alert email via Gmail SMTP. Returns True if sent."""
     sender_email    = os.environ.get("SENDER_EMAIL") or os.environ.get("GMAIL_EMAIL", "")
     sender_password = os.environ.get("SENDER_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD", "")
 
     if not sender_email or not sender_password:
         print("⚠️  Alert: no SMTP credentials found — skipping email send.")
-        return
+        return False
 
     sent_count = 0
     try:
@@ -165,8 +165,10 @@ def _send_alert_email(subject: str, html_body: str, recipients: list[str]):
                 server.sendmail(sender_email, [recipient], msg.as_string())
                 sent_count += 1
         print(f"🚨 Alert sent privately to {sent_count} recipient(s): {subject}")
+        return sent_count > 0
     except Exception as e:
         print(f"❌ Alert email failed: {e}")
+        return False
 
 
 def _build_alert_html(rule: dict, discovery: dict) -> str:
@@ -211,16 +213,46 @@ def _build_alert_html(rule: dict, discovery: dict) -> str:
 # PUBLIC API
 # ─────────────────────────────────────────────────────────────────────────────
 
-def check_and_fire_alerts(discoveries: list[dict], subscribers: list[dict]) -> int:
+def _matching_rule(discovery: dict) -> dict | None:
+    """Return the first matching alert rule whose min_score threshold is satisfied."""
+    did = discovery.get("id", "")
+    if not did:
+        return None
+    score = float(discovery.get("scores", {}).get("composite", 0))
+    for rule in ALERT_RULES:
+        if score < rule.get("min_score", 0):
+            continue
+        try:
+            if not rule["condition"](discovery):
+                continue
+        except Exception:
+            continue
+        if not _already_alerted(rule["id"], did):
+            return rule
+    return None
+
+
+def check_and_fire_alerts(
+    discoveries: list[dict],
+    subscribers: list[dict],
+    dry_run: bool = False,
+    max_alerts: int | None = None,
+) -> int:
     """
-    Evaluate all ALERT_RULES against all discoveries.
-    For each match, send an alert email to opted-in subscribers.
-    Returns total number of alerts fired.
+    Evaluate ALERT_RULES against highest-scoring discoveries and send up to
+    MAX_ALERTS_PER_RUN priority alert emails to opted-in subscribers.
     """
+    if dry_run:
+        return 0
+
+    sender_email    = os.environ.get("SENDER_EMAIL") or os.environ.get("GMAIL_EMAIL", "")
+    sender_password = os.environ.get("SENDER_PASSWORD") or os.environ.get("GMAIL_APP_PASSWORD", "")
+    if not sender_email or not sender_password:
+        print("⚠️  Alert: no SMTP credentials found — skipping priority alerts.")
+        return 0
+
     _init_alert_table()
 
-    # Only subscribers who selected "Research Papers" or "Emerging Frontiers"
-    # in their Discovery Preferences are considered for alerts.
     def _wants_alerts(sub: dict) -> bool:
         prefs = (sub.get("Discovery Preferences") or "").lower()
         return "emerging" in prefs or "breakthrough" in prefs or prefs == ""
@@ -230,34 +262,27 @@ def check_and_fire_alerts(discoveries: list[dict], subscribers: list[dict]) -> i
         return 0
 
     alert_emails = [s.get("Email", "") for s in alert_subscribers if s.get("Email")]
-    total_fired  = 0
+    cap = max_alerts if max_alerts is not None else int(os.environ.get("MAX_ALERTS_PER_RUN", "3"))
+    ranked = sorted(
+        discoveries,
+        key=lambda d: float(d.get("scores", {}).get("composite", 0)),
+        reverse=True,
+    )
+    total_fired = 0
 
-    for discovery in discoveries:
-        did = discovery.get("id", "")
-        if not did:
+    for discovery in ranked:
+        if total_fired >= cap:
+            break
+        rule = _matching_rule(discovery)
+        if not rule:
             continue
 
-        for rule in ALERT_RULES:
-            try:
-                if not rule["condition"](discovery):
-                    continue
-            except Exception:
-                continue
+        title   = discovery.get("title", "Untitled")[:60]
+        subject = f"{rule['emoji']} Noetica Alert: {rule['name']} — {title}..."
+        html    = _build_alert_html(rule, discovery)
 
-            if _already_alerted(rule["id"], did):
-                continue
-
-            score = float(discovery.get("scores", {}).get("composite", 0))
-            if score < rule.get("min_score", 0):
-                continue
-
-            # Fire alert
-            title   = discovery.get("title", "Untitled")[:60]
-            subject = f"{rule['emoji']} Noetica Alert: {rule['name']} — {title}..."
-            html    = _build_alert_html(rule, discovery)
-
-            _send_alert_email(subject, html, alert_emails)
-            _record_alert(rule["id"], did)
+        if _send_alert_email(subject, html, alert_emails):
+            _record_alert(rule["id"], discovery["id"])
             total_fired += 1
 
     return total_fired

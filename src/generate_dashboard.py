@@ -48,6 +48,50 @@ MOCK_SOURCES = {
 }
 
 
+_DASHBOARD_DOMAIN_RULES: list[tuple[str, tuple[str, ...]]] = [
+    ("Artificial Intelligence", ("ai", "machine learning", "deep learning", "neurips", "icml")),
+    ("Statistics", ("stat",)),
+    ("Mathematics", ("math",)),
+    ("Quantum Computing", ("quantum",)),
+    ("Physics", ("physic",)),
+    ("Synthetic Biology", ("synthetic bio",)),
+    ("Neuroscience", ("neuro",)),
+    ("Medicine", ("oncology", "cancer", "immunology", "clinical", "medicine", "health informatics", "infectious", "biomedical", "circadian", "drug discovery")),
+    ("Public Health", ("public health", "epidem")),
+    ("Biology", ("bio", "molecular", "gnn", "nature", "cell")),
+    ("Chemistry", ("chem",)),
+    ("Astronomy", ("astro",)),
+    ("Climate Science", ("climate", "carbon")),
+    ("Environmental Science", ("environ", "ecolog")),
+    ("Earth Science", ("earth", "geolog", "ocean")),
+    ("Computer Science", ("crypto", "systems cs", "robotics", "open source", "computer")),
+    ("Engineering", ("engineer", "patent")),
+    ("Materials Science", ("material",)),
+    ("Economics", ("econ",)),
+    ("Business & Management", ("venture", "business")),
+    ("Psychology", ("psych",)),
+    ("Sociology", ("socio",)),
+    ("Philosophy", ("philo",)),
+    ("Education", ("educ",)),
+    ("Agriculture", ("agri",)),
+    ("Linguistics", ("linguist",)),
+    ("Political Science", ("polit",)),
+    ("Law", ("law",)),
+    ("History", ("hist",)),
+]
+
+
+def _resolve_dashboard_domain(raw_domain: str, paradigm_lookup: dict[str, str]) -> str:
+    """Map a discovery's domain label to one of the 31 canonical dashboard paradigms."""
+    d_low = (raw_domain or "Other").strip().lower()
+    if d_low in paradigm_lookup:
+        return paradigm_lookup[d_low]
+    for target, keywords in _DASHBOARD_DOMAIN_RULES:
+        if any(k in d_low for k in keywords):
+            return target
+    return "Other"
+
+
 def generate_dashboard():
     kb_path = Path("data") / "knowledge_base_scored.json"
     papers = []
@@ -89,37 +133,7 @@ def generate_dashboard():
     # POPULATE WITH REAL DATA
     # ─────────────────────────────────────────────
     for p in papers:
-        raw_domain = (p.get("domain") or "Other").strip()
-        d_low = raw_domain.lower()
-
-        # Exact match (case-insensitive) preserves distinct paradigms like "Synthetic Biology" & "Neuroscience"
-        if d_low in paradigm_lookup:
-            domain = paradigm_lookup[d_low]
-        elif "ai" in d_low or "machine learning" in d_low:
-            domain = "Artificial Intelligence"
-        elif "math" in d_low:
-            domain = "Mathematics"
-        elif "quantum" in d_low:
-            domain = "Quantum Computing"
-        elif "physic" in d_low:
-            domain = "Physics"
-        elif "synthetic bio" in d_low:
-            domain = "Synthetic Biology"
-        elif "neuro" in d_low:
-            domain = "Neuroscience"
-        elif "oncology" in d_low or "cancer" in d_low or "immunology" in d_low or "clinical" in d_low or "medicine" in d_low or "health" in d_low or "infectious" in d_low:
-            domain = "Medicine"
-        elif "bio" in d_low or "molecular" in d_low or "gnn" in d_low:
-            domain = "Biology"
-        elif "astro" in d_low:
-            domain = "Astronomy"
-        elif "crypto" in d_low or "systems cs" in d_low or "robotics" in d_low or "open source" in d_low:
-            domain = "Computer Science"
-        elif "material" in d_low:
-            domain = "Materials Science"
-        else:
-            domain = "Other"
-        
+        domain = _resolve_dashboard_domain(p.get("domain") or "Other", paradigm_lookup)
         dtype = map_source_to_dtype(p.get("source_types", ["paper"]))
         
         # First item placed is the highest-scoring for that cell (pre-sorted)
@@ -136,9 +150,10 @@ def generate_dashboard():
             else:
                 source_agg = p.get("source", "")
 
+            clean_authors = [str(a) for a in (p.get("authors") or [])[:3] if a and str(a).lower() not in ("none", "unknown")]
             matrix[domain][dtype] = {
                 "title": p.get("title", ""),
-                "authors": ", ".join((p.get("authors") or [])[:3]),
+                "authors": ", ".join(clean_authors) or "Authors not listed",
                 "abstract": p.get("abstract", "")[:300] + ("..." if len(p.get("abstract", "")) > 300 else ""),
                 "url": p.get("url", "#"),
                 "pdf_url": p.get("pdf_url", ""),

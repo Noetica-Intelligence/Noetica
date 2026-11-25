@@ -114,7 +114,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
         raw_abs = html_lib.escape(textwrap.shorten(discovery.get("abstract", ""), width=300, placeholder="..."))
         abstract = latex_to_unicode(raw_abs)
         
-    authors_list = [a for a in (discovery.get("authors") or []) if a and a.lower() != "unknown"]
+    authors_list = [a for a in (discovery.get("authors") or []) if a and str(a).lower() not in ("unknown", "none")]
     authors = ", ".join(html_lib.escape(a) for a in authors_list[:3]) if authors_list else "Authors not listed"
     if len(authors_list) > 3:
         authors += " et al."
@@ -248,7 +248,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         wc_domain = wildcard.get("domain", "")
         wc_source = html_lib.escape(wildcard.get("source", ""))
         
-        wc_authors_list = [a for a in (wildcard.get("authors") or []) if a and a.lower() != "unknown"]
+        wc_authors_list = [a for a in (wildcard.get("authors") or []) if a and str(a).lower() not in ("unknown", "none")]
         wc_authors = ", ".join(html_lib.escape(a) for a in wc_authors_list[:3]) if wc_authors_list else "Authors not listed"
         if len(wc_authors_list) > 3: wc_authors += " et al."
         
@@ -320,8 +320,8 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
             icon = "🔥" if t.get("type") == "surge" else "🧬"
             trends_items += f"""
             <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #e2e8f0;">
-              <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">{icon} {t.get('name', '')}</div>
-              <div style="font-size:12px;color:#64748b;">{t.get('description', '')}</div>
+              <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px;">{icon} {html_lib.escape(str(t.get('name', '')))}</div>
+              <div style="font-size:12px;color:#64748b;">{html_lib.escape(str(t.get('description', '')))}</div>
             </div>"""
             
         trends_html = f"""

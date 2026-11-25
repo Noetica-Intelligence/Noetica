@@ -151,25 +151,68 @@ def get_paper_limit_for_time(reading_time: str) -> int:
         "15 Minutes": 10,
         "30 Minutes": 20,
         "60 Minutes": 40,
-        "120 Minutes": 80
+        "120 Minutes": 80,
     }
-    return mapping.get(reading_time, 10)
+    if reading_time in mapping:
+        return mapping[reading_time]
+    lower = (reading_time or "").strip().lower()
+    for label, limit in mapping.items():
+        if label.lower() == lower:
+            return limit
+    return 10
+
 
 def parse_interests(interest_str: str) -> list[str]:
-    """Parse comma-separated interests into a list."""
-    if not interest_str or interest_str.lower() == "all":
+    """Parse comma-separated interests into clean search terms (preserving parenthetical lists)."""
+    if not interest_str or interest_str.strip().lower() == "all":
         return []
-    return [i.strip() for i in interest_str.split(",")]
+    parts: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    for ch in interest_str:
+        if ch == "(":
+            depth += 1
+            buf.append(ch)
+        elif ch == ")":
+            depth = max(0, depth - 1)
+            buf.append(ch)
+        elif ch == "," and depth == 0:
+            token = "".join(buf).strip()
+            if token:
+                parts.append(token)
+            buf = []
+        else:
+            buf.append(ch)
+    tail = "".join(buf).strip()
+    if tail:
+        parts.append(tail)
+
+    expanded: list[str] = []
+    seen = set()
+    for part in parts:
+        if "(" in part and ")" in part:
+            outer = part.split("(", 1)[0].strip()
+            inner = part.split("(", 1)[1].rsplit(")", 1)[0]
+            candidates = ([outer] if outer else []) + [x.strip() for x in inner.split(",") if x.strip()]
+        else:
+            candidates = [part]
+        for c in candidates:
+            low = c.lower()
+            if low and low not in seen:
+                seen.add(low)
+                expanded.append(c)
+    return expanded
+
 
 def parse_discovery_preferences(pref_str: str) -> list[str]:
     """Map Google Form checkbox strings to system source types."""
     if not pref_str:
         # Default to papers if nothing selected
         return ["paper"]
-        
+
     pref_str = pref_str.lower()
     types = set()
-    
+
     if "research papers" in pref_str or "scientific conferences" in pref_str:
         types.add("paper")
     if "patents" in pref_str:
@@ -178,13 +221,16 @@ def parse_discovery_preferences(pref_str: str) -> list[str]:
         types.add("grant")
     if "startup funding" in pref_str:
         types.add("funding")
-    if "open source projects" in pref_str or "datasets" in pref_str:
+    if "datasets" in pref_str or "technical reports" in pref_str:
+        types.add("dataset")
+        types.add("repo")
+    if "open source projects" in pref_str:
         types.add("repo")
     if "clinical trials" in pref_str:
         types.add("trial")
-        
+
     # Meta-categories that imply wanting papers/general intelligence
     if "cross-disciplinary" in pref_str or "emerging frontiers" in pref_str or "forecasts" in pref_str:
         types.add("paper")
-        
+
     return list(types) if types else ["paper"]

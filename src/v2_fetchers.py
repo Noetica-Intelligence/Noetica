@@ -2,6 +2,8 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import json
+import re
+import hashlib
 import time
 import os
 import datetime
@@ -14,6 +16,8 @@ import xml.etree.ElementTree as ET
 
 def _sanitize_string(s: Any) -> str:
     """UTF-8 sanitization and schema enforcement (ensures output is a clean string)."""
+    if s is None:
+        return ""
     if not isinstance(s, str):
         try:
             s = str(s)
@@ -22,13 +26,16 @@ def _sanitize_string(s: Any) -> str:
     # Strip null bytes and non-printable control chars that break strict JSON parsers (Zig)
     return "".join(c for c in s if c.isprintable() or c in '\n\r\t')
 
+
 def _sanitize_list(lst: Any) -> List[str]:
     """Schema enforcement for lists of strings (e.g. authors)."""
     if not isinstance(lst, list):
         if isinstance(lst, str):
-            return [_sanitize_string(lst)]
+            clean = _sanitize_string(lst)
+            return [clean] if clean else ["Unknown"]
         return ["Unknown"]
-    return [_sanitize_string(i) for i in lst if i]
+    cleaned = [_sanitize_string(i) for i in lst if i is not None and _sanitize_string(i)]
+    return cleaned or ["Unknown"]
 
 def robust_fetch_json(req: urllib.request.Request, timeout: int = 10, max_retries: int = 3) -> dict:
     """Executes an HTTP request with exponential backoff, retries on 429/5xx, and strict timeouts."""
@@ -104,15 +111,18 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
     try:
         data = robust_fetch_json(req)
         for item in data.get("results", []):
-            title = _sanitize_string(item.get("project_title", ""))
-            abstract = _sanitize_string(item.get("abstract_text", ""))
-            org = _sanitize_string(item.get("organization", {}).get("org_name", "Unknown Org"))
-            
-            pi_list = item.get("principal_investigators", [])
-            pi = _sanitize_string(pi_list[0].get("pi_name") if pi_list else "Unknown")
-            
-            cost = item.get("award_amount", 0)
-            
+            title = _sanitize_string(item.get("project_title") or "Untitled Grant")
+            abstract = _sanitize_string(item.get("abstract_text") or "")
+            org_obj = item.get("organization") or {}
+            org = _sanitize_string(org_obj.get("org_name") or "Unknown Org")
+
+            pi_list = item.get("principal_investigators") or []
+            raw_pi = pi_list[0].get("pi_name") if pi_list and isinstance(pi_list[0], dict) else ""
+            pi = _sanitize_string(raw_pi) or "Unknown PI"
+
+            cost = item.get("award_amount") or 0
+            start_date = _sanitize_string(item.get("project_start_date")) or datetime.date.today().isoformat()
+
             results.append({
                 "id": f"nih_{item.get('appl_id')}",
                 "title": f"[GRANT] {title}",
@@ -120,7 +130,7 @@ def fetch_nih_grants(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
                 "authors": [pi],
                 "source": "NIH RePORTER",
                 "domain": "Biomedical Funding",
-                "date": item.get("project_start_date", datetime.date.today().isoformat()),
+                "date": start_date,
                 "url": f"https://reporter.nih.gov/project-details/{item.get('appl_id')}",
                 "funding_amount": cost,
                 "source_types": ["grant"]
@@ -162,10 +172,10 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
             data = robust_fetch_json(req_fb)
             items = data.get("items", [])
         for item in items:
-            title = _sanitize_string(item.get("full_name", ""))
-            desc = _sanitize_string(item.get("description", "No description provided."))
-            author = _sanitize_string(item.get("owner", {}).get("login", "Unknown"))
-            
+            title = _sanitize_string(item.get("full_name") or "")
+            desc = _sanitize_string(item.get("description")) or "Open-source scientific repository."
+            author = _sanitize_string((item.get("owner") or {}).get("login")) or "Unknown"
+
             results.append({
                 "id": f"gh_{item.get('id')}",
                 "title": f"[REPO] {title}",
@@ -173,9 +183,9 @@ def fetch_github_repos(topic: str, max_results: int = 5) -> List[Dict[str, Any]]
                 "authors": [author],
                 "source": "GitHub",
                 "domain": "Open Source Software",
-                "date": item.get("updated_at", datetime.date.today().isoformat()),
-                "url": item.get("html_url", ""),
-                "stars": item.get("stargazers_count", 0),
+                "date": _sanitize_string(item.get("updated_at")) or datetime.date.today().isoformat(),
+                "url": item.get("html_url") or "",
+                "stars": item.get("stargazers_count") or 0,
                 "source_types": ["repo"]
             })
     except Exception as e:
@@ -197,17 +207,21 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
     try:
         data = robust_fetch_json(req, timeout=15, max_retries=2)
         for item in data.get("resultList", {}).get("result", [])[:max_results]:
-            title = _sanitize_string(item.get("title", ""))
-            abstract = _sanitize_string(item.get("abstractText", "No abstract available."))
-            
+            title = _sanitize_string(item.get("title") or "")
+            if not title:
+                continue
+            abstract = _sanitize_string(item.get("abstractText")) or "No abstract available."
+
             authors = []
-            for auth in item.get("authorList", {}).get("author", []):
-                authors.append(_sanitize_string(auth.get("fullName", auth.get("lastName", ""))))
+            for auth in ((item.get("authorList") or {}).get("author") or []):
+                name = _sanitize_string(auth.get("fullName") or auth.get("lastName"))
+                if name:
+                    authors.append(name)
             if not authors:
                 authors = ["Unknown Inventor/Assignee"]
-            
-            pub_date = item.get("firstPublicationDate", datetime.date.today().isoformat())
-            
+
+            pub_date = _sanitize_string(item.get("firstPublicationDate")) or datetime.date.today().isoformat()
+
             results.append({
                 "id": f"pat_{item.get('id', 'unknown')}",
                 "title": f"[PATENT] {title}",
@@ -226,54 +240,149 @@ def fetch_patents(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
 
 
 # ─────────────────────────────────────────────
-# SEMANTIC SCHOLAR API (CONFERENCE PROCEEDINGS)
+# OPENALEX FLAGSHIP JOURNALS & CONFERENCES
 # ─────────────────────────────────────────────
 
-def fetch_conferences(venue: str, max_results: int = 3) -> List[Dict[str, Any]]:
-    """Fetch recent conference proceedings via Semantic Scholar."""
-    safe_venue = urllib.parse.quote(venue)
-    curr_year = datetime.date.today().year
-    url = f"https://api.semanticscholar.org/graph/v1/paper/search?query={safe_venue}&fields=title,abstract,authors,year,url,venue&publicationDateOrYear={curr_year - 1}-{curr_year}&limit={max_results}"
-    
+def fetch_conferences(venue: str, max_results: int = 5) -> List[Dict[str, Any]]:
+    """Fetch recent peer-reviewed journal/conference articles via OpenAlex (zero 429)."""
+    since = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
+    if venue.startswith("issn:"):
+        issn_filter = f"primary_location.source.issn:{venue.split(':', 1)[1]}"
+        url = (
+            f"https://api.openalex.org/works?"
+            f"filter={issn_filter},from_publication_date:{since},type:article,has_abstract:true"
+            f"&sort=publication_date:desc&per-page={max_results}&mailto=research@example.com"
+        )
+    else:
+        safe_venue = urllib.parse.quote(venue)
+        url = (
+            f"https://api.openalex.org/works?"
+            f"filter=from_publication_date:{since},type:article|preprint,has_abstract:true"
+            f"&search={safe_venue}&sort=publication_date:desc&per-page={max_results}&mailto=research@example.com"
+        )
+
     req = urllib.request.Request(url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
     results = []
     try:
-        data = robust_fetch_json(req)
-        for item in data.get("data", []):
-            title = _sanitize_string(item.get("title", ""))
-            abstract = _sanitize_string(item.get("abstract", "No abstract available."))
-            
-            authors = [_sanitize_string(a.get("name", "")) for a in item.get("authors", [])]
-            if not authors:
-                authors = ["Unknown Author"]
-            
-            year = item.get("year", datetime.date.today().year)
-            if not year: year = datetime.date.today().year
-            v = _sanitize_string(item.get("venue", venue))
-            if not v: v = venue
-            
+        data = robust_fetch_json(req, timeout=15)
+        for w in data.get("results", [])[:max_results]:
+            title = _sanitize_string(w.get("title"))
+            if not title:
+                continue
+            abstract_inv = w.get("abstract_inverted_index") or {}
+            abstract = ""
+            if abstract_inv:
+                word_pos = {pos: word for word, positions in abstract_inv.items() for pos in positions}
+                abstract = _sanitize_string(" ".join(word_pos[i] for i in sorted(word_pos))[:800])
+            authors = [
+                _sanitize_string((a.get("author") or {}).get("display_name"))
+                for a in (w.get("authorships") or [])[:4]
+                if (a.get("author") or {}).get("display_name")
+            ] or ["Unknown Author"]
+            src_name = _sanitize_string(
+                ((w.get("primary_location") or {}).get("source") or {}).get("display_name")
+            ) or venue
+            doi = w.get("doi") or ""
+            landing = ((w.get("primary_location") or {}).get("landing_page_url")
+                       or (w.get("open_access") or {}).get("oa_url")
+                       or doi or "")
+            oa_pdf = (w.get("open_access") or {}).get("oa_url") or ""
             results.append({
-                "id": f"ss_{item.get('paperId', 'unknown')}",
-                "title": f"[CONFERENCE] {title}",
-                "abstract": abstract,
-                "authors": authors[:3],
-                "source": v,
-                "domain": "Conference Proceedings",
-                "date": datetime.date(year, 1, 1).isoformat(),
-                "url": item.get("url", ""),
-                "source_types": ["paper"]
+                "id": _sanitize_string(w.get("id")) or f"oa_conf_{len(results)}",
+                "title": title,
+                "abstract": abstract or f"Peer-reviewed article published in {src_name}.",
+                "authors": authors,
+                "source": src_name,
+                "domain": venue if not venue.startswith("issn:") else src_name,
+                "date": _sanitize_string(w.get("publication_date")) or datetime.date.today().isoformat(),
+                "url": landing,
+                "pdf_url": oa_pdf,
+                "cited_by": w.get("cited_by_count") or 0,
+                "source_types": ["paper"],
             })
     except Exception as e:
-        print(f"⚠️ Conference Fetch Error for '{venue}': {e}")
-        
+        print(f"⚠️ Conference/Venue Fetch Error for '{venue}': {e}")
+
+    return results
+
+
+# ─────────────────────────────────────────────
+# SCIENTIFIC DATASETS & TECHNICAL REPORTS (ZENODO + HUGGINGFACE)
+# ─────────────────────────────────────────────
+
+def fetch_datasets(query: str, max_results: int = 5) -> List[Dict[str, Any]]:
+    """Fetch recent scientific datasets from Zenodo and HuggingFace Datasets API."""
+    results: List[Dict[str, Any]] = []
+    safe_q = urllib.parse.quote(query)
+
+    # 1. Zenodo open research datasets
+    zenodo_url = f"https://zenodo.org/api/records?q={safe_q}&type=dataset&sort=mostrecent&size={max_results}"
+    req_z = urllib.request.Request(zenodo_url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+    try:
+        zdata = robust_fetch_json(req_z, timeout=12, max_retries=2)
+        for hit in (zdata.get("hits") or {}).get("hits", [])[:max_results]:
+            meta = hit.get("metadata") or {}
+            title = _sanitize_string(meta.get("title"))
+            if not title:
+                continue
+            raw_desc = re.sub(r"<[^>]+>", " ", meta.get("description") or "").strip()
+            desc = _sanitize_string(raw_desc)[:700] or f"Scientific dataset deposited on Zenodo matching '{query}'."
+            creators = [
+                _sanitize_string(c.get("name"))
+                for c in (meta.get("creators") or [])[:3]
+                if c.get("name")
+            ] or ["Zenodo Contributor"]
+            links = hit.get("links") or {}
+            rec_url = links.get("self_html") or hit.get("doi_url") or ""
+            results.append({
+                "id": f"zen_{hit.get('id', 'unknown')}",
+                "title": f"[DATASET] {title}",
+                "abstract": desc,
+                "authors": creators,
+                "source": "Zenodo Datasets",
+                "domain": query.title(),
+                "date": _sanitize_string(meta.get("publication_date")) or datetime.date.today().isoformat(),
+                "url": rec_url,
+                "pdf_url": "",
+                "source_types": ["dataset"],
+            })
+    except Exception as e:
+        print(f"⚠️ Zenodo Dataset Fetch Error for '{query}': {e}")
+
+    # 2. HuggingFace Datasets
+    hf_url = f"https://huggingface.co/api/datasets?search={safe_q}&sort=downloads&direction=-1&limit={max(2, max_results // 2)}"
+    req_hf = urllib.request.Request(hf_url, headers={"User-Agent": "Noetica-Scientific-Intelligence-V2"})
+    try:
+        hf_items = robust_fetch_json(req_hf, timeout=10, max_retries=2)
+        if isinstance(hf_items, list):
+            for item in hf_items[:max(2, max_results // 2)]:
+                ds_id = _sanitize_string(item.get("id"))
+                if not ds_id:
+                    continue
+                author = _sanitize_string(item.get("author")) or ds_id.split("/")[0]
+                desc = _sanitize_string(item.get("description")) or f"Open scientific dataset hosted on HuggingFace ({ds_id})."
+                downloads = item.get("downloads") or 0
+                results.append({
+                    "id": f"hf_{ds_id.replace('/', '_')}",
+                    "title": f"[DATASET] {ds_id}",
+                    "abstract": f"{desc[:550]} (Downloads: {downloads:,})",
+                    "authors": [author],
+                    "source": "HuggingFace Datasets",
+                    "domain": "Artificial Intelligence",
+                    "date": _sanitize_string(item.get("lastModified"))[:10] or datetime.date.today().isoformat(),
+                    "url": f"https://huggingface.co/datasets/{ds_id}",
+                    "pdf_url": "",
+                    "source_types": ["dataset"],
+                })
+    except Exception as e:
+        print(f"⚠️ HuggingFace Dataset Fetch Error for '{query}': {e}")
+
     return results
 
 
 # ─────────────────────────────────────────────
 # UNIFIED RSS AGGREGATOR (STARTUP FUNDING)
 # ─────────────────────────────────────────────
-import re
-import hashlib
 
 def fetch_startup_funding_rss(query: str, max_results: int = 3) -> List[Dict[str, Any]]:
     """Fetch startup funding rounds using unified RSS aggregation (Google News + TechCrunch)."""

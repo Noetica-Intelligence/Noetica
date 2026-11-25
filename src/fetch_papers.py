@@ -65,8 +65,8 @@ OPENALEX_CONCEPTS = [
     "C127413603",  # Engineering
 ]
 
-PAPERS_PER_SOURCE = int(os.environ.get("PAPERS_PER_SOURCE", "5"))
-MAX_PAPERS_TOTAL  = int(os.environ.get("MAX_PAPERS_TOTAL", "60"))
+PAPERS_PER_SOURCE = int(os.environ.get("PAPERS_PER_SOURCE", "15"))
+MAX_PAPERS_TOTAL  = int(os.environ.get("MAX_PAPERS_TOTAL", "500"))
 
 
 # ─────────────────────────────────────────────
@@ -314,7 +314,7 @@ def fetch_biorxiv(category: str = "bioinformatics", max_results: int = 5, server
                 "date":     p.get("date", ""),
                 "url":      f"https://www.{server}.org/content/{doi}",
                 "pdf_url":  f"https://www.{server}.org/content/{doi}.full.pdf",
-                "domain":   category,
+                "domain":   category.title(),
             })
     except json.JSONDecodeError as e:
         print(f"  [ERROR] {server} JSON error: {e}")

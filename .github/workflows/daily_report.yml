@@ -43,8 +43,13 @@ jobs:
           NOETICA_SUBSCRIBERS: ${{ secrets.NOETICA_SUBSCRIBERS }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           FEEDBACK_SHEET_ID: ${{ secrets.FEEDBACK_SHEET_ID }}
+          FEEDBACK_FORM_BASE_URL: ${{ secrets.FEEDBACK_FORM_BASE_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python src/main.py

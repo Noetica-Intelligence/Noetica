@@ -26,21 +26,62 @@ from fetch_papers import (
 )
 from v2_fetchers import (
     fetch_nih_grants, fetch_github_repos, fetch_patents,
-    fetch_conferences, fetch_startup_funding_rss
+    fetch_conferences, fetch_datasets, fetch_startup_funding_rss
 )
 from fetch_clinical_trials import fetch_recent_oncology_trials
 from dashboard_config import PARADIGMS
 import hashlib
 
+# Ordered longest/most-specific patterns first so "synthetic biology" beats "biology",
+# and medical terms route to "Medicine" instead of defaulting to chunk[0] ("Mathematics").
+_PARADIGM_RULES: list[tuple[str, tuple[str, ...]]] = [
+    ("Synthetic Biology", ("synthetic biology", "crispr", "gene circuit", "metabolic engineering")),
+    ("Artificial Intelligence", ("artificial intelligence", "machine learning", "deep learning", "large language model", "llm", "neural network", "transformer", "generative ai", "foundation model")),
+    ("Quantum Computing", ("quantum computing", "qubit", "quantum algorithm", "quantum error", "superconducting quantum")),
+    ("Neuroscience", ("neuroscience", "neural circuit", "connectome", "brain", "synap", "alzheimer", "parkinson", "cognitive")),
+    ("Materials Science", ("materials science", "metamaterial", "perovskite", "battery", "catalyst", "graphene", "polymer", "nanomaterial")),
+    ("Climate Science", ("climate change", "carbon capture", "greenhouse", "decarbonization", "renewable")),
+    ("Environmental Science", ("environmental", "ecology", "biodiversity", "pollution", "watershed")),
+    ("Earth Science", ("geology", "seismic", "geophys", "oceanograph", "atmospheric")),
+    ("Astronomy", ("astronomy", "astrophys", "exoplanet", "galaxy", "cosmolog", "telescope")),
+    ("Medicine", ("cancer", "oncology", "tumor", "carcinoma", "fgfr4", "clinical", "therapeutic", "drug discovery", "patient", "disease", "alzheimer", "dementia", "immunotherapy", "kinase", "biomarker", "vaccine", "pharmac", "circadian")),
+    ("Biology", ("biology", "genom", "proteom", "protein", "bioinformatics", "cell", "rna", "dna", "microbiome", "molecular dynamics", "enzyme")),
+    ("Chemistry", ("chemistry", "chemical", "organic synthesis", "catalysis", "molecule", "ligand")),
+    ("Computer Science", ("computer science", "algorithm", "software", "compiler", "distributed system", "cryptography", "cybersecurity", "robotics", "open source")),
+    ("Physics", ("physics", "photon", "laser", "condensed matter", "particle", "plasma", "optical")),
+    ("Mathematics", ("mathematics", "theorem", "topology", "algebra", "differential equation", "manifold")),
+    ("Statistics", ("statistics", "statistical", "bayesian", "regression", "causal inference")),
+    ("Engineering", ("engineering", "hardware", "semiconductor", "robotics", "actuator", "aerospace")),
+    ("Economics", ("economics", "macroeconomic", "fintech", "market")),
+    ("Public Health", ("public health", "epidemiology", "pandemic", "health equity")),
+    ("Agriculture", ("agriculture", "crop", "soil", "agritech")),
+    ("Education", ("education", "pedagogy", "learning analytics")),
+]
+
+
+def infer_paradigm_domain(item: dict, default_domain: str = "Other") -> str:
+    """Infer the closest PARADIGM domain from an item's title and abstract."""
+    text = f"{item.get('title', '')} {item.get('abstract', '')}".lower()
+    for paradigm, keywords in _PARADIGM_RULES:
+        if any(kw in text for kw in keywords):
+            return paradigm
+    return default_domain if default_domain in PARADIGMS else "Other"
+
+
 def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
-def assign_domain_from_chunk(item, chunk):
+
+def assign_domain_from_chunk(item, chunk, fallback: str = "Other"):
+    """Assign an accurate scientific domain rather than blindly defaulting to chunk[0]."""
+    inferred = infer_paradigm_domain(item, default_domain="")
+    if inferred and inferred != "Other":
+        return inferred
     text = (item.get("title", "") + " " + item.get("abstract", "")).lower()
     for c in chunk:
         if c.lower() in text:
             return c
-    return chunk[0]
+    return fallback if fallback in PARADIGMS else "Other"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SOURCE REGISTRY
@@ -50,7 +91,7 @@ def assign_domain_from_chunk(item, chunk):
 def _fetch_all_arxiv():
     papers = []
     for domain, cats in ARXIV_CATEGORIES.items():
-        batch = fetch_arxiv(cats, max_results=int(os.environ.get("PAPERS_PER_SOURCE", "5")))
+        batch = fetch_arxiv(cats, max_results=int(os.environ.get("PAPERS_PER_SOURCE", "15")))
         for p in batch:
             p["domain"] = domain
             p["source_types"] = ["paper"]
@@ -61,7 +102,7 @@ def _fetch_all_arxiv():
 def _fetch_all_pubmed():
     papers = []
     for domain, query in PUBMED_QUERIES.items():
-        batch = fetch_pubmed(query, max_results=int(os.environ.get("PAPERS_PER_SOURCE", "5")))
+        batch = fetch_pubmed(query, max_results=int(os.environ.get("PAPERS_PER_SOURCE", "15")))
         for p in batch:
             p["domain"] = domain
             p["source_types"] = ["paper"]
@@ -76,7 +117,7 @@ def _fetch_all_openalex():
     ]
     papers = []
     for cid, name in zip(OPENALEX_CONCEPTS, names):
-        batch = fetch_openalex(cid, max_results=4)
+        batch = fetch_openalex(cid, max_results=10)
         for p in batch:
             p["domain"] = name
             p["source_types"] = ["paper"]
@@ -87,13 +128,13 @@ def _fetch_all_openalex():
 def _fetch_all_biorxiv():
     papers = []
     for cat in ["bioinformatics", "cancer biology", "neuroscience", "systems biology"]:
-        batch = fetch_biorxiv(cat, max_results=5, server="biorxiv")
+        batch = fetch_biorxiv(cat, max_results=15, server="biorxiv")
         for p in batch:
             p["source_types"] = ["paper"]
         papers.extend(batch)
         time.sleep(0.4)
     for cat in ["oncology", "health informatics", "infectious diseases"]:
-        batch = fetch_biorxiv(cat, max_results=4, server="medrxiv")
+        batch = fetch_biorxiv(cat, max_results=10, server="medrxiv")
         for p in batch:
             p["source_types"] = ["paper"]
         papers.extend(batch)
@@ -155,16 +196,23 @@ def _fetch_all_semantic_scholar():
     return papers
 
 def _fetch_all_nih():
+    """Fetch diverse recent NIH grants across domain-specific queries (avoiding cross-chunk overlap)."""
+    queries = [
+        ("cancer OR oncology OR tumor OR kinase", "Medicine"),
+        ("artificial intelligence OR machine learning OR computational biology", "Artificial Intelligence"),
+        ("circadian OR neuroscience OR neurodegeneration OR alzheimer", "Neuroscience"),
+        ("CRISPR OR synthetic biology OR genomics OR vaccine", "Synthetic Biology"),
+    ]
     results = []
-    for chunk in chunker(PARADIGMS, 8):
-        query = " OR ".join(f'"{c}"' for c in chunk)
+    for query, fallback in queries:
         batch = fetch_nih_grants(query, max_results=5)
         for p in batch:
             p["source_types"] = ["grant"]
-            p["domain"] = assign_domain_from_chunk(p, chunk)
+            p["domain"] = infer_paradigm_domain(p, default_domain=fallback)
         results.extend(batch)
-        time.sleep(0.5)
+        time.sleep(0.4)
     return results
+
 
 def _fetch_all_github():
     results = []
@@ -174,28 +222,70 @@ def _fetch_all_github():
         batch = fetch_github_repos(query, max_results=4)
         for p in batch:
             p["source_types"] = ["repo"]
-            p["domain"] = assign_domain_from_chunk(p, chunk)
+            p["domain"] = assign_domain_from_chunk(p, chunk, fallback="Computer Science")
         results.extend(batch)
     return results
+
 
 def _fetch_all_patents():
-    results = []
+    """Fetch patents across multiple scientific domains via simple non-timing-out terms."""
     patent_queries = [
-        '"cancer" OR "oncology" OR "kinase" OR "CRISPR"',
-        '"machine learning" OR "neural network" OR "quantum computing"',
-        '"biomarker" OR "drug delivery" OR "therapeutics"',
+        ("cancer", "Medicine"),
+        ("protein", "Biology"),
+        ("neural", "Neuroscience"),
+        ("quantum", "Quantum Computing"),
+        ("algorithm", "Artificial Intelligence"),
+        ("biosensor", "Engineering"),
     ]
-    for query in patent_queries:
-        batch = fetch_patents(query, max_results=4)
+    results = []
+    for query, default_domain in patent_queries:
+        batch = fetch_patents(query, max_results=3)
         for p in batch:
             p["source_types"] = ["patent"]
+            p["domain"] = infer_paradigm_domain(p, default_domain=default_domain)
         results.extend(batch)
-        time.sleep(0.8)
+        time.sleep(0.5)
     return results
 
+
 def _fetch_all_conferences():
-    # Merged into _fetch_all_semantic_scholar to prevent concurrent 429 rate-limit bursts
-    return []
+    """Fetch recent peer-reviewed flagship journals & AI/Bio venues via OpenAlex."""
+    venues = [
+        ("issn:0028-0836|0036-8075|0092-8674", "Biology"),  # Nature, Science, Cell
+        ("issn:1087-0156|1367-4803", "Biology"),             # Nature Biotech, Bioinformatics
+        ("NeurIPS", "Artificial Intelligence"),
+        ("ICML", "Artificial Intelligence"),
+    ]
+    results = []
+    for venue, default_domain in venues:
+        batch = fetch_conferences(venue, max_results=4)
+        for p in batch:
+            p["source_types"] = ["paper"]
+            p["domain"] = infer_paradigm_domain(p, default_domain=default_domain)
+        results.extend(batch)
+        time.sleep(0.3)
+    return results
+
+
+def _fetch_all_datasets():
+    """Fetch recent open scientific datasets & technical resources via Zenodo + HuggingFace."""
+    queries = [
+        ("oncology", "Medicine"),
+        ("protein", "Biology"),
+        ("machine learning", "Artificial Intelligence"),
+        ("quantum", "Physics"),
+        ("climate", "Climate Science"),
+    ]
+    results = []
+    for q, default_domain in queries:
+        batch = fetch_datasets(q, max_results=4)
+        for p in batch:
+            p["source_types"] = ["dataset"]
+            p["domain"] = infer_paradigm_domain(p, default_domain=default_domain)
+        results.extend(batch)
+        time.sleep(0.3)
+    return results
+
 
 def _fetch_all_funding():
     results = []
@@ -204,7 +294,7 @@ def _fetch_all_funding():
         batch = fetch_startup_funding_rss(query, max_results=4)
         for p in batch:
             p["source_types"] = ["funding"]
-            p["domain"] = assign_domain_from_chunk(p, chunk)
+            p["domain"] = assign_domain_from_chunk(p, chunk, fallback="Business & Management")
         results.extend(batch)
     return results
 
@@ -287,9 +377,16 @@ SOURCE_REGISTRY = [
     {
         "name":        "Conferences",
         "type":        "paper",
-        "enabled":     False,
+        "enabled":     True,
         "fetcher":     _fetch_all_conferences,
-        "description": "Peer-reviewed AI/Bio conference proceedings (handled serially in S2)",
+        "description": "Peer-reviewed flagship journals and AI/Bio proceedings via OpenAlex",
+    },
+    {
+        "name":        "Scientific Datasets",
+        "type":        "dataset",
+        "enabled":     True,
+        "fetcher":     _fetch_all_datasets,
+        "description": "Open scientific datasets from Zenodo and HuggingFace",
     },
     {
         "name":        "Venture Capital Feeds",
@@ -311,7 +408,7 @@ def fetch_all_intelligence() -> list[dict]:
     Returns a deduplicated, clustered list of discovery dicts.
     """
     all_items: list[dict] = []
-    max_total = int(os.environ.get("MAX_PAPERS_TOTAL", "250"))
+    max_total = int(os.environ.get("MAX_PAPERS_TOTAL", "500"))
 
     enabled = [s for s in SOURCE_REGISTRY if s["enabled"]]
     print(f"\n📡 Running {len(enabled)} enabled source(s) concurrently...\n")
@@ -355,6 +452,7 @@ def fetch_all_intelligence() -> list[dict]:
 
     # Filter: must have title
     all_items = [i for i in all_items if i.get("title")]
+    raw_scanned_count = len(all_items)
 
     # SHA-256 Deduplication Failsafe (Cross-Paradigm)
     seen_hashes = set()
@@ -387,5 +485,7 @@ def fetch_all_intelligence() -> list[dict]:
             idx += 1
         all_items = balanced
 
-    print(f"\n✅ Total unique discoveries after deduplication & clustering: {len(all_items)}")
+    total_fetched = len(all_items)
+    print(f"\n✅ Scanned {raw_scanned_count} raw items → {total_fetched} unique discoveries after deduplication & clustering")
+    fetch_all_intelligence.last_raw_count = raw_scanned_count
     return all_items

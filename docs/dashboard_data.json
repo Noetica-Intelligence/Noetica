@@ -991,7 +991,7 @@
         "is_mock": true
       },
       "Open Source Projects / Software": {
-        "title": "Physics Simulator for Rust",
+        "title": "v2.0 Release of Tensor Analytics Engine",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Materials Science under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -1105,6 +1105,25 @@
         "domain": "Earth Science",
         "date": "2026-11-25",
         "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "[REPO] Avril-Exoplanet/Avril",
+        "authors": "Avril-Exoplanet",
+        "abstract": "AI-guided, evidence-preserving exoplanet candidate discovery for public TESS data.",
+        "url": "https://github.com/Avril-Exoplanet/Avril",
+        "pdf_url": "",
+        "source": "GitHub",
+        "source_agg": "1 repo",
+        "score": 6.4,
+        "novelty": 5.0,
+        "evidence": 5.0,
+        "trend": 9.4,
+        "status": "Emerging Signal",
+        "strategic_implication": "Consolidates existing empirical frameworks within Earth Science.",
+        "knowledge_graph_edge": "",
+        "domain": "Earth Science",
+        "date": "2026-11-24",
+        "is_mock": false
       }
     },
     "Environmental Science": {
@@ -1535,7 +1554,7 @@
         "is_mock": true
       },
       "Research Grants / Startup Funding": {
-        "title": "NSF Grant for High-Temperature Superconductors",
+        "title": "Seed Funding for Neural Interface Startup",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Synthetic Biology under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -1613,7 +1632,7 @@
         "is_mock": false
       },
       "Patents / Clinical Trials": {
-        "title": "Clinical Validation of mRNA Vector",
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Quantum Computing under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2041,7 +2060,7 @@
       "Scientific Datasets / Technical Reports": {
         "title": "Global Climate Assessment Report 2026",
         "authors": "Various Contributors",
-        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
+        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Political Science under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
         "pdf_url": "",
         "source": "Figshare",
@@ -2098,7 +2117,7 @@
         "is_mock": true
       },
       "Patents / Clinical Trials": {
-        "title": "Clinical Validation of mRNA Vector",
+        "title": "Phase III Trial of Novel Kinase Inhibitor",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2136,7 +2155,7 @@
         "is_mock": false
       },
       "Scientific Datasets / Technical Reports": {
-        "title": "Technical Survey of 6G Telecommunications",
+        "title": "Global Climate Assessment Report 2026",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Law under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2252,7 +2271,7 @@
         "is_mock": true
       },
       "Open Source Projects / Software": {
-        "title": "Open Source DNA Sequencing Library",
+        "title": "v2.0 Release of Tensor Analytics Engine",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Philosophy under the category of Open Source Projects / Software. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2505,7 +2524,7 @@
         "is_mock": true
       },
       "Research Grants / Startup Funding": {
-        "title": "Seed Funding for Neural Interface Startup",
+        "title": "NSF Grant for High-Temperature Superconductors",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Arts & Design under the category of Research Grants / Startup Funding. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2560,6 +2579,25 @@
         "domain": "Arts & Design",
         "date": "2026-11-25",
         "is_mock": true
+      },
+      "Open Source Projects / Software": {
+        "title": "[REPO] chadyi/StudyOnTV",
+        "authors": "chadyi",
+        "abstract": "StudyOnTV (Tiledaoti TV) \u2014 open-source Android TV app where kids unlock screen time by answering questions. Runs fully on the TV: no server, no account. Parents scan a QR code and manage questions from the LAN. Learn first. Watch later.",
+        "url": "https://github.com/chadyi/StudyOnTV",
+        "pdf_url": "",
+        "source": "GitHub",
+        "source_agg": "1 repo",
+        "score": 7.3,
+        "novelty": 7.0,
+        "evidence": 5.0,
+        "trend": 10.0,
+        "status": "Emerging Signal",
+        "strategic_implication": "Introduces novel methodology to Arts & Design, expanding theoretical boundaries.",
+        "knowledge_graph_edge": "",
+        "domain": "Arts & Design",
+        "date": "2026-11-25",
+        "is_mock": false
       }
     },
     "Business & Management": {
@@ -2718,7 +2756,7 @@
         "is_mock": true
       },
       "Scientific Datasets / Technical Reports": {
-        "title": "Open Dataset of 100M Protein Structures",
+        "title": "Global Climate Assessment Report 2026",
         "authors": "Various Contributors",
         "abstract": "This is an illustrative entry representing the highest-scoring discovery in Education under the category of Scientific Datasets / Technical Reports. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
         "url": "#",
@@ -2971,10 +3009,10 @@
         "is_mock": true
       },
       "Patents / Clinical Trials": {
-        "title": "Patent for Quantum Dot Photovoltaics",
-        "authors": "Various Contributors",
-        "abstract": "This is an illustrative entry representing the highest-scoring discovery in Other under the category of Patents / Clinical Trials. It demonstrates the Noetica scoring engine's capability to surface critical breakthroughs across all scientific disciplines.",
-        "url": "#",
+        "title": "[PATENT] AUTOMATED MEASUREMENT OF BRAIN INJURY INDICES USING BRAIN CT IMAGES, INJURY DATA, AND MACHINE LEARNING",
+        "authors": "NAJARIAN KAYVAN, CHEN WENAN, WARD KEVIN R",
+        "abstract": "A decision-support system and computer implemented method automatically measures fee midline shift in a patient's brain using Computed Tomography (CT) images. The decision-support system and computer implemented method applies machine learning methods to features extracted from multiple sources, inc...",
+        "url": "https://europepmc.org/article/PAT/WO2010117573",
         "pdf_url": "",
         "source": "ClinicalTrials.gov",
         "source_agg": "1 ClinicalTrials.gov",
@@ -2983,8 +3021,8 @@
         "evidence": 7.2,
         "trend": 5.6,
         "status": "Emerging Signal",
-        "strategic_implication": "Consolidates existing empirical frameworks within Other. Demonstrates moderate theoretical confidence; early-stage validation.",
-        "knowledge_graph_edge": "Primary convergence vector linking Other frameworks with adjacent disciplinary architecture.",
+        "strategic_implication": "Introduces novel methodology to Applied Technology / Patent, expanding theoretical boundaries.",
+        "knowledge_graph_edge": "",
         "domain": "Other",
         "date": "2026-11-25",
         "is_mock": true

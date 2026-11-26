@@ -67,3 +67,21 @@ data/*.jsonl
 run.log
 .env
 zig_engine/input.json
+
+# ── Personal / non-project files ────────────────────────────────────────────
+# Presentation & pitch decks
+*.pptx
+*.ppt
+
+# Scanned / personal documents
+Annapurna_Application_*.png
+ChatGPT Image*.png
+ChatGPT Image*.jpg
+
+# Launch collateral & marketing assets (not part of codebase)
+Noetica_Beta_Launch.*
+forms-gle*
+
+# Local mail drafts / review notes
+Mail_Noetica/
+

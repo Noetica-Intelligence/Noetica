@@ -54,6 +54,42 @@ DOMAIN_COLORS = {
 # PRE-PROCESSORS
 # ─────────────────────────────────────────────
 
+_ALLOWED_INLINE_TAG_RE = re.compile(
+    r'<(?:(br)\s*/?|(/)(b|i|strong|em|u|sup|sub|p|ul|ol|li)\s*|(b|i|strong|em|u|sup|sub|p|ul|ol|li)\s*)>',
+    re.IGNORECASE,
+)
+_BARE_AMP_RE = re.compile(r'&(?!([a-zA-Z][a-zA-Z0-9]*|#\d+|#x[0-9a-fA-F]+);)')
+
+
+def _escape_text_preserving_entities(chunk: str) -> str:
+    """Escape <, >, and bare & without double-escaping existing HTML entities."""
+    chunk = _BARE_AMP_RE.sub('&amp;', chunk)
+    return chunk.replace('<', '&lt;').replace('>', '&gt;')
+
+
+def _sanitize_inline_html(text: str) -> str:
+    """Preserve safe inline HTML formatting tags while escaping stray angle brackets and unsafe tags."""
+    if not text:
+        return ""
+    parts: list[str] = []
+    pos = 0
+    for match in _ALLOWED_INLINE_TAG_RE.finditer(text):
+        chunk = text[pos:match.start()]
+        if chunk:
+            parts.append(_escape_text_preserving_entities(chunk))
+        if match.group(1):
+            parts.append('<br>')
+        elif match.group(2):
+            parts.append(f'</{match.group(3).lower()}>')
+        else:
+            parts.append(f'<{match.group(4).lower()}>')
+        pos = match.end()
+    tail = text[pos:]
+    if tail:
+        parts.append(_escape_text_preserving_entities(tail))
+    return "".join(parts)
+
+
 def latex_to_unicode(text: str) -> str:
     """Safely convert common LaTeX symbols to Unicode, and complex math to SVG images."""
     if not text:
@@ -61,7 +97,7 @@ def latex_to_unicode(text: str) -> str:
         
     # Handle block math: \[ ... \]
     def block_math_replacer(match):
-        math_str = match.group(1).strip()
+        math_str = html_lib.unescape(match.group(1).strip())
         encoded = urllib.parse.quote(math_str)
         return f'<br><div style="text-align:center; margin: 10px 0;"><img src="https://latex.codecogs.com/svg.image?{encoded}" style="max-width:100%; border-radius: 4px;" alt="math equation" /></div><br>'
 
@@ -69,7 +105,7 @@ def latex_to_unicode(text: str) -> str:
     
     # Handle inline math: $ ... $
     def inline_math_replacer(match):
-        math_str = match.group(1).strip()
+        math_str = html_lib.unescape(match.group(1).strip())
         encoded = urllib.parse.quote(math_str)
         return f'<img src="https://latex.codecogs.com/svg.image?{encoded}" style="vertical-align: middle; padding: 0 2px; border-radius: 2px; height: 1.2em;" alt="math" />'
 
@@ -84,15 +120,31 @@ def render_markdown_to_html(text: str) -> str:
     """Convert basic markdown bold/italic/lists to HTML for email rendering."""
     if not text:
         return ""
-    # Bold
-    text = re.sub(r'\*\*(.*?)\*\*', r'<strong style="color:#0f172a;">\1</strong>', text)
+    text = text.replace('\r\n', '\n')
+    # Bold (inherit parent text color so dark mode & dark anomaly cards stay legible)
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
     # Newlines
     text = text.replace('\n\n', '<br><br>')
     text = text.replace('\n', '<br>')
-    # Simple list formatting
-    text = text.replace('<br>- ', '<br>&nbsp;&nbsp;&bull; ')
-    text = text.replace('<br>* ', '<br>&nbsp;&nbsp;&bull; ')
+    # Normalize line-leading and inline bullet markers (e.g. "<br>- ", "<br>-<i>", " * <b>")
+    text = re.sub(r'<br\s*/?>\s*[-*](?:\s+|(?=<(?:b|i|strong|em)>))', '<br>&nbsp;&nbsp;&bull; ', text)
+    text = re.sub(r'(?<!<br>)\s+\*\s+(?=<(?:b|i|strong|em)>)', '<br>&nbsp;&nbsp;&bull; ', text)
     return text
+
+
+def _format_card_abstract(discovery: dict) -> str:
+    """Render AI-structured HTML abstract safely, or shortened escaped plain abstract."""
+    structured = discovery.get("structured_abstract")
+    if structured:
+        # structured_abstract from ai_synthesis.py contains HTML tags (<b>, <br>, <i>) —
+        # preserve safe formatting tags rather than double-escaping them into literal text,
+        # while still escaping stray '<'/'>' (e.g. "p < 0.05") or fallback unsafe markup.
+        safe_html = _sanitize_inline_html(str(structured))
+        return render_markdown_to_html(latex_to_unicode(safe_html))
+    raw_abs = html_lib.escape(
+        textwrap.shorten(discovery.get("abstract") or "", width=300, placeholder="...")
+    )
+    return latex_to_unicode(raw_abs)
 
 
 def domain_badge(domain: str) -> str:
@@ -107,12 +159,7 @@ def paper_card(rank: int, discovery: dict, subscriber_email: str) -> str:
     raw_title = html_lib.escape(discovery.get("title", "Untitled"))
     title = latex_to_unicode(raw_title)
     
-    if "structured_abstract" in discovery:
-        raw_struct = html_lib.escape(discovery["structured_abstract"])
-        abstract = render_markdown_to_html(latex_to_unicode(raw_struct))
-    else:
-        raw_abs = html_lib.escape(textwrap.shorten(discovery.get("abstract", ""), width=300, placeholder="..."))
-        abstract = latex_to_unicode(raw_abs)
+    abstract = _format_card_abstract(discovery)
         
     authors_list = [a for a in (discovery.get("authors") or []) if a and str(a).lower() not in ("unknown", "none")]
     authors = ", ".join(html_lib.escape(a) for a in authors_list[:3]) if authors_list else "Authors not listed"
@@ -244,7 +291,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
 
     wildcard_html = ""
     if wildcard:
-        wc_title  = html_lib.escape(latex_to_unicode(wildcard.get("title","")))
+        wc_title  = latex_to_unicode(html_lib.escape(wildcard.get("title", "")))
         wc_url    = wildcard.get("url","#")
         wc_domain = wildcard.get("domain", "")
         wc_source = html_lib.escape(wildcard.get("source", ""))
@@ -253,11 +300,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
         wc_authors = ", ".join(html_lib.escape(a) for a in wc_authors_list[:3]) if wc_authors_list else "Authors not listed"
         if len(wc_authors_list) > 3: wc_authors += " et al."
         
-        if "structured_abstract" in wildcard:
-            wc_abstract = render_markdown_to_html(latex_to_unicode(html_lib.escape(wildcard["structured_abstract"])))
-        else:
-            raw_wc_abs = html_lib.escape(textwrap.shorten(wildcard.get("abstract", ""), width=300, placeholder="..."))
-            wc_abstract = latex_to_unicode(raw_wc_abs)
+        wc_abstract = _format_card_abstract(wildcard)
             
         base_strat = wildcard.get("strategic_implication", "")
         wc_strat  = html_lib.escape(f"Highly disruptive anomaly detected. {base_strat}")
@@ -301,6 +344,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
     # Generate AI Synthesis HTML
     ai_synthesis_formatted = ""
     if ai_synthesis_html:
+        safe_synthesis = latex_to_unicode(_sanitize_inline_html(ai_synthesis_html))
         ai_synthesis_formatted = f"""
         <div style="background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:32px;margin-bottom:40px;box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:center;margin-bottom:16px;">
@@ -309,7 +353,7 @@ def build_email_html(papers: list[dict], date_str: str, emerging_trends: list[di
             </div>
           </div>
           <div style="color:#e2e8f0;font-size:15px;line-height:1.7;font-weight:400;">
-            {ai_synthesis_html}
+            {safe_synthesis}
           </div>
         </div>"""
 

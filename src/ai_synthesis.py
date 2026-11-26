@@ -4,6 +4,7 @@ Uses Gemini to generate a tailored executive summary for the user's specific exp
 """
 
 import os
+import re
 try:
     from google import genai
 except ImportError:
@@ -81,11 +82,28 @@ def _call_groq(prompt: str, system_prompt: str, max_tokens: int = 600) -> str:
         return ""
 
 
+def _strip_code_fences(text: str) -> str:
+    """Remove wrapping markdown code fences that LLMs sometimes emit around HTML."""
+    cleaned = text.strip()
+    cleaned = re.sub(r'^```(?:html)?\s*\n?', '', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\n?```\s*$', '', cleaned)
+    return cleaned.strip()
+
+
 def _clean_structured_html(text: str) -> str:
-    """Normalize bold markdown and newlines into clean email-safe HTML."""
-    import re
+    """Normalize markdown bold/bullets and newlines into clean email-safe HTML."""
+    text = _strip_code_fences(text)
+    text = text.replace("\\r\\n", "\n").replace("\r\n", "\n").replace("\\n", "\n")
     text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
-    return text.replace("\\n", " ").replace("\n", " ")
+    text = re.sub(r'<br\s*/?>', '<br>', text, flags=re.IGNORECASE)
+    text = re.sub(
+        r'(?:<br>\s*|\n)[ \t]*(?:[-*][ \t]+|[-*](?=<(?:b|i|strong|em)>))',
+        '<br>&nbsp;&nbsp;&bull; ',
+        text,
+    )
+    text = text.replace("\n", " ")
+    text = re.sub(r'(<br>)?\s*(<b>\s*[23]\.)', lambda m: (m.group(1) or '<br><br>') + m.group(2), text)
+    return re.sub(r' {2,}', ' ', text).strip()
 
 
 def format_abstract_pointwise(abstract: str) -> str:
@@ -122,6 +140,15 @@ ORIGINAL ABSTRACT:
         _ABSTRACT_CACHE[abstract] = _clean_structured_html(text)
         return _ABSTRACT_CACHE[abstract]
     return abstract
+
+
+def _clean_synthesis_html(text: str) -> str:
+    """Normalize markdown bold, fences, and paragraph breaks for executive synthesis HTML."""
+    text = _strip_code_fences(text)
+    text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+    if "<br>" not in text.lower() and "<p>" not in text.lower():
+        text = text.replace("\n\n", "<br><br>").replace("\n", " ")
+    return text
 
 
 def generate_personalized_synthesis(papers: list[dict], expertise: str, interests: str) -> str:
@@ -162,9 +189,7 @@ TOP DISCOVERIES TODAY:
         text = _call_gemini(prompt)
     if not text:
         return ""
-    if "<br>" not in text and "<p>" not in text:
-        text = text.replace("\n\n", "<br><br>").replace("\n", " ")
-    return text
+    return _clean_synthesis_html(text)
 
 
 def _generate_personalized_synthesis_gemini(papers: list[dict], expertise: str, interests: str) -> str:
@@ -177,6 +202,4 @@ def _generate_personalized_synthesis_gemini(papers: list[dict], expertise: str, 
         f"reader interested in {interests}:\n\n{paper_context}"
     )
     text = _call_gemini(prompt)
-    if text and "<br>" not in text and "<p>" not in text:
-        text = text.replace("\n\n", "<br><br>").replace("\n", " ")
-    return text
+    return _clean_synthesis_html(text) if text else ""

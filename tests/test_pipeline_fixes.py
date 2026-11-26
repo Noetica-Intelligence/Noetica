@@ -14,6 +14,7 @@ import source_registry
 import subscribers
 import v2_fetchers
 import alerts
+import ai_synthesis
 import build_email
 import send_email
 
@@ -352,3 +353,138 @@ def test_alerts_fallback_to_resend_without_smtp_password(monkeypatch):
 
     assert fired == 1
     assert sent == ["user@example.com"]
+
+
+def test_paper_card_and_wildcard_render_structured_abstract_html():
+    sample_structured = (
+        "<b>1. Abstract Overview:</b><br>"
+        "Proves leading coefficient formula with p < 0.05 and $IC_{50} < 10$. "
+        "<script>bad()</script><br>"
+        "<b>2. Research Details:</b><br>"
+        " * <b>Topic:</b> Elliptic curves * <b>Workflow:</b> Proof construction<br>"
+        "<b>3. Key Findings & Future Directions:</b><br>Significant advance."
+    )
+    wildcard_structured = (
+        "<b>1. Abstract Overview:</b><br>Introduces QLAF.<br>"
+        "<b>2. Research Details:</b><br>-<i>Topic: </i>Pretraining<br>-<i>Workflow: </i>3-seed"
+    )
+    main_paper = {
+        "id": "math_1",
+        "title": "Refined conjectures of Birch-Swinnerton-Dyer type",
+        "abstract": "Fallback abstract",
+        "structured_abstract": sample_structured,
+        "source": "arXiv",
+        "source_types": {"paper": 1},
+        "domain": "Pure Mathematics",
+        "url": "https://example.org/1",
+        "authors": ["Castella F", "Sano T"],
+        "scores": {"composite": 7.5},
+    }
+    wildcard_paper = {
+        "id": "ai_1",
+        "title": "Quantum H_{2}O & $E = mc^2$ Attention",
+        "abstract": "Wildcard fallback",
+        "structured_abstract": wildcard_structured,
+        "source": "HuggingFace Datasets",
+        "source_types": {"dataset": 1},
+        "domain": "Engineering",
+        "url": "https://example.org/2",
+        "authors": ["IgnisCogitationis"],
+        "scores": {"composite": 6.6},
+    }
+
+    html_doc = build_email.build_email_html(
+        [main_paper, wildcard_paper],
+        "2026-11-26",
+        subscriber_email="sub@example.com",
+        ai_synthesis_html="<p><b>Key theme:</b> Convergence at p < 0.01.</p>",
+    )
+
+    # AI HTML tags must render directly, never double-escaped as &lt;b&gt;
+    assert "<b>1. Abstract Overview:</b>" in html_doc
+    assert "<b>2. Research Details:</b>" in html_doc
+    assert "<i>Topic: </i>" in html_doc
+    assert "&lt;b&gt;" not in html_doc
+    assert "&lt;br&gt;" not in html_doc
+    assert "&lt;i&gt;" not in html_doc
+
+    # Inline and hyphen-joined bullets are normalized cleanly
+    assert "&bull; <b>Topic:</b>" in html_doc
+    assert "&bull; <b>Workflow:</b>" in html_doc
+    assert "&bull; <i>Topic: </i>" in html_doc
+    assert "&bull; <i>Workflow: </i>" in html_doc
+
+    # Unsafe tags and stray comparisons outside LaTeX are safely escaped, while LaTeX unescapes '<'
+    assert "p &lt; 0.05" in html_doc
+    assert "&lt;script&gt;bad()&lt;/script&gt;" in html_doc
+    assert "<script>" not in html_doc
+    assert "IC_%7B50%7D%20%3C%2010" in html_doc
+
+    # Wildcard title LaTeX renders <sub> and <img> rather than escaping generated HTML
+    assert "H<sub>2</sub>O" in html_doc
+    assert "https://latex.codecogs.com/svg.image?E%20%3D%20mc%5E2" in html_doc
+    assert "&lt;sub&gt;" not in html_doc
+    assert "&lt;img" not in html_doc
+
+    # AI synthesis safe markup renders and stray '<' is escaped
+    assert "<p><b>Key theme:</b> Convergence at p &lt; 0.01.</p>" in html_doc
+
+
+def test_clean_structured_html_preserves_bullets_and_strips_fences():
+    raw = (
+        "```html\n"
+        "<b>1. Abstract Overview:</b><br>\n"
+        "Summary text.\n"
+        "<b>2. Research Details:</b><br>\n"
+        "* **Topic:** FGFR4\n"
+        "* **Workflow:** Docking\n"
+        "**3. Key Findings:** Important.\n"
+        "```"
+    )
+    cleaned = ai_synthesis._clean_structured_html(raw)
+    assert not cleaned.startswith("```")
+    assert not cleaned.endswith("```")
+    assert "&bull; <b>Topic:</b>" in cleaned
+    assert "&bull; <b>Workflow:</b>" in cleaned
+    assert "<br><br><b>3. Key Findings:</b>" in cleaned
+
+
+def test_paper_card_empty_structured_abstract_and_attr_sanitization():
+    html_fallback = build_email.paper_card(
+        1,
+        {
+            "id": "fb_1",
+            "title": "Plain <Fallback> Paper",
+            "abstract": "Raw abstract with p < 0.01 and <script>x</script>.",
+            "structured_abstract": "",
+            "source": "PubMed",
+            "source_types": ["paper"],
+            "domain": "Oncology",
+            "url": "https://example.org/fb",
+            "authors": ["Roy S"],
+            "scores": {"composite": 8.0},
+        },
+        "sub@example.com",
+    )
+    assert "p &lt; 0.01" in html_fallback
+    assert "&lt;script&gt;x&lt;/script&gt;" in html_fallback
+
+    html_attr = build_email.paper_card(
+        1,
+        {
+            "id": "attr_1",
+            "title": "Attr Sanitization",
+            "abstract": "Unused",
+            "structured_abstract": '<b>Title</b> <b onclick="alert(1)">bad</b> <i>ok</i>',
+            "source": "arXiv",
+            "source_types": ["paper"],
+            "domain": "Bioinformatics",
+            "url": "https://example.org/attr",
+            "authors": ["Roy S"],
+            "scores": {"composite": 8.0},
+        },
+        "sub@example.com",
+    )
+    assert "<b>Title</b>" in html_attr
+    assert "<i>ok</i>" in html_attr
+    assert '&lt;b onclick="alert(1)"&gt;bad</b>' in html_attr
